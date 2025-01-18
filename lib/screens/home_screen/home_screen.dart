@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:musik/misc/page_navigator.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,13 +12,15 @@ class HomeScreen extends StatelessWidget {
       onPopInvokedWithResult: (didPop, dynamic) {
         if (PageNavigator.pageHistory.isNotEmpty) {
           PageNavigator.backButton(context);
+        } else {
+          SystemNavigator.pop();
         }
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
 
         appBar: AppBar(
-          title: Text('Home', style: GoogleFonts.roboto(fontSize: 20)),
+          title: const Text('Musik', style: TextStyle(fontFamily: 'SourGummy', fontSize: 25, fontWeight: FontWeight.bold)),
           foregroundColor: Theme.of(context).colorScheme.onSurface,
           centerTitle: true,
           shape: const Border(
