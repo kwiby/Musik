@@ -4,9 +4,9 @@ class Themes {
   // -=-  Dark Theme Colours  -=-
   Color darkPrimaryColour = const Color.fromRGBO(0, 0, 0, 1.0);
   Color darkInversePrimaryColour = const Color.fromRGBO(255, 255, 255, 1.0);
-  Color darkBackgroundColour = const Color.fromRGBO(39, 39, 40, 1.0);
+  Color darkBackgroundColour = const Color.fromRGBO(74, 78, 105, 1.0);
   Color darkAccent = const Color.fromRGBO(77, 117, 129, 1.0);
-  Color darkAppBar = const Color.fromRGBO(23, 23, 23, 1.0);
+  Color darkAppBar = const Color.fromRGBO(34, 34, 59, 1.0);
 
   // -=-  Light Theme Colours  -=-
   Color lightPrimaryColour = const Color.fromRGBO(255, 255, 255, 1.0);

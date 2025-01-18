@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:musik/misc/shared_prefs.dart';
 import 'package:musik/screens/home_screen/home_screen.dart';
+import 'package:musik/themes/theme_manager.dart';
+import 'package:provider/provider.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await sharedPrefs.init();
 
-  runApp(const MyApp());
+  runApp(
+      ChangeNotifierProvider(
+        create: (context) => ThemeManager(),
+        child: const MyApp(),
+      ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -18,10 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Musik',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: Provider.of<ThemeManager>(context).themeData,
       home: const HomeScreen(),
       routes: {
         '/HomeScreen': (context) => const HomeScreen(),

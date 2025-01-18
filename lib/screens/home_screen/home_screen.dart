@@ -20,9 +20,9 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.surface,
 
         appBar: AppBar(
-          title: const Text('Musik', style: TextStyle(fontFamily: 'SourGummy', fontSize: 25, fontWeight: FontWeight.bold)),
+          title: const Text('Musik', style: TextStyle(fontFamily: 'SourGummy', fontSize: 30, fontWeight: FontWeight.bold)),
           foregroundColor: Theme.of(context).colorScheme.onSurface,
-          centerTitle: true,
+          centerTitle: false,
           shape: const Border(
             bottom: BorderSide(color: Colors.transparent)
           )

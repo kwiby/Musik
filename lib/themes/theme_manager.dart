@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:musik/misc/shared_prefs.dart';
-import 'package:musik/misc/themes/themes.dart';
+import 'package:musik/themes/themes.dart';
 
 class ThemeManager with ChangeNotifier {
   ThemeData? _themeData;
