@@ -4,9 +4,10 @@ class Themes {
   // -=-  Dark Theme Colours  -=-
   Color darkPrimaryColour = const Color.fromRGBO(0, 0, 0, 1.0);
   Color darkInversePrimaryColour = const Color.fromRGBO(255, 255, 255, 1.0);
-  Color darkBackgroundColour = const Color.fromRGBO(74, 78, 105, 1.0);
+  Color darkBackgroundColour = const Color.fromRGBO(29, 29, 38, 1.0);
   Color darkAccent = const Color.fromRGBO(77, 117, 129, 1.0);
-  Color darkAppBar = const Color.fromRGBO(34, 34, 59, 1.0);
+  Color darkTitle = const Color.fromRGBO(198, 198, 231, 1.0);
+  Color darkContainer = const Color.fromRGBO(40, 40, 52, 1.0);
 
   // -=-  Light Theme Colours  -=-
   Color lightPrimaryColour = const Color.fromRGBO(255, 255, 255, 1.0);
@@ -23,15 +24,13 @@ class Themes {
       inversePrimary: _themes.darkInversePrimaryColour,
       surface: _themes.darkBackgroundColour,
       secondary: _themes.darkAccent,
+      tertiary: _themes.darkTitle,
+      primaryContainer: _themes.darkContainer,
     ),
 
     // -=-  Dark Theme AppBar  -=-
-    appBarTheme: const AppBarTheme().copyWith(
-        backgroundColor: _themes.darkAppBar,
-        toolbarHeight: 70,
-        shape: const BorderDirectional(bottom: BorderSide(color: Colors.black))),
     bottomAppBarTheme: BottomAppBarTheme(
-      color: _themes.darkAppBar,
+      color: _themes.darkPrimaryColour,
       padding: const EdgeInsets.all(20),
     ),
     progressIndicatorTheme: ProgressIndicatorThemeData(
