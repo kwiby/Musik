@@ -37,7 +37,7 @@ class AllMusicContainer extends Container {
                   width: 80,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
                     boxShadow: [BoxShadow(
                       blurRadius: 1,
                       offset: const Offset(0, -3),
@@ -71,7 +71,7 @@ class AllMusicContainer extends Container {
                   margin: const EdgeInsets.only(top: 13, bottom: 3),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
                     boxShadow: [BoxShadow(
                       blurRadius: 1,
                       offset: const Offset(0, -3),
