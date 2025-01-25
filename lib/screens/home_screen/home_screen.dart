@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:musik/misc/page_navigator.dart';
-import 'containers/playlists_list_container.dart';
+import 'containers/all_music_container.dart';
+import 'containers/playlists_container.dart';
 
-class HomeScreen extends StatelessWidget {
+ValueNotifier<String> tabNotifier = ValueNotifier<String>('All Music');
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -21,17 +29,26 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.surface,
 
         appBar: AppBar(
-          title: const Text('Musik', style: TextStyle(fontFamily: 'SourGummy', fontSize: 30, fontWeight: FontWeight.bold)),
+          title: const Text(
+              'Musik',
+              style: TextStyle(
+                  fontFamily: 'SourGummy',
+                  fontSize: 30,
+                  fontVariations: [FontVariation('wght', 900)], // 'wght' = width, 'wdth' = width
+              )
+          ),
           toolbarHeight: 100,
           foregroundColor: Theme.of(context).colorScheme.tertiary, // 'Musik' title
           centerTitle: false,
-          shape: const Border(
-            bottom: BorderSide(color: Colors.transparent)
-          ),
           elevation: 0,
         ),
 
-        body: PlaylistsListContainer(),
+        body: ValueListenableBuilder<String>(
+            valueListenable: tabNotifier,
+            builder: (context, tab, child) {
+              return tab == 'All Music' ? AllMusicContainer() : PlaylistsContainer();
+            },
+        ),
       ),
     );
   }

@@ -9,7 +9,7 @@ class ThemeManager with ChangeNotifier {
     loadThemePref();
   }
 
-  ThemeData get themeData => _themeData ?? Themes.dark;
+  ThemeData get themeData => _themeData ?? Themes.night;
 
   set themeData(ThemeData themeData) {
     _themeData = themeData;
@@ -18,14 +18,11 @@ class ThemeManager with ChangeNotifier {
 
   void setTheme(String value) {
     switch (value) {
-      case 'light':
-        themeData = Themes.light;
-        break;
-      case 'dark':
-        themeData = Themes.dark;
+      case 'night':
+        themeData = Themes.night;
         break;
       default:
-        themeData = Themes.dark;
+        themeData = Themes.night;
         break;
     }
 
@@ -34,14 +31,11 @@ class ThemeManager with ChangeNotifier {
 
   Future<void> loadThemePref() async {
     switch (sharedPrefs.theme) {
-      case 'light':
-        _themeData = Themes.light;
-        break;
-      case 'dark':
-        _themeData = Themes.dark;
+      case 'night':
+        _themeData = Themes.night;
         break;
       default:
-        _themeData = Themes.dark;
+        _themeData = Themes.night;
         break;
     }
 
