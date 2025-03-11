@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:musik/misc/page_navigator.dart';
-import 'containers/all_music_container.dart';
-import 'containers/playlists_container.dart';
+import 'tabs/all_music_tab/all_music_tab.dart';
+import 'tabs/playlists_tab/playlists_tab.dart';
 
 ValueNotifier<String> tabNotifier = ValueNotifier<String>('All Music');
 
@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
               )
           ),
           toolbarHeight: 100,
-          foregroundColor: Theme.of(context).colorScheme.tertiary, // 'Musik' title
+          foregroundColor: Theme.of(context).colorScheme.outline, // 'Musik' title
           centerTitle: false,
           elevation: 0,
         ),
@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
         body: ValueListenableBuilder<String>(
             valueListenable: tabNotifier,
             builder: (context, tab, child) {
-              return tab == 'All Music' ? AllMusicContainer() : PlaylistsContainer();
+              return tab == 'All Music' ? const AllMusicContainer() : PlaylistsContainer();
             },
         ),
       ),

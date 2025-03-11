@@ -7,6 +7,7 @@ class Themes {
   Color nightBackgroundColour = const Color.fromRGBO(29, 29, 38, 1.0);
   Color nightAccent = const Color.fromRGBO(77, 117, 129, 1.0);
   Color nightTitle = const Color.fromRGBO(198, 198, 231, 1.0);
+  Color nightText = const Color.fromRGBO(255, 255, 255, 1.0);
   Color nightContainer = const Color.fromRGBO(40, 40, 52, 1.0);
   Color nightShadow = const Color.fromRGBO(21, 21, 28, 1.0);
 
@@ -18,7 +19,8 @@ class Themes {
       inversePrimary: _themes.nightInversePrimaryColour,
       surface: _themes.nightBackgroundColour,
       secondary: _themes.nightAccent,
-      tertiary: _themes.nightTitle,
+      outline: _themes.nightTitle,
+      tertiary: _themes.nightText,
       primaryContainer: _themes.nightContainer,
       shadow: _themes.nightShadow,
     ),
