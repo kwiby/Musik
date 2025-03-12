@@ -15,28 +15,52 @@ class AddMusicContainer extends StatelessWidget {
         //color: Colors.blueAccent, // DEBUG BACKGROUND COLOUR
         borderRadius: BorderRadius.all(Radius.circular(5)),
       ),
-      child: Stack(
-          children: [
-            // -=-  Add Music Button  -=-
-            Align(
-                alignment: Alignment.topLeft,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                    backgroundColor: WidgetStateColor.transparent,
-                    shadowColor: WidgetStateColor.transparent,
-                    shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
-                  ),
-                  onPressed: () {
-                    isAddingMusicNotifier.value = false;
-                  },
-                  child: Icon(
-                    Icons.arrow_back_outlined,
-                    color: Theme.of(context).colorScheme.tertiary,
-                  ),
-                )
+      child: Column(
+        children: [
+          // -=-  Back Button  -=-
+          Align(
+            alignment: Alignment.topLeft,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                backgroundColor: WidgetStateColor.transparent,
+                shadowColor: WidgetStateColor.transparent,
+                shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+              ),
+              onPressed: () {
+                isAddingMusicNotifier.value = false;
+              },
+              child: Icon(
+                Icons.arrow_back_outlined,
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
             ),
-          ]
+          ),
+
+          const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+
+          // -=-  List of Audio Files  -=-
+          Expanded(
+            child: StretchingOverscrollIndicator(
+              axisDirection: AxisDirection.down,
+              child: ListView.separated(
+                padding: const EdgeInsets.only(
+                  left: 30,
+                  right: 30,
+                ),
+                scrollDirection: Axis.vertical,
+                itemCount: 15,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    height: 70,
+                    color: Colors.red,
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) => const Divider(),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

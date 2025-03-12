@@ -30,12 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
         appBar: AppBar(
           title: const Text(
-              'Musik',
-              style: TextStyle(
-                  fontFamily: 'SourGummy',
-                  fontSize: 30,
-                  fontVariations: [FontVariation('wght', 900)], // 'wght' = width, 'wdth' = width
-              )
+            'Musik',
+            style: TextStyle(
+              fontFamily: 'SourGummy',
+              fontSize: 30,
+              fontVariations: [FontVariation('wght', 900)], // 'wght' = width, 'wdth' = width
+            ),
           ),
           toolbarHeight: 100,
           foregroundColor: Theme.of(context).colorScheme.outline, // 'Musik' title
@@ -44,10 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
 
         body: ValueListenableBuilder<String>(
-            valueListenable: tabNotifier,
-            builder: (context, tab, child) {
-              return tab == 'All Music' ? const AllMusicContainer() : PlaylistsContainer();
-            },
+          valueListenable: tabNotifier,
+          builder: (context, tab, child) {
+            return tab == 'All Music' ? const AllMusicContainer() : PlaylistsContainer();
+          },
         ),
       ),
     );

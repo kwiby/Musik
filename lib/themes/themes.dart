@@ -30,13 +30,11 @@ class Themes {
       color: _themes.nightPrimaryColour,
       padding: const EdgeInsets.all(20),
     ),
-    progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: _themes.nightAccent
-    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(color: _themes.nightAccent),
     elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: _themes.nightAccent,
-        )
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _themes.nightAccent,
+      ),
     ),
   );
 }
