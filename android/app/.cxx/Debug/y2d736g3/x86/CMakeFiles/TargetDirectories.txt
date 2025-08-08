@@ -1,0 +1,2 @@
+D:/GitHub/Musik/android/app/.cxx/Debug/y2d736g3/x86/CMakeFiles/edit_cache.dir
+D:/GitHub/Musik/android/app/.cxx/Debug/y2d736g3/x86/CMakeFiles/rebuild_cache.dir

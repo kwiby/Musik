@@ -6,62 +6,54 @@ class AddMusicContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(
-        top: 50,
-        bottom: 30,
-      ),
-      decoration: const BoxDecoration(
-        //color: Colors.blueAccent, // DEBUG BACKGROUND COLOUR
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-      ),
-      child: Column(
-        children: [
-          // -=-  Back Button  -=-
-          Align(
-            alignment: Alignment.topLeft,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                backgroundColor: WidgetStateColor.transparent,
-                shadowColor: WidgetStateColor.transparent,
-                shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+    return Column(
+      children: [
+        const Padding(padding: EdgeInsets.only(top: 50)), // Top Padding
+
+        // -=-  Back Button  -=-
+        Align(
+          alignment: Alignment.topLeft,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+              backgroundColor: WidgetStateColor.transparent,
+              shadowColor: WidgetStateColor.transparent,
+              shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+            ),
+            onPressed: () {
+              isAddingMusicNotifier.value = false;
+            },
+            child: Icon(
+              Icons.arrow_back_outlined,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+          ),
+        ),
+
+        const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+
+        // -=-  List of Audio Files  -=-
+        Expanded(
+          child: StretchingOverscrollIndicator(
+            axisDirection: AxisDirection.down,
+            child: ListView.separated(
+              padding: const EdgeInsets.only(
+                left: 30,
+                right: 30,
               ),
-              onPressed: () {
-                isAddingMusicNotifier.value = false;
+              scrollDirection: Axis.vertical,
+              itemCount: 15,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  height: 70,
+                  color: Colors.red,
+                );
               },
-              child: Icon(
-                Icons.arrow_back_outlined,
-                color: Theme.of(context).colorScheme.tertiary,
-              ),
+              separatorBuilder: (BuildContext context, int index) => const Divider(),
             ),
           ),
-
-          const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-
-          // -=-  List of Audio Files  -=-
-          Expanded(
-            child: StretchingOverscrollIndicator(
-              axisDirection: AxisDirection.down,
-              child: ListView.separated(
-                padding: const EdgeInsets.only(
-                  left: 30,
-                  right: 30,
-                ),
-                scrollDirection: Axis.vertical,
-                itemCount: 15,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    height: 70,
-                    color: Colors.red,
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) => const Divider(),
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

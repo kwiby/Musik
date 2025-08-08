@@ -1,0 +1,2 @@
+D:/GitHub/Musik/android/app/.cxx/Debug/y2d736g3/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/GitHub/Musik/android/app/.cxx/Debug/y2d736g3/armeabi-v7a/CMakeFiles/rebuild_cache.dir

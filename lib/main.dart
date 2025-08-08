@@ -4,11 +4,13 @@ import 'package:musik/misc/shared_prefs.dart';
 import 'package:musik/screens/home_screen/home_screen.dart';
 import 'package:musik/themes/theme_manager.dart';
 import 'package:provider/provider.dart';
+import 'audio_controller/audio_controller.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await sharedPrefs.init();
+  await audioController.init();
 
   runApp(
     ChangeNotifierProvider(

@@ -6,38 +6,29 @@ class AllMusicListContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(
-        top: 50,
-        bottom: 30,
-      ),
-      decoration: const BoxDecoration(
-        //color: Colors.blueAccent, // DEBUG BACKGROUND COLOUR
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-      ),
-      child: Column(
-        children: [
-          // -=-  Add Music Button  -=-
-          Align(
-            alignment: Alignment.topRight,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                backgroundColor: WidgetStateColor.transparent,
-                shadowColor: WidgetStateColor.transparent,
-                shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
-              ),
-              onPressed: () {
-                isAddingMusicNotifier.value = true;
-              },
-              child: Icon(
-                Icons.add,
-                color: Theme.of(context).colorScheme.tertiary,
-              ),
+    return Column(
+      children: [
+        const Padding(padding: EdgeInsets.only(top: 50)), // Top Padding
+        // -=-  Add Music Button  -=-
+        Align(
+          alignment: Alignment.topRight,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+              backgroundColor: WidgetStateColor.transparent,
+              shadowColor: WidgetStateColor.transparent,
+              shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+            ),
+            onPressed: () {
+              isAddingMusicNotifier.value = true;
+            },
+            child: Icon(
+              Icons.add,
+              color: Theme.of(context).colorScheme.tertiary,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

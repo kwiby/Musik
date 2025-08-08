@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:musik/audio_controller/audio_controller.dart';
 import 'package:musik/misc/page_navigator.dart';
 import 'tabs/all_music_tab/all_music_tab.dart';
 import 'tabs/playlists_tab/playlists_tab.dart';
@@ -14,6 +16,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // -=-  Audio Controlling  -=-
+  final player = AudioPlayer();
+
+  Duration position = Duration.zero;
+  Duration duration = Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+
+    player.positionStream.listen((pos) {
+      setState(() => position = pos);
+    });
+
+    player.durationStream.listen((dur) {
+      setState(() {
+        duration = dur ?? Duration.zero;
+      });
+    });
+  }
+
+  // -=-  Main UI  -=-
   @override
   Widget build(BuildContext context) {
     return PopScope(

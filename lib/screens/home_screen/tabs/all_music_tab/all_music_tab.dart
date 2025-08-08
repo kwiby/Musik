@@ -33,7 +33,7 @@ class _AllMusicContainerState extends State<AllMusicContainer> {
 
         // -=-  Tabs  -=-
         Positioned.fill(
-          bottom: 543,
+          bottom: 583,
           child: Row(
             spacing: 30, // To keep the position of other boxes constant
             // while one of them is selected (and therefore bigger), you can
@@ -77,7 +77,7 @@ class _AllMusicContainerState extends State<AllMusicContainer> {
 
               // -=-  Playlists Tab  -=-
               Container(
-                height: 50,
+                height: 40,
                 width: 80,
                 margin: const EdgeInsets.only(top: 13, bottom: 3),
                 decoration: BoxDecoration(
