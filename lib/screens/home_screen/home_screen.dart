@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:musik/audio_controller/audio_controller.dart';
 import 'package:musik/misc/page_navigator.dart';
 import 'tabs/all_music_tab/all_music_tab.dart';
 import 'tabs/playlists_tab/playlists_tab.dart';
@@ -58,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(
               fontFamily: 'SourGummy',
               fontSize: 30,
-              fontVariations: [FontVariation('wght', 900)], // 'wght' = width, 'wdth' = width
+              fontVariations: [FontVariation('wght', 900)], // 'wght' = weight, 'wdth' = width
             ),
           ),
           toolbarHeight: 100,

@@ -4,25 +4,29 @@ import 'package:musik/misc/shared_prefs.dart';
 import 'package:musik/screens/home_screen/home_screen.dart';
 import 'package:musik/themes/theme_manager.dart';
 import 'package:provider/provider.dart';
-import 'audio_controller/audio_controller.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await sharedPrefs.init();
-  await audioController.init();
+  //await audioController.init();
 
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeManager(),
-      child: const MyApp(),
+      child: const Musik(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Musik extends StatefulWidget {
+  const Musik({super.key});
 
+  @override
+  State<Musik> createState() => _MusikState();
+}
+
+class _MusikState extends State<Musik> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

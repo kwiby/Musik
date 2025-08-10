@@ -5,7 +5,22 @@ class AudioController {
   late AudioPlayer _player;
 
   Future<void> init() async {
-    await requestStoragePermission();
+    _player = AudioPlayer();
+
+    _setupAudioPlayer();
+  }
+
+  Future<void> _setupAudioPlayer() async {
+    _player.playbackEventStream.listen((event) {},
+        onError: (Object error, StackTrace stackTrace) {
+          print("A playback event stream error occurred: $error");
+        });
+
+    try {
+      _player.setAudioSource(AudioSource.file(""));
+    } catch (error) {
+      print("There was an error loading the audio source: $error");
+    }
   }
 
   void setPlayer(AudioPlayer player) {
