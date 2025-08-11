@@ -10,6 +10,157 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.embedding.android.FlutterActivity
 import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+class MainActivity: FlutterActivity() {
+    private val CHANNEL = "com.example.audio/files"
+    private var audioListCache: List<Map<String, Any?>>? = null
+    private var cacheTimestamp: Long = 0
+    private val CACHE_VALIDITY_MS = 5 * 60 * 1000 // 5 minutes cache
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "getAudioFiles" -> {
+                    val page = call.argument<Int>("page") ?: 0
+                    val pageSize = call.argument<Int>("pageSize") ?: 50
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val audioList = getAudioFiles(page, pageSize)
+                            withContext(Dispatchers.Main) {
+                                result.success(audioList)
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                result.error("ERROR", e.message, null)
+                            }
+                        }
+                    }
+                }
+                else -> result.notImplemented()
+            }
+        }
+    }
+
+    private fun getAlbumArtBase64(albumId: Long): String? {
+        if (albumId == -1L) return null
+
+        val albumArtUri = "content://media/external/audio/albumart/$albumId"
+
+        return try {
+            contentResolver.openInputStream(android.net.Uri.parse(albumArtUri))?.use { inputStream ->
+                val options = BitmapFactory.Options().apply {
+                    inSampleSize = 1 // Higher the number = lower quality
+                    inPreferredConfig = Bitmap.Config.ARGB_8888
+                }
+
+                val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
+                ByteArrayOutputStream().use { outputStream ->
+                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                    Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
+                }
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun getAudioFiles(page: Int = 0, pageSize: Int = 50): List<Map<String, Any?>> {
+        val currentTime = System.currentTimeMillis()
+        if (page == 0 && audioListCache != null && (currentTime - cacheTimestamp) < CACHE_VALIDITY_MS) {
+            return if (pageSize > 0) audioListCache!!.take(pageSize) else audioListCache!!
+        }
+
+        val audioList = mutableListOf<Map<String, Any?>>()
+        val albumArtCache = mutableMapOf<Long, String?>()
+
+        val projection = arrayOf(
+            MediaStore.Audio.Media._ID,
+            MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.ARTIST,
+            MediaStore.Audio.Media.DURATION,
+            MediaStore.Audio.Media.ALBUM_ID,
+            MediaStore.Audio.Media.DATA
+        )
+
+        val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
+        val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
+
+        val uri = if (pageSize > 0) {
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.buildUpon()
+                .appendQueryParameter("limit", "$pageSize")
+                .appendQueryParameter("offset", "${page * pageSize}")
+                .build()
+        } else {
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        }
+
+        contentResolver.query(uri, projection, selection, null, sortOrder)?.use { cursor ->
+            // First pass: collect unique album IDs
+            val albumIds = mutableSetOf<Long>()
+            val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
+
+            while (cursor.moveToNext()) {
+                albumIds.add(cursor.getLong(albumIdColumn))
+            }
+
+            // Pre-fetch album arts in batch
+            albumIds.forEach { albumId ->
+                if (!albumArtCache.containsKey(albumId)) {
+                    albumArtCache[albumId] = getAlbumArtBase64(albumId)
+                }
+            }
+
+            // Second pass: build the audio list
+            cursor.moveToPosition(-1) // Reset cursor position
+            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
+            val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
+            val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
+            val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+            val dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
+
+            while (cursor.moveToNext()) {
+                val albumId = cursor.getLong(albumIdColumn)
+                val audio = mapOf<String, Any?>(
+                    "id" to cursor.getLong(idColumn),
+                    "title" to cursor.getString(titleColumn),
+                    "artist" to cursor.getString(artistColumn),
+                    "duration" to cursor.getLong(durationColumn),
+                    "filePath" to cursor.getString(dataColumn),
+                    "albumArtBase64" to albumArtCache[albumId],
+                )
+                audioList.add(audio)
+            }
+        }
+
+        if (page == 0) {
+            audioListCache = audioList
+            cacheTimestamp = currentTime
+        }
+
+        return audioList
+    }
+}
+
+
+/*package com.example.musik
+
+import android.provider.MediaStore
+import android.database.Cursor
+import android.graphics.BitmapFactory
+import android.graphics.Bitmap
+import android.util.Base64
+import android.os.Bundle
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.embedding.android.FlutterActivity
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 class MainActivity: FlutterActivity() {
@@ -101,4 +252,4 @@ class MainActivity: FlutterActivity() {
 
         return audioList
     }
-}
+}*/
