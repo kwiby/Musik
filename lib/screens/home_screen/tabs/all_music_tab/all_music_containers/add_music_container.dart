@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:musik/misc/loading_circle.dart';
 import 'package:musik/models/add_music_model.dart';
 import 'package:musik/screens/home_screen/tabs/all_music_tab/all_music_tab.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../../../misc/album_art.dart';
 
 class AddMusicContainer extends StatefulWidget {
@@ -102,19 +103,61 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
 
           const Padding(padding: EdgeInsets.only(top: 10)),
 
-          // -=-  Not Storage Permission Message  -=-
-          Align(
-            alignment: Alignment.topCenter,
-            child: Text(
-              "Storage permission is denied",
-              style: TextStyle(
-                fontFamily: 'SourGummy',
-                fontVariations: const [FontVariation('wght', 400)],
-                fontSize: 20,
-                color: Theme.of(context).colorScheme.tertiary,
-              )
-            )
-          )
+          // -=-  No Audio Access Permission Message  -=-
+          Text(
+            "Allow audio permissions in settings",
+            style: TextStyle(
+              fontFamily: 'SourGummy',
+              fontVariations: const [FontVariation('wght', 400)],
+              fontSize: 17,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+          ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // -=-  Open Settings Button  -=-
+              SizedBox(
+                width: 40,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                    backgroundColor: WidgetStateColor.transparent,
+                    shadowColor: WidgetStateColor.transparent,
+                    shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                  ),
+                  onPressed: () {
+                    openAppSettings();
+                  },
+                  child: Icon(
+                    Icons.settings,
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
+                ),
+              ),
+
+              // -=-  Refresh Button (Not audio access permission)  -=-
+              SizedBox(
+                width: 40,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                    backgroundColor: WidgetStateColor.transparent,
+                    shadowColor: WidgetStateColor.transparent,
+                    shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                  ),
+                  onPressed: () {
+                    _fetchModelData();
+                  },
+                  child: Icon(
+                    Icons.refresh,
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ]
       )
     )
@@ -124,7 +167,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
 
         // -=-  Top Bar  -=-
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // -=-  Back Button (Storage Granted)  -=-
             ElevatedButton(
@@ -177,20 +220,46 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
               ),
             ),
 
-            // -=-  Add Selected Button  -=-
-            ElevatedButton(
-              style: ButtonStyle(
-                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                backgroundColor: WidgetStateColor.transparent,
-                shadowColor: WidgetStateColor.transparent,
-                shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+            // -=-  Refresh Button (Audio access permission granted)  -=-
+            Container(
+              width: 40,
+              margin: const EdgeInsets.only(left: 10),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                  backgroundColor: WidgetStateColor.transparent,
+                  shadowColor: WidgetStateColor.transparent,
+                  shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                ),
+                onPressed: () {
+                  _searchController.text = '';
+                  _fetchModelData();
+                },
+                child: Icon(
+                  Icons.refresh,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
               ),
-              onPressed: () {
-                _selectedIndexes.forEach(print); // TEMPORARY CODE
-              },
-              child: Icon(
-                Icons.add_box_outlined,
-                color: Theme.of(context).colorScheme.tertiary,
+            ),
+
+            // -=-  Add Selected Button  -=-
+            Container(
+              width: 40,
+              margin: const EdgeInsets.only(right: 12),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                  backgroundColor: WidgetStateColor.transparent,
+                  shadowColor: WidgetStateColor.transparent,
+                  shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                ),
+                onPressed: () {
+                  _selectedIndexes.forEach(print); // TEMPORARY CODE
+                },
+                child: Icon(
+                  Icons.add_box_outlined,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
               ),
             ),
           ],
@@ -209,7 +278,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                 style: TextStyle(
                   fontFamily: 'SourGummy',
                   fontVariations: const [FontVariation('wght', 400)],
-                  fontSize: 20,
+                  fontSize: 17,
                   color: Theme.of(context).colorScheme.tertiary,
                 )
               )
