@@ -19,7 +19,7 @@ class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.example.audio/files"
     private var audioListCache: List<Map<String, Any?>>? = null
     private var cacheTimestamp: Long = 0
-    private val CACHE_VALIDITY_MS = 5 * 60 * 1000 // 5 minutes cache
+    private val CACHE_VALIDITY_MS = 10 * 60 * 1000 // 5 minutes cache (set to 0 to remove caching)
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -28,7 +28,7 @@ class MainActivity: FlutterActivity() {
             when (call.method) {
                 "getAudioFiles" -> {
                     val page = call.argument<Int>("page") ?: 0
-                    val pageSize = call.argument<Int>("pageSize") ?: 50
+                    val pageSize = call.argument<Int>("pageSize") ?: 1000 // Max audio files to parse through (defaults to 1000 if null)
 
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
@@ -71,7 +71,7 @@ class MainActivity: FlutterActivity() {
         }
     }
 
-    private fun getAudioFiles(page: Int = 0, pageSize: Int = 50): List<Map<String, Any?>> {
+    private fun getAudioFiles(page: Int = 0, pageSize: Int = 1000): List<Map<String, Any?>> {
         val currentTime = System.currentTimeMillis()
         if (page == 0 && audioListCache != null && (currentTime - cacheTimestamp) < CACHE_VALIDITY_MS) {
             return if (pageSize > 0) audioListCache!!.take(pageSize) else audioListCache!!
