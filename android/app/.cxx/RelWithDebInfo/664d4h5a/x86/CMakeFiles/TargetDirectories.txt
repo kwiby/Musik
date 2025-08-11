@@ -1,0 +1,2 @@
+D:/GitHub/Musik/android/app/.cxx/RelWithDebInfo/664d4h5a/x86/CMakeFiles/edit_cache.dir
+D:/GitHub/Musik/android/app/.cxx/RelWithDebInfo/664d4h5a/x86/CMakeFiles/rebuild_cache.dir
