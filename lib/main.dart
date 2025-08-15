@@ -11,7 +11,7 @@ Future main() async {
 
   await sharedPrefs.init(); // "SharedPrefs().init()" = new instance everytime; "sharedPrefs.init()" ('sharedPrefs' is variable made in model file) = same new instance everytime.
   WidgetsBinding.instance.addPostFrameCallback((_) async {
-    await addMusicModel.init();
+    await addMusicModel.init(true);
   });
   //await audioController.init();
 

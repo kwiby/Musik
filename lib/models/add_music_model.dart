@@ -9,8 +9,8 @@ class AddMusicModel {
   bool _isStoragePermissionGranted = false;
   List<Map<String, dynamic>> _originalAudioFiles = [];
 
-  Future<void> init() async {
-    await requestStoragePermission();
+  Future<void> init(bool useCache) async {
+    await requestStoragePermission(useCache);
   }
 
   // -=-  Getter Methods  -=-
@@ -24,22 +24,22 @@ class AddMusicModel {
 
   // -=-  Processing Methods  -=-
   // Logic to acquire storage access.
-  Future<void> requestStoragePermission() async {
+  Future<void> requestStoragePermission(bool useCache) async {
     final status = await Permission.audio.request();
 
     _isStoragePermissionGranted = false;
     if (status.isGranted) {
       _isStoragePermissionGranted = true;
-      await fetchAudioFiles();
+      await fetchAudioFiles(useCache);
     } else {
       log("Storage permission was denied!");
     }
   }
 
   // Logic to acquire all audio files and their data.
-  Future<void> fetchAudioFiles() async {
+  Future<void> fetchAudioFiles(bool useCache) async {
     try {
-      final List<dynamic> result = await platform.invokeMethod('getAudioFiles');
+      final List<dynamic> result = useCache ? await platform.invokeMethod('getAudioFilesWithCache') : await platform.invokeMethod('getAudioFilesWithoutCache');
 
       _originalAudioFiles = result.map<Map<String, dynamic>>((item) {
         final map = Map<Object?, Object?>.from(item);

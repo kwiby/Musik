@@ -27,14 +27,14 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchModelData());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchModelData(true));
   }
 
   // -=-  Model Data Fetching Logic  -=-
-  Future<void> _fetchModelData() async {
+  Future<void> _fetchModelData(bool useCache) async {
     setState(() => _isLoading = true);
 
-    await addMusicModel.init();
+    await addMusicModel.init(useCache);
 
     if (addMusicModel.getIsStoragePermissionGranted) {
       _audioFiles = List.from(addMusicModel.getOriginalAudioFiles);
@@ -172,7 +172,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                     shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                   ),
                   onPressed: () {
-                    _fetchModelData();
+                    _fetchModelData(true);
                   },
                   child: Icon(
                     Icons.refresh,
@@ -257,7 +257,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                 ),
                 onPressed: () {
                   _searchController.text = '';
-                  _fetchModelData();
+                  _fetchModelData(false);
                 },
                 child: Icon(
                   Icons.refresh,

@@ -19,20 +19,40 @@ class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.example.audio/files"
     private var audioListCache: List<Map<String, Any?>>? = null
     private var cacheTimestamp: Long = 0
-    private val CACHE_VALIDITY_MS = 10 * 60 * 1000 // 5 minutes cache (set to 0 to remove caching)
+
+    private val CACHE_VALIDITY_MS_CONSTANT = 60000
+    private val CACHE_VALIDITY_MS_MINUTES = 15 // 15 minutes of cache utilization (set to 0 to remove caching)
+    private var cache_validity_ms = CACHE_VALIDITY_MS_CONSTANT * CACHE_VALIDITY_MS_MINUTES
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
-                "getAudioFiles" -> {
+                "getAudioFilesWithCache" -> {
                     val page = call.argument<Int>("page") ?: 0
-                    val pageSize = call.argument<Int>("pageSize") ?: 1000 // Max audio files to parse through (defaults to 1000 if null)
+                    val pageSize = call.argument<Int>("pageSize") ?: 1000
 
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                            val audioList = getAudioFiles(page, pageSize)
+                            val audioList = getAudioFilesWithCache(page, pageSize)
+                            withContext(Dispatchers.Main) {
+                                result.success(audioList)
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                result.error("ERROR", e.message, null)
+                            }
+                        }
+                    }
+                }
+                "getAudioFilesWithoutCache" -> {
+                    val page = call.argument<Int>("page") ?: 0
+                    val pageSize = call.argument<Int>("pageSize") ?: 1000
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val audioList = getAudioFilesWithoutCache(page, pageSize)
                             withContext(Dispatchers.Main) {
                                 result.success(audioList)
                             }
@@ -71,12 +91,35 @@ class MainActivity: FlutterActivity() {
         }
     }
 
-    private fun getAudioFiles(page: Int = 0, pageSize: Int = 1000): List<Map<String, Any?>> {
+    private fun getAudioFilesWithCache(page: Int = 0, pageSize: Int = 1000): List<Map<String, Any?>> {
         val currentTime = System.currentTimeMillis()
-        if (page == 0 && audioListCache != null && (currentTime - cacheTimestamp) < CACHE_VALIDITY_MS) {
+        if (page == 0 && audioListCache != null && (currentTime - cacheTimestamp) < cache_validity_ms) {
             return if (pageSize > 0) audioListCache!!.take(pageSize) else audioListCache!!
         }
 
+        val audioList = fetchAudioFilesFromStorage(page, pageSize)
+
+        if (page == 0) {
+            audioListCache = audioList
+            cacheTimestamp = currentTime
+        }
+
+        return audioList
+    }
+
+    private fun getAudioFilesWithoutCache(page: Int = 0, pageSize: Int = 1000): List<Map<String, Any?>> {
+        val audioList = fetchAudioFilesFromStorage(page, pageSize)
+
+        // Update cache with fresh data and reset timer
+        if (page == 0) {
+            audioListCache = audioList
+            cacheTimestamp = System.currentTimeMillis()
+        }
+
+        return audioList
+    }
+
+    private fun fetchAudioFilesFromStorage(page: Int, pageSize: Int): List<Map<String, Any?>> {
         val audioList = mutableListOf<Map<String, Any?>>()
         val albumArtCache = mutableMapOf<Long, String?>()
 
@@ -137,11 +180,6 @@ class MainActivity: FlutterActivity() {
                 )
                 audioList.add(audio)
             }
-        }
-
-        if (page == 0) {
-            audioListCache = audioList
-            cacheTimestamp = currentTime
         }
 
         return audioList
