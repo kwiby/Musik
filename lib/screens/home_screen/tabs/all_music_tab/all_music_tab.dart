@@ -92,7 +92,7 @@ class _AllMusicContainerState extends State<AllMusicContainer> {
                   padding: WidgetStatePropertyAll(EdgeInsets.zero),
                   backgroundColor: WidgetStateColor.transparent,
                   shadowColor: WidgetStateColor.transparent,
-                ),
+              ),
                 child: Text(
                   'Playlists',
                   style: TextStyle(
@@ -111,7 +111,7 @@ class _AllMusicContainerState extends State<AllMusicContainer> {
         ),
 
         // -=-  All Music Content Area  -=-
-        ValueListenableBuilder<bool>(
+      ValueListenableBuilder<bool>(
           valueListenable: isAddingMusicNotifier,
           builder: (context, isAddingMusic, child) {
             return isAddingMusic ? const AddMusicContainer() : const AllMusicListContainer();

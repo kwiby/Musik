@@ -1,11 +1,14 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:musik/misc/loading_circle.dart';
 import 'package:musik/models/add_music_model.dart';
 import 'package:musik/screens/home_screen/tabs/all_music_tab/all_music_tab.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 import '../../../../../misc/album_art.dart';
+import '../../../../../misc/shared_prefs.dart';
 
 class AddMusicContainer extends StatefulWidget {
   const AddMusicContainer({super.key});
@@ -33,13 +36,13 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
 
     await addMusicModel.init();
 
-    if (addMusicModel.getIsStoragePermissionGranted()) {
-      _audioFiles = List.from(addMusicModel.getOriginalAudioFiles());
+    if (addMusicModel.getIsStoragePermissionGranted) {
+      _audioFiles = List.from(addMusicModel.getOriginalAudioFiles);
 
       _selectedIndexes.clear();
 
       _decodedBytes.clear();
-      for (dynamic song in addMusicModel.getOriginalAudioFiles()) {
+      for (dynamic song in addMusicModel.getOriginalAudioFiles) {
         //final cleanedBase64String = song['albumArtBase64'].replaceAll(RegExp(r'\s'), '');
         _decodedBytes.putIfAbsent(song['title'], () => base64Decode(song['albumArtBase64']));
       }
@@ -61,10 +64,10 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
   void _applyFilters() {
     String query = _searchController.text.toLowerCase();
 
-    final searchResults = addMusicModel.getOriginalAudioFiles().where((song) {
+    final searchResults = (addMusicModel.getOriginalAudioFiles as List<Map<String, dynamic>> ).where((song) {
       final songTitle = song['title'].toLowerCase();
-      final matchesSearch = songTitle.contains(query);
 
+      final matchesSearch = songTitle.contains(query);
       return matchesSearch;
     }).toList();
 
@@ -72,11 +75,32 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
     _selectedIndexes.clear();
   }
 
+  // Logic to add the currently selected songs to the all music list.
+  Future<void> addToAddedSongsList() async {
+    setState(() => _isLoading = true);
+
+    if (_selectedIndexes.isNotEmpty) {
+      Map<String, dynamic> selectedSongsMap = sharedPrefs.addedSongs.isNotEmpty ? jsonDecode(sharedPrefs.addedSongs) : {};
+
+      for (int index in _selectedIndexes) {
+        var song = _audioFiles[index];
+
+        if (!selectedSongsMap.containsKey(song['id'].toString())) {
+          selectedSongsMap.putIfAbsent(song['id'].toString(), () => song);
+        }
+      }
+
+      sharedPrefs.addedSongs = jsonEncode(selectedSongsMap);
+    }
+
+    isAddingMusicNotifier.value = false;
+  }
+
   final Set<int> _selectedIndexes = {}; // A set of all indexes of audio files and their decoded byte data, which were selected through UI.
   @override
   Widget build(BuildContext context) {
     return _isLoading ? Container(padding: const EdgeInsets.only(top: 100), child: const LoadingCircle())
-    : addMusicModel.getIsStoragePermissionGranted() == false
+    : addMusicModel.getIsStoragePermissionGranted == false
     ? Container(
       padding: const EdgeInsets.only(top: 50),
       child: Column(
@@ -205,7 +229,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                       return Colors.grey;
                     }
                   }),
-                  hintText: 'Search Audio Files',
+                  hintText: 'Search audio files',
                   hintStyle: const TextStyle(
                     fontFamily: 'SourGummy',
                     fontVariations: [FontVariation('wght', 300)],
@@ -254,7 +278,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                   shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                 ),
                 onPressed: () {
-                  _selectedIndexes.forEach(print); // TEMPORARY CODE
+                  addToAddedSongsList();
                 },
                 child: Icon(
                   Icons.add_box_outlined,
@@ -346,7 +370,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
           ),
         ),
 
-        const Padding(padding: EdgeInsets.only(bottom: 60)),
+        const Padding(padding: EdgeInsets.only(bottom: 60)), // Bottom padding
       ],
     );
   }

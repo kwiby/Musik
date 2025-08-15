@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -12,11 +14,11 @@ class AddMusicModel {
   }
 
   // -=-  Getter Methods  -=-
-  bool getIsStoragePermissionGranted() {
+  get getIsStoragePermissionGranted {
     return _isStoragePermissionGranted;
   }
 
-  List<Map<String, dynamic>> getOriginalAudioFiles() {
+  get getOriginalAudioFiles {
     return _originalAudioFiles;
   }
 
@@ -30,7 +32,7 @@ class AddMusicModel {
       _isStoragePermissionGranted = true;
       await fetchAudioFiles();
     } else {
-      print("Storage permission was denied!");
+      log("Storage permission was denied!");
     }
   }
 
@@ -44,7 +46,7 @@ class AddMusicModel {
         return map.map<String, dynamic>((key, value) => MapEntry(key.toString(), value));
       }).toList();
     } on PlatformException catch (error) {
-      print("Failed to get audio files: $error");
+      log("Failed to get audio files: $error");
     }
   }
 }

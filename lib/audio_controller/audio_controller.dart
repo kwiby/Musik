@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:just_audio/just_audio.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -13,13 +15,13 @@ class AudioController {
   Future<void> _setupAudioPlayer() async {
     _player.playbackEventStream.listen((event) {},
         onError: (Object error, StackTrace stackTrace) {
-          print("A playback event stream error occurred: $error");
+          log("A playback event stream error occurred: $error");
         });
 
     try {
       _player.setAudioSource(AudioSource.file(""));
     } catch (error) {
-      print("There was an error loading the audio source: $error");
+      log("There was an error loading the audio source: $error");
     }
   }
 
@@ -31,9 +33,9 @@ class AudioController {
     PermissionStatus status = await Permission.manageExternalStorage.request();
 
     if (status.isGranted) {
-      print("granted");
+      log("granted");
     } else if (status.isDenied) {
-      print("denied");
+      log("denied");
     }
   }
 
