@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:musik/audio_controller/audio_controller.dart';
 import 'package:musik/misc/custom_scroll_behaviour.dart';
 import 'package:musik/misc/shared_prefs.dart';
 import 'package:musik/models/add_music_model.dart';
@@ -10,6 +11,7 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await sharedPrefs.init(); // "SharedPrefs().init()" = new instance everytime; "sharedPrefs.init()" ('sharedPrefs' is variable made in model file) = same new instance everytime.
+  await audioController.init();
   WidgetsBinding.instance.addPostFrameCallback((_) async {
     await addMusicModel.init(true);
   });

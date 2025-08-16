@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:musik/audio_controller/audio_controller.dart';
 import 'package:musik/misc/shared_prefs.dart';
 
 import '../../../../../misc/album_art.dart';
@@ -57,6 +58,13 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
     sharedPrefs.addedSongs = jsonEncode(selectedSongsMap);
 
     setState(() => _isInSelectionMode = false);
+  }
+
+  // Method to manage song playing and other audio logic.
+  void _playSong(int index) {
+    dynamic songData = _songs[index];
+
+    audioController.playSong(songData);
   }
 
   bool _isInSelectionMode = false;
@@ -133,7 +141,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
                     )
                 )
             ) : ListView.separated(
-              padding: const EdgeInsets.only(left: 15, right: 15),
+              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 70),
               scrollDirection: Axis.vertical,
               itemCount: _songs.length,
               itemBuilder: (BuildContext context, int index) {
@@ -190,7 +198,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
                                     _isInSelectionMode = false;
                                   }
                                 } else {
-                                  print("Play the tapped song!!! {Line 193}");
+                                  _playSong(index);
                                 }
                               },
                               onLongPress: () { // Users must long press to enter selection mode (instead of long pressing songs, users can just tap to add to selection)
@@ -218,7 +226,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
           ),
         ),
 
-        const Padding(padding: EdgeInsets.only(bottom: 60)), // Bottom padding
+        const Padding(padding: EdgeInsets.only(bottom: 00)), // Bottom padding
       ],
     );
   }
