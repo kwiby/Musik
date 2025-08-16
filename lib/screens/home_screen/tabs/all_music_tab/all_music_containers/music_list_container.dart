@@ -45,7 +45,13 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
   // Method to remove selected songs.
   void _removeSongs() {
     final sortedSelectedIndexes = _selectedIndexes.toList()..sort((a, b) => b.compareTo(a)); // Sort the selected indexes from highest to lowest (prevents errors as '_songs' shifts while removing other songs)
+
+    String? currentSongId = audioController.currentlyPlayingSongId();
     for (int index in sortedSelectedIndexes) {
+      if (_songs[index]['id'].toString() == currentSongId) { // If the currently playing song id is equal to the currently deleting index id, stop and play next song in queue if available.
+        audioController.stop();
+      }
+
       _songs.removeAt(index);
     }
     _selectedIndexes.clear();
@@ -130,16 +136,16 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
           child: StretchingOverscrollIndicator(
             axisDirection: AxisDirection.down,
             child: _songs.isEmpty ? Align(
-                alignment: Alignment.topCenter,
-                child: Text(
-                    "No songs added",
-                    style: TextStyle(
-                      fontFamily: 'SourGummy',
-                      fontVariations: const [FontVariation('wght', 400)],
-                      fontSize: 17,
-                      color: Theme.of(context).colorScheme.tertiary,
-                    )
+              alignment: Alignment.topCenter,
+              child: Text(
+                "No songs added",
+                style: TextStyle(
+                  fontFamily: 'SourGummy',
+                  fontVariations: const [FontVariation('wght', 400)],
+                  fontSize: 17,
+                  color: Theme.of(context).colorScheme.tertiary,
                 )
+              )
             ) : ListView.separated(
               padding: const EdgeInsets.only(left: 15, right: 15, bottom: 70),
               scrollDirection: Axis.vertical,
@@ -148,77 +154,77 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
                 final song = _songs[index];
 
                 return ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Material(
-                        color: !_selectedIndexes.contains(index) ? Colors.transparent : Theme.of(context).colorScheme.surface,
-                        child: InkWell(
-                            child: ListTile(
-                              leading: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: AlbumArtLoader.loadAlbumArt(song['albumArtBase64'], _decodedBytes[song['title']]!)
-                              ),
-                              title: Text(
-                                  song['title'] ?? 'Unknown Title',
-                                  style: TextStyle(
-                                    fontFamily: 'SourGummy',
-                                    fontVariations: const [FontVariation('wght', 500)],
-                                    fontSize: 15,
-                                    color: Theme.of(context).colorScheme.tertiary,
-                                  )
-                              ),
-                              subtitle: Text(
-                                  song['artist'] ?? "Unknown Artist",
-                                  style: const TextStyle(
-                                    fontFamily: 'SourGummy',
-                                    fontVariations: [FontVariation('wght', 300)],
-                                    fontSize: 13,
-                                  )
-                              ),
-                              trailing: Text(
-                                  song['duration'] != null
-                                      ? Duration(milliseconds: song['duration']).toString().split('.').first : 'Unknown Duration',
-                                  style: TextStyle(
-                                    fontFamily: 'SourGummy',
-                                    fontVariations: const [FontVariation('wght', 300)],
-                                    fontSize: 13,
-                                    color: Theme.of(context).colorScheme.tertiary,
-                                  )
-                              ),
-                              onTap: () {
-                                if (_isInSelectionMode) {
-                                  setState(() {
-                                    if (_selectedIndexes.contains(index)) {
-                                      _selectedIndexes.remove(index);
-                                    } else {
-                                      _selectedIndexes.add(index);
-                                    }
-                                  });
+                  borderRadius: BorderRadius.circular(15),
+                  child: Material(
+                    color: !_selectedIndexes.contains(index) ? Colors.transparent : Theme.of(context).colorScheme.surface,
+                    child: InkWell(
+                      child: ListTile(
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: AlbumArtLoader.loadAlbumArt(song['albumArtBase64'], _decodedBytes[song['title']]!)
+                        ),
+                        title: Text(
+                          song['title'] ?? 'Unknown Title',
+                          style: TextStyle(
+                            fontFamily: 'SourGummy',
+                            fontVariations: const [FontVariation('wght', 500)],
+                            fontSize: 15,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          )
+                        ),
+                        subtitle: Text(
+                          song['artist'] ?? "Unknown Artist",
+                          style: const TextStyle(
+                            fontFamily: 'SourGummy',
+                            fontVariations: [FontVariation('wght', 300)],
+                            fontSize: 13,
+                          )
+                        ),
+                        trailing: Text(
+                          song['duration'] != null
+                              ? Duration(milliseconds: song['duration']).toString().split('.').first : 'Unknown Duration',
+                          style: TextStyle(
+                            fontFamily: 'SourGummy',
+                            fontVariations: const [FontVariation('wght', 300)],
+                            fontSize: 13,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          )
+                        ),
+                        onTap: () {
+                          if (_isInSelectionMode) {
+                            setState(() {
+                              if (_selectedIndexes.contains(index)) {
+                                _selectedIndexes.remove(index);
+                              } else {
+                                _selectedIndexes.add(index);
+                              }
+                            });
 
-                                  if (_selectedIndexes.isEmpty) {
-                                    _isInSelectionMode = false;
-                                  }
-                                } else {
-                                  _playSong(index);
-                                }
-                              },
-                              onLongPress: () { // Users must long press to enter selection mode (instead of long pressing songs, users can just tap to add to selection)
-                                _isInSelectionMode = true;
+                            if (_selectedIndexes.isEmpty) {
+                              _isInSelectionMode = false;
+                            }
+                          } else {
+                            _playSong(index);
+                          }
+                        },
+                        onLongPress: () { // Users must long press to enter selection mode (instead of long pressing songs, users can just tap to add to selection)
+                          _isInSelectionMode = true;
 
-                                setState(() {
-                                  if (_selectedIndexes.contains(index)) {
-                                    _selectedIndexes.remove(index);
-                                  } else {
-                                    _selectedIndexes.add(index);
-                                  }
-                                });
+                          setState(() {
+                            if (_selectedIndexes.contains(index)) {
+                              _selectedIndexes.remove(index);
+                            } else {
+                              _selectedIndexes.add(index);
+                            }
+                          });
 
-                                if (_selectedIndexes.isEmpty) {
-                                  _isInSelectionMode = false;
-                                }
-                              },
-                            )
-                        )
+                          if (_selectedIndexes.isEmpty) {
+                            _isInSelectionMode = false;
+                          }
+                        },
+                      )
                     )
+                  )
                 );
               },
               separatorBuilder: (BuildContext context, int index) => const Divider(height: 15, thickness: 0.5),
