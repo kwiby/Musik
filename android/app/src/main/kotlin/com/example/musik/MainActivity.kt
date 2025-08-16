@@ -177,6 +177,7 @@ class MainActivity: FlutterActivity() {
                     "duration" to cursor.getLong(durationColumn),
                     "filePath" to cursor.getString(dataColumn),
                     "albumArtBase64" to albumArtCache[albumId],
+                    "albumArtUri" to "content://media/external/audio/albumart/$albumId"
                 )
                 audioList.add(audio)
             }

@@ -67,11 +67,39 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
         ),
 
-        body: ValueListenableBuilder<String>(
-          valueListenable: tabNotifier,
-          builder: (context, tab, child) {
-            return tab == 'All Music' ? const AllMusicContainer() : PlaylistsContainer();
-          },
+        body: SafeArea(
+          child: Stack(
+            children: [
+              // Containers
+              ValueListenableBuilder<String>(
+                valueListenable: tabNotifier,
+                builder: (context, tab, child) {
+                  return tab == 'All Music' ? const AllMusicContainer() : PlaylistsContainer();
+                },
+              ),
+
+              // Black background for bottom rounded corner cutout areas
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: 30,
+                  color: Colors.black
+                ),
+              ),
+
+              // Floating bottom bar for currently playing song
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Container(
+                    height: 60,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

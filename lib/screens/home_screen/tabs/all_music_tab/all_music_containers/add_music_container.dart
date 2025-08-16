@@ -308,7 +308,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
               )
             )
             : ListView.separated(
-              padding: const EdgeInsets.only(left: 15, right: 15),
+              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 70),
               scrollDirection: Axis.vertical,
               itemCount: _audioFiles.length,
               itemBuilder: (BuildContext context, int index) {
@@ -370,7 +370,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
           ),
         ),
 
-        const Padding(padding: EdgeInsets.only(bottom: 60)), // Bottom padding
+        const Padding(padding: EdgeInsets.only(bottom: 0)), // Bottom padding
       ],
     );
   }
