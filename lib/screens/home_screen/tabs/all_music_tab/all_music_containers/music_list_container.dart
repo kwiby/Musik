@@ -46,7 +46,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
   void _removeSongs() {
     final sortedSelectedIndexes = _selectedIndexes.toList()..sort((a, b) => b.compareTo(a)); // Sort the selected indexes from highest to lowest (prevents errors as '_songs' shifts while removing other songs)
 
-    String? currentSongId = audioController.currentlyPlayingSongId();
+    String? currentSongId = audioController.getPlayingSongData('id');
     for (int index in sortedSelectedIndexes) {
       if (_songs[index]['id'].toString() == currentSongId) { // If the currently playing song id is equal to the currently deleting index id, stop and play next song in queue if available.
         audioController.stop();
@@ -67,10 +67,10 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
   }
 
   // Method to manage song playing and other audio logic.
-  void _playSong(int index) {
+  void _playSong(int index, Uint8List decodedByte) {
     dynamic songData = _songs[index];
 
-    audioController.playSong(songData);
+    audioController.playSong(songData, decodedByte);
   }
 
   bool _isInSelectionMode = false;
@@ -204,7 +204,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
                               _isInSelectionMode = false;
                             }
                           } else {
-                            _playSong(index);
+                            _playSong(index, _decodedBytes[song['title']]!);
                           }
                         },
                         onLongPress: () { // Users must long press to enter selection mode (instead of long pressing songs, users can just tap to add to selection)

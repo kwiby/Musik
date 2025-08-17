@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:musik/misc/page_navigator.dart';
+import 'package:musik/screens/home_screen/containers/floating_bar.dart';
+import '../../misc/forced_value_notifier.dart';
 import 'tabs/all_music_tab/all_music_tab.dart';
 import 'tabs/playlists_tab/playlists_tab.dart';
 
 // Value Notifiers (State Updating)
 ValueNotifier<String> tabNotifier = ValueNotifier<String>('All Music');
-ValueNotifier<bool> isPlayingSongNotifier = ValueNotifier<bool>(false);
+ValueNotifier<bool> isPlayingSongNotifier = ForcedValueNotifier<bool>(false);
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -81,24 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               // Floating bottom bar for currently playing song
-              ValueListenableBuilder<bool>(
-                valueListenable: isPlayingSongNotifier,
-                builder: (context, isPlayingSong, child) {
-                  return Visibility(
-                    visible: isPlayingSong,
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(30),
-                        child: Container(
-                          height: 60,
-                          color: Theme.of(context).colorScheme.surface,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              )
+              const FloatingBar(),
             ],
           ),
         ),

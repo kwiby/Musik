@@ -32,7 +32,7 @@ class AddMusicModel {
       _isStoragePermissionGranted = true;
       await fetchAudioFiles(useCache);
     } else {
-      log("Storage permission was denied!");
+      log("Storage permission was denied! {add_music_model.dart LINE 35}");
     }
   }
 
@@ -46,7 +46,7 @@ class AddMusicModel {
         return map.map<String, dynamic>((key, value) => MapEntry(key.toString(), value));
       }).toList();
     } on PlatformException catch (error) {
-      log("Failed to get audio files: $error");
+      log("Failed to get audio files {add_music_model.dart LINE 49}: $error");
     }
   }
 }
