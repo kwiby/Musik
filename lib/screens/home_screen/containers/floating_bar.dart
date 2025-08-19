@@ -44,16 +44,30 @@ class _FloatingBarState extends State<FloatingBar> {
                         : null,
                     ),
 
-                    Row(
+                    const Padding(padding: EdgeInsets.only(right: 10)),
+
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "",
+                          audioController.getPlayingSongData('title'),
                           style: TextStyle(
                             fontFamily: 'SourGummy',
-                            fontVariations: const [FontVariation('wght', 300)],
-                            fontSize: 13,
+                            fontVariations: const [FontVariation('wght', 400)],
+                            fontSize: 15,
                             color: Theme.of(context).colorScheme.tertiary,
                           )
+                        ),
+
+                        Text(
+                            audioController.getPlayingSongData('artist'),
+                            style: const TextStyle(
+                              fontFamily: 'SourGummy',
+                              fontVariations: [FontVariation('wght', 300)],
+                              fontSize: 13,
+                              color: Colors.grey,
+                            )
                         ),
                       ],
                     ),

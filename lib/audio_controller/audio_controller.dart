@@ -61,13 +61,10 @@ class AudioController {
         return tag.id;
       case 'decodedByte':
         return tag.extras?['decodedByte'];
-        /*if (tag is MediaItem) {
-          return (tag).extras?['decodedByte'];
-        } else {
-          return null;
-        }*/
       case 'title':
         return tag.title;
+      case 'artist':
+        return tag.artist;
     }
   }
 

@@ -262,7 +262,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                           song['title'] ?? 'Unknown Title',
                           style: TextStyle(
                             fontFamily: 'SourGummy',
-                            fontVariations: const [FontVariation('wght', 500)],
+                            fontVariations: const [FontVariation('wght', 400)],
                             fontSize: 15,
                             color: Theme.of(context).colorScheme.tertiary,
                           )
