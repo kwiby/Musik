@@ -54,15 +54,20 @@ class AudioController {
   // Method to retrieve whatever song data is available based on passed option.
   dynamic getPlayingSongData(String option) {
     final tag = _audioPlayer.sequenceState?.currentSource?.tag;
+    if (tag == null) return null;
 
-    if (option == 'id') {
-      return (tag as MediaItem).id;
-    } else if (option == 'decodedByte') {
-      if (tag is MediaItem) {
-        return (tag).extras?['decodedByte'];
-      } else {
-        return null;
-      }
+    switch (option) {
+      case 'id':
+        return tag.id;
+      case 'decodedByte':
+        return tag.extras?['decodedByte'];
+        /*if (tag is MediaItem) {
+          return (tag).extras?['decodedByte'];
+        } else {
+          return null;
+        }*/
+      case 'title':
+        return tag.title;
     }
   }
 

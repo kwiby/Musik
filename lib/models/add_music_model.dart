@@ -9,10 +9,6 @@ class AddMusicModel {
   bool _isStoragePermissionGranted = false;
   List<Map<String, dynamic>> _originalAudioFiles = [];
 
-  Future<void> init(bool useCache) async {
-    await requestStoragePermission(useCache);
-  }
-
   // -=-  Getter Methods  -=-
   get getIsStoragePermissionGranted {
     return _isStoragePermissionGranted;
@@ -20,6 +16,19 @@ class AddMusicModel {
 
   get getOriginalAudioFiles {
     return _originalAudioFiles;
+  }
+
+  // -=-  Setter Methods  -=-
+  set setIsStoragePermissionGranted(bool isGranted) {
+    _isStoragePermissionGranted = isGranted;
+  }
+
+  Future<void> init(bool useCache) async {
+    if (_isStoragePermissionGranted) {
+      await fetchAudioFiles(true);
+    } else {
+      await requestStoragePermission(useCache);
+    }
   }
 
   // -=-  Processing Methods  -=-

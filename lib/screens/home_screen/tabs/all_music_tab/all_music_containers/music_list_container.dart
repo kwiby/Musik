@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:musik/audio_controller/audio_controller.dart';
 import 'package:musik/misc/shared_prefs.dart';
+import 'package:musik/models/add_music_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../../misc/album_art.dart';
 import '../all_music_tab.dart';
@@ -15,15 +18,32 @@ class AllMusicListContainer extends StatefulWidget {
   State<AllMusicListContainer> createState() => _AllMusicListContainerState();
 }
 
-class _AllMusicListContainerState extends State<AllMusicListContainer>{
+class _AllMusicListContainerState extends State<AllMusicListContainer> with WidgetsBindingObserver {
+
   List<dynamic> _songs = [];
   final Map<String, Uint8List> _decodedBytes = {};
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     _fetchAddedSongs();
+    _checkPermissionStatus();
+  }
+
+  // Code for widget binding observer (for permission status changing)
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkPermissionStatus();
+    }
   }
 
   // Method to fetch added songs from shared preferences.
@@ -73,11 +93,86 @@ class _AllMusicListContainerState extends State<AllMusicListContainer>{
     audioController.playSong(songData, decodedByte);
   }
 
+  // Method to check storage permission.
+  Future<void> _checkPermissionStatus() async {
+    if (await Permission.audio.isGranted) {
+      addMusicModel.setIsStoragePermissionGranted = true;
+    } else {
+      log("Storage permission is not granted! {music_list_container.dart LINE 85}");
+    }
+
+    setState(() {});
+  }
+
+  // -=-  Main Widget  -=-
   bool _isInSelectionMode = false;
   final Set<int> _selectedIndexes = {};
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return addMusicModel.getIsStoragePermissionGranted == false
+      ? Container(
+      padding: const EdgeInsets.only(top: 100),
+      child: Column(
+        children: [
+          // -=-  No Audio Access Permission Message  -=-
+          Text(
+            "Allow audio permissions in settings",
+            style: TextStyle(
+              fontFamily: 'SourGummy',
+              fontVariations: const [FontVariation('wght', 400)],
+              fontSize: 17,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+          ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // -=-  Open Settings Button  -=-
+              SizedBox(
+                width: 40,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                    backgroundColor: WidgetStateColor.transparent,
+                    shadowColor: WidgetStateColor.transparent,
+                    shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                  ),
+                  onPressed: () {
+                    openAppSettings();
+                  },
+                  child: Icon(
+                    Icons.settings,
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
+                ),
+              ),
+
+              // -=-  Refresh Button (Not audio access permission)  -=-
+              SizedBox(
+                width: 40,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                    backgroundColor: WidgetStateColor.transparent,
+                    shadowColor: WidgetStateColor.transparent,
+                    shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                  ),
+                  onPressed: () {
+                    _checkPermissionStatus();
+                  },
+                  child: Icon(
+                    Icons.refresh,
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ]
+      )
+    )
+    : Column(
       children: [
         const Padding(padding: EdgeInsets.only(top: 50)), // Top padding
 

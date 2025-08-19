@@ -37,11 +37,25 @@ class _FloatingBarState extends State<FloatingBar> {
                     CircleAvatar(
                       radius: 25,
                       backgroundImage: audioController.getPlayingSongData('decodedByte') != null
-                          ? MemoryImage(audioController.getPlayingSongData('decodedByte'))
-                          : null,
+                        ? MemoryImage(audioController.getPlayingSongData('decodedByte'))
+                        : null,
                       child: audioController.getPlayingSongData('decodedByte') == null
-                          ? const Icon(Icons.question_mark)
-                          : null,
+                        ? const Icon(Icons.question_mark)
+                        : null,
+                    ),
+
+                    Row(
+                      children: [
+                        Text(
+                          "",
+                          style: TextStyle(
+                            fontFamily: 'SourGummy',
+                            fontVariations: const [FontVariation('wght', 300)],
+                            fontSize: 13,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          )
+                        ),
+                      ],
                     ),
                   ],
                 ),

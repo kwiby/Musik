@@ -8,16 +8,11 @@ import 'package:provider/provider.dart';
 
 import 'models/add_music_model.dart';
 
-Future main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await sharedPrefs.init(); // "SharedPrefs().init()" = new instance everytime; "sharedPrefs.init()" ('sharedPrefs' is variable made in model file) = same new instance everytime.
   await audioController.init();
-
-  WidgetsFlutterBinding.ensureInitialized();
-  WidgetsBinding.instance.addPostFrameCallback((_) async {
-    await addMusicModel.init(true);
-  });
 
   runApp(
     ChangeNotifierProvider(
@@ -37,14 +32,19 @@ class Musik extends StatefulWidget {
 class _MusikState extends State<Musik> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Musik',
-      theme: Provider.of<ThemeManager>(context).themeData,
-      scrollBehavior: CustomScrollBehaviour(),
-      home: const HomeScreen(),
-      routes: {
-        '/HomeScreen': (context) => const HomeScreen(),
+    return FutureBuilder(
+      future: addMusicModel.init(true),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Musik',
+          theme: Provider.of<ThemeManager>(context).themeData,
+          scrollBehavior: CustomScrollBehaviour(),
+          home: const HomeScreen(),
+          routes: {
+            '/HomeScreen': (context) => const HomeScreen(),
+          },
+        );
       },
     );
   }
