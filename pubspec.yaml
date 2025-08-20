@@ -41,6 +41,7 @@ dependencies:
   just_audio: ^0.9.46
   permission_handler: ^11.4.0
   audio_service: ^0.18.18
+  marquee: ^2.3.0
 
 dev_dependencies:
   flutter_test:

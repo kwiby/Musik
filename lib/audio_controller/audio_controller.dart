@@ -54,33 +54,22 @@ class AudioController {
   // Method to retrieve whatever song data is available based on passed option.
   dynamic getPlayingSongData(String option) {
     final tag = _audioPlayer.sequenceState?.currentSource?.tag;
-    if (tag == null) return null;
 
     switch (option) {
       case 'id':
-        return tag.id;
+        return tag == null ? '' : tag.id;
       case 'decodedByte':
-        return tag.extras?['decodedByte'];
+        return tag == null ? null : tag.extras?['decodedByte'];
       case 'title':
-        return tag.title;
+        return tag == null ? '' : tag.title;
       case 'artist':
-        return tag.artist;
+        return tag == null ? '' : tag.artist;
     }
   }
 
   // Method to check whether a song is currently playing or not.
   bool isPlaying() {
     return _audioPlayer.playing;
-  }
-
-  // Method to stop a song (for when the song is deleted from added songs list).
-  void stop() {
-    _audioPlayer.stop();
-    _audioPlayer.seekToNext();
-
-    if (!_audioPlayer.playing) { // If seeking to next song did nothing, there is no more songs in queue, so hide the floating bar.
-      isPlayingSongNotifier.value = false;
-    }
   }
 
   // Method to pause a song.
@@ -96,6 +85,24 @@ class AudioController {
   void play() {
     _audioPlayer.play();
     isPlayingSongNotifier.value = true;
+  }
+
+  // Method to skip to next song (and for when a song is deleted).
+  void skipToNext() {
+    _audioPlayer.seekToNext();
+
+    if (!_audioPlayer.playing) { // If seeking to next song did nothing, there is no more songs in queue, so hide the floating bar.
+      isPlayingSongNotifier.value = false;
+    }
+  }
+
+  // Method to skip to previous song.
+  void skipToPrev() {
+    _audioPlayer.seekToPrevious();
+
+    if (!_audioPlayer.playing) { // If seeking to next song did nothing, there is no more songs in queue, so hide the floating bar.
+      isPlayingSongNotifier.value = false;
+    }
   }
 
   // Method to seek through a song.

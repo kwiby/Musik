@@ -69,7 +69,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
     String? currentSongId = audioController.getPlayingSongData('id');
     for (int index in sortedSelectedIndexes) {
       if (_songs[index]['id'].toString() == currentSongId) { // If the currently playing song id is equal to the currently deleting index id, stop and play next song in queue if available.
-        audioController.stop();
+        audioController.skipToNext();
       }
 
       _songs.removeAt(index);
@@ -87,10 +87,19 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
   }
 
   // Method to manage song playing and other audio logic.
-  void _playSong(int index, Uint8List decodedByte) {
-    dynamic songData = _songs[index];
+  Future<void> _playSong(int initialIndex) async {
+    dynamic currentSong = _songs[initialIndex];
 
-    audioController.playSong(songData, decodedByte);
+    while (true) {
+      // Play current song.
+      await audioController.playSong(currentSong, _decodedBytes[currentSong['title']]!);
+
+      // Wait until song finishes before continuing.
+      //await audioController.onSongComplete.first;
+
+      // Move to next song (wrap back to start and play songs before the starting song if available).
+      currentSong = _songs[(_songs.indexOf(currentSong) + 1) % _songs.length];
+    }
   }
 
   // Method to check storage permission.
@@ -226,6 +235,8 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
           ],
         ),
 
+        const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+
         // -=-  Music List  -=-
         Expanded(
           child: StretchingOverscrollIndicator(
@@ -299,7 +310,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                               _isInSelectionMode = false;
                             }
                           } else {
-                            _playSong(index, _decodedBytes[song['title']]!);
+                            _playSong(index);
                           }
                         },
                         onLongPress: () { // Users must long press to enter selection mode (instead of long pressing songs, users can just tap to add to selection)
