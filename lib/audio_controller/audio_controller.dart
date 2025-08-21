@@ -9,14 +9,47 @@ import '../screens/home_screen/home_screen.dart';
 
 class AudioController {
   final _audioPlayer = AudioPlayer();
-  late final CircularDoublyLinkedList songList;
+  final CircularDoublyLinkedList _playlist = CircularDoublyLinkedList();
+  late Node _currentSong;
 
   Future<void> init() async {
-    _audioPlayer.processingStateStream.listen((state) {
+    _audioPlayer.processingStateStream.listen((state) async {
       if (state == ProcessingState.completed) {
-        isPlayingSongNotifier.value = false;
+        await skipToNext();
+
+        if (!isPlaying()) {
+          isPlayingSongNotifier.value = false;
+        }
       }
     });
+  }
+
+  // Method to setup the circular doubly linked list for the playlist.
+  Future<void> setupPlaylist(List<dynamic> songs, Map<String, Uint8List> decodedBytes, int startingIndex) async {
+    _playlist.clear();
+
+    final int numOfSongs = songs.length;
+
+    int index = startingIndex;
+    while (_playlist.size != numOfSongs) {
+      dynamic songData = songs[index];
+      String songTitle = songData['title'];
+
+      List<dynamic> song = [songData, decodedBytes[songTitle]];
+
+      _playlist.addEnd(song);
+
+      index = (index + 1) % numOfSongs;
+    }
+
+    _currentSong = _playlist.getStart()!;
+    await playNewSongFromPlaylist();
+  }
+
+  // Method to play the next song in the playlist.
+  Future<void> playNewSongFromPlaylist() async {
+    List<dynamic> songData = _currentSong.value;
+    await playSong(songData[0], songData[1]);
   }
 
   // Method for the song playing logic, and the fetching of song data.
@@ -47,7 +80,7 @@ class AudioController {
         preload: true,
       );
 
-      play();
+      await play();
     } catch (error) {
       log('Error playing song {audio_controller.dart LINE 42}: $error');
     }
@@ -75,42 +108,59 @@ class AudioController {
   }
 
   // Method to pause a song.
-  void pause() {
+  Future<void> pause() async {
     if (isPlaying()) {
-      _audioPlayer.pause();
+      await _audioPlayer.pause();
     } else {
-      play();
+      await play();
     }
   }
 
-  // Method to play a song.
-  void play() {
-    _audioPlayer.play();
-    isPlayingSongNotifier.value = true;
+  // Method to add a song.
+  Future<void> addAfter(Map<String, dynamic>? previousSong, Map<String, dynamic> newSongData, Uint8List decodedByte) async {
+    List<dynamic> song = [newSongData, decodedByte];
+
+    _playlist.addAfter(previousSong, song);
   }
 
-  // Method to skip to next song (and for when a song is deleted).
-  void skipToNext() {
-    _audioPlayer.stop();
-    _audioPlayer.seekToNext();
+  // Method to remove a song.
+  Future<void> remove(Map<String, dynamic> songData, Uint8List decodedByte) async {
+    List<dynamic> song = [songData, decodedByte];
 
-    if (!_audioPlayer.playing) { // If seeking to next song did nothing, there is no more songs in queue, so hide the floating bar.
-      isPlayingSongNotifier.value = false;
+    _playlist.remove(song);
+  }
+
+  // Method to play a song.
+  Future<void> play() async {
+    isPlayingSongNotifier.value = true;
+    await _audioPlayer.play();
+  }
+
+  // Method stop a song.
+  Future<void> stop() async {
+    await _audioPlayer.stop();
+    isPlayingSongNotifier.value = false;
+  }
+
+  // Method to skip to next song.
+  Future<void> skipToNext() async {
+    if (!_playlist.isEmpty) {
+      _currentSong = _currentSong.next!;
+      await playNewSongFromPlaylist();
     }
   }
 
   // Method to skip to previous song.
-  void skipToPrev() {
-    _audioPlayer.seekToPrevious();
-
-    if (!_audioPlayer.playing) { // If seeking to next song did nothing, there is no more songs in queue, so hide the floating bar.
-      isPlayingSongNotifier.value = false;
+  Future<void> skipToPrev() async {
+    if (!_playlist.isEmpty) {
+      _currentSong = _currentSong.prev!;
+      await playNewSongFromPlaylist();
     }
   }
 
   // Method to seek through a song.
-  void seek(double seconds) {
-    _audioPlayer.seek(Duration(seconds: seconds.toInt()));
+  Future<void> seek(double seconds) async {
+    await _audioPlayer.seek(Duration(seconds: seconds.toInt()));
   }
 }
 

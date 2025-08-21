@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:musik/audio_controller/audio_controller.dart';
 import 'package:musik/misc/loading_circle.dart';
 import 'package:musik/models/add_music_model.dart';
 import 'package:musik/screens/home_screen/tabs/all_music_tab/all_music_tab.dart';
@@ -76,17 +77,21 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
   }
 
   // Logic to add the currently selected songs to the all music list.
-  Future<void> addToAddedSongsList() async {
+  Future<void> _addToAddedSongsList() async {
     setState(() => _isLoading = true);
 
     if (_selectedIndexes.isNotEmpty) {
       Map<String, dynamic> selectedSongsMap = sharedPrefs.addedSongs.isNotEmpty ? jsonDecode(sharedPrefs.addedSongs) : {};
 
+      Map<String, dynamic>? prevSongData = selectedSongsMap.isEmpty ? null : selectedSongsMap.values.last;
       for (int index in _selectedIndexes) {
-        var song = _audioFiles[index];
+        Map<String, dynamic> song = _audioFiles[index];
 
-        if (!selectedSongsMap.containsKey(song['id'].toString())) {
+        if (!selectedSongsMap.containsKey(song['id'].toString())) { // If the song is unique, continue to actually add to the song list.
           selectedSongsMap.putIfAbsent(song['id'].toString(), () => song);
+
+          audioController.addAfter(prevSongData, song, _decodedBytes[song['title']]!);
+          prevSongData = song;
         }
       }
 
@@ -278,7 +283,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                   shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                 ),
                 onPressed: () {
-                  addToAddedSongsList();
+                  _addToAddedSongsList();
                 },
                 child: Icon(
                   Icons.add_box_outlined,

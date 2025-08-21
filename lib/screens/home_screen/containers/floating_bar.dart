@@ -178,8 +178,9 @@ class _FloatingBarState extends State<FloatingBar> {
                               shadowColor: WidgetStateColor.transparent,
                               shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                             ),
-                            onPressed: () {
-                              setState(() => audioController.skipToPrev());
+                            onPressed: () async {
+                              await audioController.skipToPrev();
+                              setState(() {});
                             },
                             child: Icon(
                               Icons.skip_previous,
@@ -198,8 +199,9 @@ class _FloatingBarState extends State<FloatingBar> {
                               shadowColor: WidgetStateColor.transparent,
                               shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                             ),
-                            onPressed: () {
-                              setState(() => audioController.pause());
+                            onPressed: () async {
+                              await audioController.pause();
+                              setState(() {});
                             },
                             child: Icon(
                               audioController.isPlaying() ? Icons.pause : Icons.play_arrow,
@@ -218,8 +220,9 @@ class _FloatingBarState extends State<FloatingBar> {
                               shadowColor: WidgetStateColor.transparent,
                               shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                             ),
-                            onPressed: () {
-                              setState(() => audioController.skipToNext());
+                            onPressed: () async {
+                              await audioController.skipToNext();
+                              setState(() {});
                             },
                             child: Icon(
                               Icons.skip_next,
