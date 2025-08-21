@@ -3,11 +3,13 @@ import 'dart:typed_data';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:musik/misc/circular_doubly_linked_list.dart';
 
 import '../screens/home_screen/home_screen.dart';
 
 class AudioController {
   final _audioPlayer = AudioPlayer();
+  late final CircularDoublyLinkedList songList;
 
   Future<void> init() async {
     _audioPlayer.processingStateStream.listen((state) {
@@ -31,14 +33,14 @@ class AudioController {
       await _audioPlayer.setAudioSource(
         AudioSource.uri(Uri.file(filePath),
           tag: MediaItem(
-            id: songData['id'].toString(),
-            title: songData['title'],
-            artist: songData['artist'],
-            duration: Duration(milliseconds: songData['duration']),
-            extras: {
-              'filePath': filePath,
-              'decodedByte': decodedByte,
-            }
+              id: songData['id'].toString(),
+              title: songData['title'],
+              artist: songData['artist'],
+              duration: Duration(milliseconds: songData['duration']),
+              extras: {
+                'filePath': filePath,
+                'decodedByte': decodedByte,
+              }
           ),
         ),
         initialPosition: Duration.zero,
@@ -89,6 +91,7 @@ class AudioController {
 
   // Method to skip to next song (and for when a song is deleted).
   void skipToNext() {
+    _audioPlayer.stop();
     _audioPlayer.seekToNext();
 
     if (!_audioPlayer.playing) { // If seeking to next song did nothing, there is no more songs in queue, so hide the floating bar.

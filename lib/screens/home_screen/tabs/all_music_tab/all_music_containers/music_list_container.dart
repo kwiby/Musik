@@ -87,19 +87,9 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
   }
 
   // Method to manage song playing and other audio logic.
-  Future<void> _playSong(int initialIndex) async {
-    dynamic currentSong = _songs[initialIndex];
-
-    while (true) {
-      // Play current song.
-      await audioController.playSong(currentSong, _decodedBytes[currentSong['title']]!);
-
-      // Wait until song finishes before continuing.
-      //await audioController.onSongComplete.first;
-
-      // Move to next song (wrap back to start and play songs before the starting song if available).
-      currentSong = _songs[(_songs.indexOf(currentSong) + 1) % _songs.length];
-    }
+  Future<void> _playSong(int startIndex) async {
+    final song = _songs[startIndex];
+    await audioController.playSong(song, _decodedBytes[song['title']]!);
   }
 
   // Method to check storage permission.

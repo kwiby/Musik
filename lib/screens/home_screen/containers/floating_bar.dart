@@ -179,7 +179,7 @@ class _FloatingBarState extends State<FloatingBar> {
                               shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                             ),
                             onPressed: () {
-                              print('Skipping to previous song!');
+                              setState(() => audioController.skipToPrev());
                             },
                             child: Icon(
                               Icons.skip_previous,
@@ -219,7 +219,7 @@ class _FloatingBarState extends State<FloatingBar> {
                               shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                             ),
                             onPressed: () {
-                              print('Skipping to next song!');
+                              setState(() => audioController.skipToNext());
                             },
                             child: Icon(
                               Icons.skip_next,
