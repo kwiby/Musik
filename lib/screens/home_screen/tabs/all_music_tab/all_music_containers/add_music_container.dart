@@ -52,7 +52,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
           _decodedBytes.putIfAbsent(title, () => base64Decode(albumArtBase64));
         } else {
           _decodedBytes.putIfAbsent(title, () => audioController.defaultIcon);
-          log("Song album art base64 was not found {add_music_container.dart LINE 57}: $song");
+          log("Song album art base64 was not found {add_music_container.dart LINE 55}: $song");
         }
       }
     }
@@ -335,7 +335,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                       child: ListTile(
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: _decodedBytes[song['title']] != null ? AlbumArtLoader.loadAlbumArt(song['albumArtBase64'], _decodedBytes[song['title']]!) : null
+                          child: AlbumArtLoader.loadAlbumArt(song['albumArtBase64'], _decodedBytes[song['title']]!),
                         ),
                         title: Text(
                           song['title'] ?? 'Unknown Title',
