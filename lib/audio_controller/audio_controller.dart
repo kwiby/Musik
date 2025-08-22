@@ -5,12 +5,14 @@ import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musik/misc/circular_doubly_linked_list.dart';
 
+import '../misc/default_icon_loader.dart';
 import '../screens/home_screen/home_screen.dart';
 
 class AudioController {
   final _audioPlayer = AudioPlayer();
   final CircularDoublyLinkedList _playlist = CircularDoublyLinkedList();
   late Node _currentSong;
+  late Uint8List defaultIcon;
 
   Future<void> init() async {
     _audioPlayer.processingStateStream.listen((state) async {
@@ -22,6 +24,8 @@ class AudioController {
         }
       }
     });
+
+    defaultIcon = await DefaultIconLoader.loadDefaultIcon();
   }
 
   // Method to setup the circular doubly linked list for the playlist.
