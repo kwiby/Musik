@@ -174,7 +174,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                 ),
               ),
 
-              // -=-  Refresh Button (Not audio access permission)  -=-
+              // -=-  Refresh Button (No audio access permission)  -=-
               SizedBox(
                 width: 40,
                 child: ElevatedButton(

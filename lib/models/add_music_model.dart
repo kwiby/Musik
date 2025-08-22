@@ -25,7 +25,7 @@ class AddMusicModel {
 
   Future<void> init(bool useCache) async {
     if (_isStoragePermissionGranted) {
-      await fetchAudioFiles(true);
+      await fetchAudioFiles(useCache);
     } else {
       await requestStoragePermission(useCache);
     }
