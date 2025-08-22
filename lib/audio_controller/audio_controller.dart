@@ -15,6 +15,8 @@ class AudioController {
   late Uint8List defaultIcon;
 
   Future<void> init() async {
+    await _audioPlayer.setAudioSource(ConcatenatingAudioSource(children: [])); // Set an empty audio source to load the player for the first time in the app's lifecycle, preventing freezing on first song playing (on its loading).
+
     _audioPlayer.processingStateStream.listen((state) async {
       if (state == ProcessingState.completed) {
         await skipToNext();
