@@ -57,7 +57,15 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
       _decodedBytes.clear();
       for (dynamic song in _songs) {
         //final cleanedBase64String = song['albumArtBase64'].replaceAll(RegExp(r'\s'), '');
-        _decodedBytes.putIfAbsent(song['title'], () => base64Decode(song['albumArtBase64']));
+        final title = song['title'] as String;
+        final albumArtBase64 = song['albumArtBase64'] as String?;
+
+        if (albumArtBase64 != null) {
+          _decodedBytes.putIfAbsent(title, () => base64Decode(albumArtBase64));
+        } else {
+          _decodedBytes.putIfAbsent(title, () => audioController.defaultIcon);
+          log("Song album art base64 was not found {add_music_container.dart LINE 57}: $song");
+        }
       }
     }
   }
