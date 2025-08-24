@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:musik/misc/page_navigator.dart';
@@ -19,6 +21,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Future<void> _sendToBackground() async {
+    const platform = MethodChannel('android_app_retain');
+
+    try {
+      await platform.invokeMethod('sendToBackground');
+    } on PlatformException catch (error) {
+      log("Error sending app to the background {home_screen.dart LINE 30}: $error");
+    }
+  }
+
   // -=-  Main UI  -=-
   @override
   Widget build(BuildContext context) {
@@ -28,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (PageNavigator.pageHistory.isNotEmpty) {
           PageNavigator.backButton(context);
         } else {
-          SystemNavigator.pop();
+          _sendToBackground();
         }
       },
       child: Scaffold(

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:musik/screens/home_screen/home_screen.dart';
 
 import '../../audio_controller/audio_controller.dart';
 import '../../misc/page_navigator.dart';
@@ -76,138 +77,143 @@ class _SongScreenState extends State<SongScreen> {
             ),
 
             // Song info and buttons
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Song image
-                  Hero(
-                    tag: 'floating_bar_image',
-                    child: SizedBox(
-                      height: 250,
-                      width: 250,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(30),
-                        child: audioController.getPlayingSongData('decodedByte') != null
-                            ? Image.memory(audioController.getPlayingSongData('decodedByte'), fit: BoxFit.cover)
-                            : null,
-                      ),
-                    ),
-                  ),
-
-                  // Padding between image and title
-                  const Padding(padding: EdgeInsets.only(bottom: 15)),
-
-                  // Title
-                  Hero(
-                    tag: 'floating_bar_title',
-                    child: SongText().getTitleText(20, 25)
-                  ),
-
-                  // Artist
-                  Hero(
-                    tag: 'floating_bar_artist',
-                    child: SongText().getArtistText(18, 25)
-                  ),
-
-                  const Padding(padding: EdgeInsets.only(bottom: 100),),
-
-                  // Buttons
-                  Row(
+            ValueListenableBuilder<bool>(
+              valueListenable: isPlayingSongNotifier,
+              builder: (context, value, child) {
+                return Center(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Skip to previous song button
+                      // Song image
                       Hero(
-                        tag: 'floating_bar_skipToPrev',
+                        tag: 'floating_bar_image',
                         child: SizedBox(
-                          width: 60,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                              backgroundColor: WidgetStateColor.transparent,
-                              shadowColor: WidgetStateColor.transparent,
-                              shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
-                            ),
-                            onPressed: () async {
-                              await audioController.skipToPrev();
-                              if (mounted) {
-                                setState(() {});
-                              } else {
-                                log('The state object is not currently in the tree {song_screen.dart LINE 134}!');
-                              }
-                            },
-                            child: Icon(
-                              Icons.skip_previous,
-                              color: Theme.of(context).colorScheme.tertiary,
-                              size: 40,
-                            ),
+                          height: 250,
+                          width: 250,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(30),
+                            child: audioController.getPlayingSongData('decodedByte') != null
+                                ? Image.memory(audioController.getPlayingSongData('decodedByte'), fit: BoxFit.cover)
+                                : null,
                           ),
                         ),
                       ),
 
-                      // Play/pause button
+                      // Padding between image and title
+                      const Padding(padding: EdgeInsets.only(bottom: 15)),
+
+                      // Title
                       Hero(
-                        tag: 'floating_bar_pause',
-                        child: SizedBox(
-                          width: 60,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                              backgroundColor: WidgetStateColor.transparent,
-                              shadowColor: WidgetStateColor.transparent,
-                              shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
-                            ),
-                            onPressed: () async {
-                              await audioController.pause();
-                              if (mounted) {
-                                setState(() {});
-                              } else {
-                                log('The state object is not currently in the tree {song_screen.dart LINE 163}!');
-                              }
-                            },
-                            child: Icon(
-                              audioController.isPlaying() ? Icons.pause : Icons.play_arrow,
-                              color: Theme.of(context).colorScheme.tertiary,
-                              size: 40,
-                            ),
-                          ),
-                        ),
+                          tag: 'floating_bar_title',
+                          child: SongText().getTitleText(20, 25)
                       ),
 
-                      // Skip to next song button
+                      // Artist
                       Hero(
-                        tag: 'floating_bar_skipToNext',
-                        child: SizedBox(
-                          width: 60,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                              backgroundColor: WidgetStateColor.transparent,
-                              shadowColor: WidgetStateColor.transparent,
-                              shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
-                            ),
-                            onPressed: () async {
-                              await audioController.skipToNext();
-                              if (mounted) {
-                                setState(() {});
-                              } else {
-                                log('The state object is not currently in the tree {song_screen.dart LINE 192}!');
-                              }
-                            },
-                            child: Icon(
-                              Icons.skip_next,
-                              color: Theme.of(context).colorScheme.tertiary,
-                              size: 40,
-                            ),
-                          ),
-                        ),
+                          tag: 'floating_bar_artist',
+                          child: SongText().getArtistText(18, 25)
                       ),
 
-                      const Padding(padding: EdgeInsets.only(right: 10)), // Padding after buttons
+                      const Padding(padding: EdgeInsets.only(bottom: 100),),
+
+                      // Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Skip to previous song button
+                          Hero(
+                            tag: 'floating_bar_skipToPrev',
+                            child: SizedBox(
+                              width: 60,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                  backgroundColor: WidgetStateColor.transparent,
+                                  shadowColor: WidgetStateColor.transparent,
+                                  shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                                ),
+                                onPressed: () async {
+                                  await audioController.skipToPrev();
+                                  if (mounted) {
+                                    setState(() {});
+                                  } else {
+                                    log('The state object is not currently in the tree {song_screen.dart LINE 134}!');
+                                  }
+                                },
+                                child: Icon(
+                                  Icons.skip_previous,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  size: 40,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Play/pause button
+                          Hero(
+                            tag: 'floating_bar_pause',
+                            child: SizedBox(
+                              width: 60,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                  backgroundColor: WidgetStateColor.transparent,
+                                  shadowColor: WidgetStateColor.transparent,
+                                  shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                                ),
+                                onPressed: () async {
+                                  await audioController.pause();
+                                  if (mounted) {
+                                    setState(() {});
+                                  } else {
+                                    log('The state object is not currently in the tree {song_screen.dart LINE 163}!');
+                                  }
+                                },
+                                child: Icon(
+                                  audioController.isPlaying() ? Icons.pause : Icons.play_arrow,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  size: 40,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Skip to next song button
+                          Hero(
+                            tag: 'floating_bar_skipToNext',
+                            child: SizedBox(
+                              width: 60,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                  backgroundColor: WidgetStateColor.transparent,
+                                  shadowColor: WidgetStateColor.transparent,
+                                  shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                                ),
+                                onPressed: () async {
+                                  await audioController.skipToNext();
+                                  if (mounted) {
+                                    setState(() {});
+                                  } else {
+                                    log('The state object is not currently in the tree {song_screen.dart LINE 192}!');
+                                  }
+                                },
+                                child: Icon(
+                                  Icons.skip_next,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  size: 40,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const Padding(padding: EdgeInsets.only(right: 10)), // Padding after buttons
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
           ],
         ),
