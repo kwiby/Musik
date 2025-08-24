@@ -65,7 +65,9 @@ class _FloatingBarState extends State<FloatingBar> {
                                   width: 50,
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(30),
-                                    child: audioController.getPlayingSongData('decodedByte') != null ? Image.memory(audioController.getPlayingSongData('decodedByte')) : null,
+                                    child: audioController.getPlayingSongData('decodedByte') != null
+                                        ? Image.memory(audioController.getPlayingSongData('decodedByte'), fit: BoxFit.cover)
+                                        : null,
                                   ),
                                 ),
                               ),
