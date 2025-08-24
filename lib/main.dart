@@ -3,6 +3,7 @@ import 'package:musik/audio_controller/audio_controller.dart';
 import 'package:musik/misc/custom_scroll_behaviour.dart';
 import 'package:musik/misc/shared_prefs.dart';
 import 'package:musik/screens/home_screen/home_screen.dart';
+import 'package:musik/screens/song_screen/song_screen.dart';
 import 'package:musik/themes/theme_manager.dart';
 import 'package:provider/provider.dart';
 
@@ -43,6 +44,7 @@ class _MusikState extends State<Musik> {
           home: const HomeScreen(),
           routes: {
             '/HomeScreen': (context) => const HomeScreen(),
+            '/SongScreen': (context) => const SongScreen(),
           },
         );
       },

@@ -60,12 +60,6 @@ class AudioController {
 
   // Method for the song playing logic, and the fetching of song data.
   Future<void> playSong(dynamic songData, Uint8List decodedByte) async {
-    _audioPlayer.playbackEventStream.listen((event) {},
-        onError: (Object error, StackTrace stackTrace) {
-          log('A stream error occurred {audio_controller.dart LINE 16}: $error');
-        }
-    );
-
     try {
       String filePath = songData['filePath'];
 
@@ -86,9 +80,9 @@ class AudioController {
         preload: true,
       );
 
-      await play();
+      play();
     } catch (error) {
-      log('Error playing song {audio_controller.dart LINE 42}: $error');
+      log('Error playing song {audio_controller.dart LINE 91}: $error');
     }
   }
 
@@ -118,7 +112,7 @@ class AudioController {
     if (isPlaying()) {
       await _audioPlayer.pause();
     } else {
-      await play();
+      play();
     }
   }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:musik/screens/home_screen/home_screen.dart';
-import 'all_music_containers/add_music_container.dart';
-import 'all_music_containers/music_list_container.dart';
+import 'containers/add_music_container.dart';
+import 'containers/music_list_container.dart';
 
 ValueNotifier<bool> isAddingMusicNotifier = ValueNotifier<bool>(false);
 

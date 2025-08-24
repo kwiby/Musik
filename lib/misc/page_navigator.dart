@@ -9,17 +9,21 @@ class PageNavigator {
   static Widget? nextPage;
 
   static void changePage(BuildContext context, Widget newPage) {
-    Navigator.pushReplacement(context, PageRouteBuilder(
-      pageBuilder: (context, animation1, animation2) => newPage,
-      transitionDuration: Duration.zero,
-      reverseTransitionDuration: Duration.zero,
-    ));
+    //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => newPage));
+
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => newPage,
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   static void navigatePage(BuildContext context, Widget newPage) {
     if (nextPage != null) {
       if ((pageHistory.isEmpty && newPage is! HomeScreen) ||
-          (pageHistory.isNotEmpty && pageHistory.first != nextPage)) {
+          (pageHistory.isNotEmpty && pageHistory.first.runtimeType != nextPage.runtimeType)) {
         pageHistory.addFirst(nextPage!);
 
         if (pageHistory.length > _pageHistoryLimit) {
@@ -43,8 +47,8 @@ class PageNavigator {
       }
 
       if (pageHistory.isNotEmpty) {
-        navigatePage(context, pageHistory.first);
-        pageHistory.removeFirst();
+        final previous = pageHistory.removeFirst();
+        navigatePage(context, previous);
       } else {
         navigatePage(context, const HomeScreen());
       }

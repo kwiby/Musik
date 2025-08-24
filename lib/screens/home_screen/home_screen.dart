@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:musik/misc/page_navigator.dart';
 import 'package:musik/screens/home_screen/containers/floating_bar.dart';
 import '../../misc/forced_value_notifier.dart';
+import 'containers/watermark.dart';
 import 'tabs/all_music_tab/all_music_tab.dart';
 import 'tabs/playlists_tab/playlists_tab.dart';
 
@@ -18,11 +19,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   // -=-  Main UI  -=-
   @override
   Widget build(BuildContext context) {
@@ -39,20 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
         resizeToAvoidBottomInset: false,
         backgroundColor: Theme.of(context).colorScheme.surface,
 
-        appBar: AppBar(
-          title: const Text(
-            'Musik',
-            style: TextStyle(
-              fontFamily: 'SourGummy',
-              fontSize: 30,
-              fontVariations: [FontVariation('wght', 900)], // 'wght' = weight, 'wdth' = width
-            ),
-          ),
-          toolbarHeight: 100,
-          foregroundColor: Theme.of(context).colorScheme.outline, // 'Musik' title
-          centerTitle: false,
-          elevation: 0,
-        ),
+        appBar: const Watermark(),
 
         body: SafeArea(
           child: Stack(
