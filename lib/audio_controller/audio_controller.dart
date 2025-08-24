@@ -26,22 +26,17 @@ class AudioController {
     });
   }
 
-  // Method to setup the circular doubly linked list for the playlist (only used when the order of the songs are changed -> might even add a moveSong() function and remove this method completely).
-  Future<void> setupNewPlaylist(List<dynamic> songs, Map<String, Uint8List> decodedBytes, int startingIndex) async {
+  // Method to setup the circular doubly linked list for the playlist (only used when the app is initialized).
+  void setupNewPlaylist(List<dynamic> songs, Map<String, Uint8List> decodedBytes) {
     _playlist.clear();
 
-    final int numOfSongs = songs.length;
-
-    int index = startingIndex;
-    while (_playlist.size != numOfSongs) {
+    for (int index = 0; index < songs.length; index++) {
       dynamic songData = songs[index];
       String songTitle = songData['title'];
 
       List<dynamic> song = [songData, decodedBytes[songTitle]];
 
       _playlist.addEnd(song);
-
-      index = (index + 1) % numOfSongs;
     }
   }
 
@@ -52,6 +47,8 @@ class AudioController {
     if (songNode != null) {
       _currentSong = songNode;
       await playNewSongFromPlaylist();
+    } else {
+      log('Retrieved null value when getting current song node {audio_controller.dart -> playCurrentSong()}');
     }
   }
 

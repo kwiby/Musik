@@ -24,6 +24,7 @@ class AllMusicListContainer extends StatefulWidget {
   State<AllMusicListContainer> createState() => _AllMusicListContainerState();
 }
 
+bool _wasPlaylistSetup = false;
 class _AllMusicListContainerState extends State<AllMusicListContainer> with WidgetsBindingObserver {
   List<dynamic> _songs = [];
   final Map<String, Uint8List> _decodedBytes = {};
@@ -71,6 +72,11 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
           log("Song album art base64 was not found {music_list_container.dart -> _fetchAddedSongs()}: $song");
         }
       }
+    }
+
+    if (!_wasPlaylistSetup) {
+      audioController.setupNewPlaylist(_songs, _decodedBytes);
+      _wasPlaylistSetup = true;
     }
   }
 
@@ -186,8 +192,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                   ),
                 ]
             )
-        )
-            : Column(
+        ) : Column(
           children: [
             const Padding(padding: EdgeInsets.only(top: 50)), // Top padding
 
