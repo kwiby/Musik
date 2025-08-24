@@ -15,6 +15,7 @@ class AudioController {
   Future<void> init() async {
     await _audioPlayer.setAudioSource(ConcatenatingAudioSource(children: [])); // Set an empty audio source to load the player for the first time in the app's lifecycle, preventing freezing on first song playing (on its loading).
 
+    // Song completion listener.
     _audioPlayer.processingStateStream.listen((state) async {
       if (state == ProcessingState.completed) {
         await skipToNext();
@@ -158,9 +159,23 @@ class AudioController {
     }
   }
 
+  // Method to get current position of song
+  Duration getPosition() {
+    return _audioPlayer.position;
+  }
+
+  // Method to get duration of song
+  Duration getDuration() {
+    return _audioPlayer.duration!;
+  }
+
   // Method to seek through a song.
-  Future<void> seek(double seconds) async {
-    await _audioPlayer.seek(Duration(seconds: seconds.toInt()));
+  Future<void> seek(double milliseconds) async {
+    await _audioPlayer.seek(Duration(milliseconds: milliseconds.toInt()));
+  }
+
+  AudioPlayer getAudioPlayer() {
+    return _audioPlayer;
   }
 }
 

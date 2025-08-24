@@ -361,7 +361,8 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                                       ),
                                       trailing: Text(
                                           song['duration'] != null
-                                              ? Duration(milliseconds: song['duration']).toString().split('.').first : 'Unknown Duration',
+                                              ? Duration(milliseconds: song['duration']).toString().split('.').first
+                                              : 'Unknown Duration',
                                           style: TextStyle(
                                             fontFamily: 'SourGummy',
                                             fontVariations: const [FontVariation('wght', 300)],

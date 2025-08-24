@@ -8,6 +8,11 @@ import '../../audio_controller/audio_controller.dart';
 import '../../misc/page_navigator.dart';
 import 'misc/song_text.dart';
 
+// Value notifiers
+ValueNotifier<Duration> positionNotifier = ValueNotifier<Duration>(Duration.zero);
+ValueNotifier<Duration> durationNotifier = ValueNotifier<Duration>(Duration.zero);
+
+
 class SongScreen extends StatefulWidget {
   const SongScreen({super.key});
 
@@ -17,6 +22,23 @@ class SongScreen extends StatefulWidget {
 
 class _SongScreenState extends State<SongScreen> {
   bool _isHeroAnimationCompleted = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Song position update listener.
+    audioController.getAudioPlayer().positionStream.listen((position){
+      positionNotifier.value = position;
+    });
+
+    // Song duration update listener.
+    audioController.getAudioPlayer().durationStream.listen((duration) {
+      if (duration != null) {
+        durationNotifier.value = duration;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +137,75 @@ class _SongScreenState extends State<SongScreen> {
                           child: SongText().getArtistText(18, 25)
                       ),
 
-                      const Padding(padding: EdgeInsets.only(bottom: 100),),
+                      // Padding between artist and buttons
+                      const Padding(padding: EdgeInsets.only(bottom: 100)),
+
+                      // Song timeline
+                      Visibility(
+                        visible: _isHeroAnimationCompleted,
+                        child: Column(
+                          children: [
+                            // Position and duration texts
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                // Current position text
+                                ValueListenableBuilder(
+                                  valueListenable: positionNotifier,
+                                  builder: (context, position, child) {
+                                    return Text(
+                                      position.toString().split('.').first,
+                                      style: TextStyle(
+                                        fontFamily: 'SourGummy',
+                                        fontVariations: const [FontVariation('wght', 400)],
+                                        fontSize: 15,
+                                        color: Theme.of(context).colorScheme.tertiary,
+                                      ),
+                                    );
+                                  },
+                                ),
+
+                                // Total duration text
+                                ValueListenableBuilder(
+                                  valueListenable: durationNotifier,
+                                  builder: (context, duration, child) {
+                                    return Text(
+                                      duration.toString().split('.').first,
+                                      style: TextStyle(
+                                        fontFamily: 'SourGummy',
+                                        fontVariations: const [FontVariation('wght', 400)],
+                                        fontSize: 15,
+                                        color: Theme.of(context).colorScheme.tertiary,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+
+                            // Timeline
+                            ValueListenableBuilder(
+                              valueListenable: positionNotifier,
+                              builder: (context, value, child) {
+                                return SliderTheme(
+                                  data: SliderTheme.of(context).copyWith(
+                                    trackHeight: 15,
+                                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 11),
+                                  ),
+                                  child: Slider(
+                                    activeColor: Theme.of(context).colorScheme.secondary,
+                                    inactiveColor: Theme.of(context).colorScheme.shadow,
+                                    min: 0,
+                                    max: durationNotifier.value.inMilliseconds.toDouble(),
+                                    value: positionNotifier.value.inMilliseconds.toDouble().clamp(0, durationNotifier.value.inMilliseconds.toDouble()),
+                                    onChanged: audioController.seek,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
 
                       // Buttons
                       Row(
