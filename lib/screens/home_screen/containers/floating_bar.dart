@@ -63,7 +63,9 @@ class _FloatingBarState extends State<FloatingBar> {
                                 tag: 'floating_bar_image',
                                 child: CircleAvatar(
                                   radius: 25,
-                                  backgroundImage: audioController.getPlayingSongData('decodedByte') != null ? MemoryImage(audioController.getPlayingSongData('decodedByte')) : MemoryImage(defaultIcon),
+                                  backgroundImage: audioController.getPlayingSongData('decodedByte') != null
+                                      ? MemoryImage(audioController.getPlayingSongData('decodedByte'))
+                                      : MemoryImage(defaultIcon),
                                 ),
                               ),
 

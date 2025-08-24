@@ -94,8 +94,8 @@ class _SongScreenState extends State<SongScreen> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(30),
                             child: audioController.getPlayingSongData('decodedByte') != null
-                                ? Image.memory(audioController.getPlayingSongData('decodedByte'), fit: BoxFit.cover)
-                                : Image.memory(defaultIcon),
+                                ? Image(image: MemoryImage(audioController.getPlayingSongData('decodedByte')), fit: BoxFit.cover)
+                                : Image(image: MemoryImage(defaultIcon), fit: BoxFit.cover),
                           ),
                         ),
                       ),

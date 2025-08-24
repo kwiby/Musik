@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:musik/audio_controller/audio_controller.dart';
 import 'package:musik/misc/forced_value_notifier.dart';
@@ -9,14 +9,19 @@ import 'package:musik/misc/loading_circle.dart';
 import 'package:musik/misc/shared_prefs.dart';
 import 'package:musik/models/add_music_model.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import '../../../../../misc/album_art.dart';
 import '../../../../../misc/default_icon_loader.dart';
 import '../all_music_tab.dart';
 
 // Value notifiers
 ForcedValueNotifier<bool> isLoadingNotifier = ForcedValueNotifier<bool>(true);
+ValueNotifier<Set<int>> _selectedIndexesNotifier = ValueNotifier<Set<int>>({});
 
+// Song data
+List<dynamic> _songs = [];
+final Map<String, Uint8List> _decodedBytes = {};
+
+
+// Classes
 class AllMusicListContainer extends StatefulWidget {
   const AllMusicListContainer({super.key});
 
@@ -26,8 +31,6 @@ class AllMusicListContainer extends StatefulWidget {
 
 bool _wasPlaylistSetup = false;
 class _AllMusicListContainerState extends State<AllMusicListContainer> with WidgetsBindingObserver {
-  List<dynamic> _songs = [];
-  final Map<String, Uint8List> _decodedBytes = {};
 
   @override
   void initState() {
@@ -54,23 +57,45 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
   // Method to fetch added songs from shared preferences.
   void _fetchAddedSongs() {
     //sharedPrefs.addedSongs = jsonEncode({}); // Don't do "= ''", but instead do "= jsonEncode({})"!
-    _songs.clear();
-
     if (sharedPrefs.addedSongs.isNotEmpty) {
+      List<dynamic> oldSongs = List.from(_songs);
       _songs = jsonDecode(sharedPrefs.addedSongs).values.toList();
 
-      _decodedBytes.clear();
-      for (dynamic song in _songs) {
-        //final cleanedBase64String = song['albumArtBase64'].replaceAll(RegExp(r'\s'), '');
-        final title = song['title'] as String;
-        final albumArtBase64 = song['albumArtBase64'] as String?;
+      if (!_areSongListsEqual(oldSongs, _songs)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _decodeImageBytes();
+        });
+      }
+    } else {
+      _songs.clear();
+    }
+  }
 
-        if (albumArtBase64 != null) {
-          _decodedBytes.putIfAbsent(title, () => base64Decode(albumArtBase64));
-        } else {
-          _decodedBytes.putIfAbsent(title, () => defaultIcon);
-          log("Song album art base64 was not found {music_list_container.dart -> _fetchAddedSongs()}: $song");
-        }
+  // Helper method for _fetchAddedSongs()
+  bool _areSongListsEqual(List<dynamic> a, List<dynamic> b) {
+    if (a.length != b.length) return false;
+
+    for (int i = 0; i < a.length; i++) {
+      if (a[i]['id'] != b[i]['id']) return false;
+    }
+
+    return true;
+  }
+
+  // Method to decode image bytes.
+  void _decodeImageBytes() {
+    _decodedBytes.clear();
+
+    for (dynamic song in _songs) {
+      //final cleanedBase64String = song['albumArtBase64'].replaceAll(RegExp(r'\s'), '');
+      final title = song['title'] as String;
+      final albumArtBase64 = song['albumArtBase64'] as String?;
+
+      if (albumArtBase64 != null) {
+        _decodedBytes.putIfAbsent(title, () => base64Decode(albumArtBase64));
+      } else {
+        _decodedBytes.putIfAbsent(title, () => defaultIcon);
+        log("Song album art base64 was not found {music_list_container.dart -> _fetchAddedSongs()}: $song");
       }
     }
 
@@ -78,6 +103,8 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
       audioController.setupNewPlaylist(_songs, _decodedBytes);
       _wasPlaylistSetup = true;
     }
+
+    setState(() {});
   }
 
   // Method to check storage permission.
@@ -93,7 +120,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
 
   // Method to remove selected songs.
   void _removeSongs() {
-    final sortedSelectedIndexes = _selectedIndexes.toList()..sort((a, b) => b.compareTo(a)); // Sort the selected indexes from highest to lowest (prevents errors as '_songs' shifts while removing other songs)
+    final sortedSelectedIndexes = _selectedIndexesNotifier.value.toList()..sort((a, b) => b.compareTo(a)); // Sort the selected indexes from highest to lowest (prevents errors as '_songs' shifts while removing other songs)
 
     String? currentSongId = audioController.getPlayingSongData('id');
     for (int index in sortedSelectedIndexes) {
@@ -104,7 +131,8 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
       audioController.remove(_songs[index], _decodedBytes[_songs[index]['title']]!);
       _songs.removeAt(index);
     }
-    _selectedIndexes.clear();
+
+    _selectedIndexesNotifier.value.clear();
 
     Map<String, dynamic> selectedSongsMap = {};
     for (dynamic song in _songs) {
@@ -113,7 +141,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
 
     sharedPrefs.addedSongs = jsonEncode(selectedSongsMap);
 
-    setState(() => _isInSelectionMode = false);
+    setState(() {});
   }
 
   // Method to manage song playing and other audio logic.
@@ -121,9 +149,22 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
     await audioController.playCurrentSong(_songs[index]);
   }
 
+  // Method to toggle selected tile background colours.
+  void toggleSelection(int index) {
+    final selected = Set<int>.from(_selectedIndexesNotifier.value);
+
+    if (selected.contains(index)) {
+      selected.remove(index);
+    } else {
+      selected.add(index);
+    }
+
+    _selectedIndexesNotifier.value = selected;
+  }
+
   // -=-  Main Widget  -=-
-  bool _isInSelectionMode = false;
-  final Set<int> _selectedIndexes = {};
+  //bool _isInSelectionMode = false;
+  //final Set<int> _selectedIndexes = {};
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -201,26 +242,31 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 // -=-  Remove Song Button  -=-
-                Visibility(
-                  visible: _isInSelectionMode,
-                  child: SizedBox(
-                    width: 40,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: WidgetStateColor.transparent,
-                        shadowColor: WidgetStateColor.transparent,
-                        shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                ValueListenableBuilder<Set<int>>(
+                  valueListenable: _selectedIndexesNotifier,
+                  builder: (context, value, child) {
+                    return Visibility(
+                      visible: value.isNotEmpty,
+                      child: SizedBox(
+                        width: 40,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                            backgroundColor: WidgetStateColor.transparent,
+                            shadowColor: WidgetStateColor.transparent,
+                            shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                          ),
+                          onPressed: () { // Logic for when the user removes selected songs.
+                            _removeSongs();
+                          },
+                          child: Icon(
+                            Icons.delete_forever,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
+                        ),
                       ),
-                      onPressed: () { // Logic for when the user removes selected songs.
-                        _removeSongs();
-                      },
-                      child: Icon(
-                        Icons.delete_forever,
-                        color: Theme.of(context).colorScheme.tertiary,
-                      ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
 
                 // -=-  Add Song Button  -=-
@@ -270,78 +316,64 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                   itemBuilder: (BuildContext context, int index) {
                     final song = _songs[index];
 
-                    return ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Material(
-                            color: !_selectedIndexes.contains(index) ? Colors.transparent : Theme.of(context).colorScheme.surface,
-                            child: InkWell(
-                                child: ListTile(
-                                  leading: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: AlbumArtLoader.loadAlbumArt(song['albumArtBase64'], _decodedBytes[song['title']]!)
-                                  ),
-                                  title: Text(
-                                      song['title'] ?? 'Unknown Title',
-                                      style: TextStyle(
-                                        fontFamily: 'SourGummy',
-                                        fontVariations: const [FontVariation('wght', 400)],
-                                        fontSize: 15,
-                                        color: Theme.of(context).colorScheme.tertiary,
-                                      )
-                                  ),
-                                  subtitle: Text(
-                                      song['artist'] ?? "Unknown Artist",
-                                      style: const TextStyle(
-                                        fontFamily: 'SourGummy',
-                                        fontVariations: [FontVariation('wght', 300)],
-                                        fontSize: 13,
-                                      )
-                                  ),
-                                  trailing: Text(
-                                      song['duration'] != null
-                                          ? Duration(milliseconds: song['duration']).toString().split('.').first : 'Unknown Duration',
-                                      style: TextStyle(
-                                        fontFamily: 'SourGummy',
-                                        fontVariations: const [FontVariation('wght', 300)],
-                                        fontSize: 13,
-                                        color: Theme.of(context).colorScheme.tertiary,
-                                      )
-                                  ),
-                                  onTap: () async {
-                                    if (_isInSelectionMode) {
-                                      setState(() {
-                                        if (_selectedIndexes.contains(index)) {
-                                          _selectedIndexes.remove(index);
-                                        } else {
-                                          _selectedIndexes.add(index);
-                                        }
-                                      });
-
-                                      if (_selectedIndexes.isEmpty) {
-                                        _isInSelectionMode = false;
-                                      }
-                                    } else {
-                                      await _playSong(index);
-                                    }
-                                  },
-                                  onLongPress: () { // Users must long press to enter selection mode (instead of long pressing songs, users can just tap to add to selection)
-                                    _isInSelectionMode = true;
-
-                                    setState(() {
-                                      if (_selectedIndexes.contains(index)) {
-                                        _selectedIndexes.remove(index);
+                    return ValueListenableBuilder<Set<int>>(
+                      valueListenable: _selectedIndexesNotifier,
+                      builder: (context, value, child) {
+                        return ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Material(
+                                color: !_selectedIndexesNotifier.value.contains(index) ? Colors.transparent : Theme.of(context).colorScheme.surface,
+                                child: InkWell(
+                                    onTap: () async {
+                                      if (_selectedIndexesNotifier.value.isNotEmpty) {
+                                        toggleSelection(index);
                                       } else {
-                                        _selectedIndexes.add(index);
+                                        await _playSong(index);
                                       }
-                                    });
-
-                                    if (_selectedIndexes.isEmpty) {
-                                      _isInSelectionMode = false;
-                                    }
-                                  },
+                                    },
+                                    onLongPress: () {
+                                      toggleSelection(index);
+                                    },
+                                    child: ListTile(
+                                      key: ValueKey(song['id']),
+                                      leading: ClipRRect(
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: _decodedBytes.containsKey(song['title'])
+                                              ? Image(image: MemoryImage(_decodedBytes[song['title']]!), fit: BoxFit.cover, height: 56, width: 56)
+                                              : Image(image: MemoryImage(defaultIcon), fit: BoxFit.cover, height: 56, width: 56),
+                                      ),
+                                      title: Text(
+                                          song['title'] ?? 'Unknown Title',
+                                          style: TextStyle(
+                                            fontFamily: 'SourGummy',
+                                            fontVariations: const [FontVariation('wght', 400)],
+                                            fontSize: 15,
+                                            color: Theme.of(context).colorScheme.tertiary,
+                                          )
+                                      ),
+                                      subtitle: Text(
+                                          song['artist'] ?? "Unknown Artist",
+                                          style: const TextStyle(
+                                            fontFamily: 'SourGummy',
+                                            fontVariations: [FontVariation('wght', 300)],
+                                            fontSize: 13,
+                                          )
+                                      ),
+                                      trailing: Text(
+                                          song['duration'] != null
+                                              ? Duration(milliseconds: song['duration']).toString().split('.').first : 'Unknown Duration',
+                                          style: TextStyle(
+                                            fontFamily: 'SourGummy',
+                                            fontVariations: const [FontVariation('wght', 300)],
+                                            fontSize: 13,
+                                            color: Theme.of(context).colorScheme.tertiary,
+                                          )
+                                      ),
+                                    )
                                 )
                             )
-                        )
+                        );
+                      },
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) => const Divider(height: 15, thickness: 0.5),

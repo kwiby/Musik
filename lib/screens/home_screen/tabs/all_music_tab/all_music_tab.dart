@@ -68,7 +68,7 @@ class _AllMusicContainerState extends State<AllMusicContainer> {
                   ),
                 ),
                 onPressed: () {
-                  tabNotifier.value = 'All Music';
+                  isAddingMusicNotifier.value = false;
                 },
               ),
             ),
@@ -111,7 +111,7 @@ class _AllMusicContainerState extends State<AllMusicContainer> {
         ),
 
         // -=-  All Music Content Area  -=-
-      ValueListenableBuilder<bool>(
+        ValueListenableBuilder<bool>(
           valueListenable: isAddingMusicNotifier,
           builder: (context, isAddingMusic, child) {
             return isAddingMusic ? const AddMusicContainer() : const AllMusicListContainer();

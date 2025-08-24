@@ -9,9 +9,11 @@ import 'package:musik/models/add_music_model.dart';
 import 'package:musik/screens/home_screen/tabs/all_music_tab/all_music_tab.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../../../misc/album_art.dart';
 import '../../../../../misc/default_icon_loader.dart';
 import '../../../../../misc/shared_prefs.dart';
+
+// Value notifier
+ValueNotifier<Set<int>> _selectedIndexesNotifier = ValueNotifier<Set<int>>({});
 
 class AddMusicContainer extends StatefulWidget {
   const AddMusicContainer({super.key});
@@ -42,7 +44,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
     if (addMusicModel.getIsStoragePermissionGranted) {
       _audioFiles = List.from(addMusicModel.getOriginalAudioFiles);
 
-      _selectedIndexes.clear();
+      _selectedIndexesNotifier.value.clear();
 
       _decodedBytes.clear();
       for (dynamic song in addMusicModel.getOriginalAudioFiles) {
@@ -82,18 +84,18 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
     }).toList();
 
     _audioFiles = searchResults;
-    _selectedIndexes.clear();
+    _selectedIndexesNotifier.value.clear();
   }
 
   // Logic to add the currently selected songs to the all music list.
   Future<void> _addToAddedSongsList() async {
     setState(() => _isLoading = true);
 
-    if (_selectedIndexes.isNotEmpty) {
+    if (_selectedIndexesNotifier.value.isNotEmpty) {
       Map<String, dynamic> selectedSongsMap = sharedPrefs.addedSongs.isNotEmpty ? jsonDecode(sharedPrefs.addedSongs) : {};
 
       Map<String, dynamic>? prevSongData = selectedSongsMap.isEmpty ? null : selectedSongsMap.values.last;
-      for (int index in _selectedIndexes) {
+      for (int index in _selectedIndexesNotifier.value) {
         Map<String, dynamic> song = _audioFiles[index];
 
         if (!selectedSongsMap.containsKey(song['id'].toString())) { // If the song is unique, continue to actually add to the song list.
@@ -110,7 +112,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
     isAddingMusicNotifier.value = false;
   }
 
-  final Set<int> _selectedIndexes = {}; // A set of all indexes of audio files and their decoded byte data, which were selected through UI.
+  //final Set<int> _selectedIndexes = {}; // A set of all indexes of audio files and their decoded byte data, which were selected through UI.
   @override
   Widget build(BuildContext context) {
     return _isLoading ? Container(padding: const EdgeInsets.only(top: 100), child: const LoadingCircle())
@@ -328,55 +330,65 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
               itemBuilder: (BuildContext context, int index) {
                 final song = _audioFiles[index];
 
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Material(
-                    color: !_selectedIndexes.contains(index) ? Colors.transparent : Theme.of(context).colorScheme.surface,
-                    child: InkWell(
-                      child: ListTile(
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: AlbumArtLoader.loadAlbumArt(song['albumArtBase64'], _decodedBytes[song['title']]!),
-                        ),
-                        title: Text(
-                          song['title'] ?? 'Unknown Title',
-                          style: TextStyle(
-                            fontFamily: 'SourGummy',
-                            fontVariations: const [FontVariation('wght', 400)],
-                            fontSize: 15,
-                            color: Theme.of(context).colorScheme.tertiary,
-                          )
-                        ),
-                        subtitle: Text(
-                          song['artist'] ?? "Unknown Artist",
-                          style: const TextStyle(
-                            fontFamily: 'SourGummy',
-                            fontVariations: [FontVariation('wght', 300)],
-                            fontSize: 13,
-                          )
-                        ),
-                        trailing: Text(
-                          song['duration'] != null
-                            ? Duration(milliseconds: song['duration']).toString().split('.').first : 'Unknown Duration',
-                          style: TextStyle(
-                            fontFamily: 'SourGummy',
-                            fontVariations: const [FontVariation('wght', 300)],
-                            fontSize: 13,
-                            color: Theme.of(context).colorScheme.tertiary,
-                          )
-                        ),
-                        onTap: () { // What happens when the user selects/deselects a song.
-                          setState(() {
-                            if (_selectedIndexes.contains(index)) {
-                              _selectedIndexes.remove(index);
-                            } else {
-                              _selectedIndexes.add(index);
-                            }
-                          });
-                        },
-                      )
-                    )
-                  )
+                return ValueListenableBuilder<Set<int>>(
+                  valueListenable: _selectedIndexesNotifier,
+                  builder: (context, value, child) {
+                    return ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Material(
+                            color: !_selectedIndexesNotifier.value.contains(index) ? Colors.transparent : Theme.of(context).colorScheme.surface,
+                            child: InkWell(
+                                onTap: () {
+                                  final selected = Set<int>.from(_selectedIndexesNotifier.value);
+
+                                  if (selected.contains(index)) {
+                                    selected.remove(index);
+                                  } else {
+                                    selected.add(index);
+                                  }
+
+                                  _selectedIndexesNotifier.value = selected;
+                                },
+                                child: ListTile(
+                                  key: ValueKey(song['id']),
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: _decodedBytes.containsKey(song['title'])
+                                        ? Image(image: MemoryImage(_decodedBytes[song['title']]!), fit: BoxFit.cover, height: 56, width: 56)
+                                        : Image(image: MemoryImage(defaultIcon), fit: BoxFit.cover, height: 56, width: 56),
+                                  ),
+                                  title: Text(
+                                      song['title'] ?? 'Unknown Title',
+                                      style: TextStyle(
+                                        fontFamily: 'SourGummy',
+                                        fontVariations: const [FontVariation('wght', 400)],
+                                        fontSize: 15,
+                                        color: Theme.of(context).colorScheme.tertiary,
+                                      )
+                                  ),
+                                  subtitle: Text(
+                                      song['artist'] ?? "Unknown Artist",
+                                      style: const TextStyle(
+                                        fontFamily: 'SourGummy',
+                                        fontVariations: [FontVariation('wght', 300)],
+                                        fontSize: 13,
+                                      )
+                                  ),
+                                  trailing: Text(
+                                      song['duration'] != null
+                                          ? Duration(milliseconds: song['duration']).toString().split('.').first : 'Unknown Duration',
+                                      style: TextStyle(
+                                        fontFamily: 'SourGummy',
+                                        fontVariations: const [FontVariation('wght', 300)],
+                                        fontSize: 13,
+                                        color: Theme.of(context).colorScheme.tertiary,
+                                      )
+                                  ),
+                                )
+                            )
+                        )
+                    );
+                  },
                 );
               },
               separatorBuilder: (BuildContext context, int index) => const Divider(height: 15, thickness: 0.5),
