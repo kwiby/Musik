@@ -108,6 +108,8 @@ class _SongScreenState extends State<SongScreen> {
                     child: SongText().getArtistText(18, 25)
                   ),
 
+                  const Padding(padding: EdgeInsets.only(bottom: 100),),
+
                   // Buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -129,12 +131,13 @@ class _SongScreenState extends State<SongScreen> {
                               if (mounted) {
                                 setState(() {});
                               } else {
-                                log('The state object is not currently in the tree {song_screen.dart LINE 132}!');
+                                log('The state object is not currently in the tree {song_screen.dart LINE 134}!');
                               }
                             },
                             child: Icon(
                               Icons.skip_previous,
                               color: Theme.of(context).colorScheme.tertiary,
+                              size: 40,
                             ),
                           ),
                         ),
@@ -157,12 +160,13 @@ class _SongScreenState extends State<SongScreen> {
                               if (mounted) {
                                 setState(() {});
                               } else {
-                                log('The state object is not currently in the tree {song_screen.dart LINE 157}!');
+                                log('The state object is not currently in the tree {song_screen.dart LINE 163}!');
                               }
                             },
                             child: Icon(
                               audioController.isPlaying() ? Icons.pause : Icons.play_arrow,
                               color: Theme.of(context).colorScheme.tertiary,
+                              size: 40,
                             ),
                           ),
                         ),
@@ -185,12 +189,13 @@ class _SongScreenState extends State<SongScreen> {
                               if (mounted) {
                                 setState(() {});
                               } else {
-                                log('The state object is not currently in the tree {song_screen.dart LINE 188}!');
+                                log('The state object is not currently in the tree {song_screen.dart LINE 192}!');
                               }
                             },
                             child: Icon(
                               Icons.skip_next,
                               color: Theme.of(context).colorScheme.tertiary,
+                              size: 40,
                             ),
                           ),
                         ),
