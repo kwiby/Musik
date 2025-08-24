@@ -10,6 +10,7 @@ import 'package:musik/screens/home_screen/tabs/all_music_tab/all_music_tab.dart'
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../../misc/album_art.dart';
+import '../../../../../misc/default_icon_loader.dart';
 import '../../../../../misc/shared_prefs.dart';
 
 class AddMusicContainer extends StatefulWidget {
@@ -51,7 +52,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
         if (albumArtBase64 != null) {
           _decodedBytes.putIfAbsent(title, () => base64Decode(albumArtBase64));
         } else {
-          _decodedBytes.putIfAbsent(title, () => audioController.defaultIcon);
+          _decodedBytes.putIfAbsent(title, () => defaultIcon);
           log("Song album art base64 was not found {add_music_container.dart LINE 55}: $song");
         }
       }

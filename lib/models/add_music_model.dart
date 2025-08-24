@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../screens/home_screen/tabs/all_music_tab/containers/music_list_container.dart';
+
 class AddMusicModel {
   static const platform = MethodChannel('com.example.audio/files');
 
@@ -41,8 +43,10 @@ class AddMusicModel {
       _isStoragePermissionGranted = true;
       await fetchAudioFiles(useCache);
     } else {
-      log("Storage permission was denied! {add_music_model.dart LINE 44}");
+      log("Storage permission was denied! {add_music_model.dart -> requestStoragePermission()}");
     }
+
+    isLoadingNotifier.value = false;
   }
 
   // Logic to acquire all audio files and their data.
@@ -55,7 +59,7 @@ class AddMusicModel {
         return map.map<String, dynamic>((key, value) => MapEntry(key.toString(), value));
       }).toList();
     } on PlatformException catch (error) {
-      log("Failed to get audio files {add_music_model.dart LINE 58}: $error");
+      log("Failed to get audio files {add_music_model.dart -> fetchAudioFiles()}: $error");
     }
   }
 }

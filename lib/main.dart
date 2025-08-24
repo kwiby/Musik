@@ -7,11 +7,13 @@ import 'package:musik/screens/song_screen/song_screen.dart';
 import 'package:musik/themes/theme_manager.dart';
 import 'package:provider/provider.dart';
 
+import 'misc/default_icon_loader.dart';
 import 'models/add_music_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await loadDefaultIcon();
   await sharedPrefs.init(); // "SharedPrefs().init()" = new instance everytime; "sharedPrefs.init()" ('sharedPrefs' is variable made in model file) = same new instance everytime.
   await audioController.init();
 

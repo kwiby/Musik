@@ -1,10 +1,10 @@
 import 'package:flutter/services.dart';
 
-class DefaultIconLoader {
-  static Future<Uint8List> loadDefaultIcon() async {
-    final byteData = await rootBundle.load('assets/icons/Musik_Icon.png');
-    final uInt8List = byteData.buffer.asUint8List();
+late final Uint8List defaultIcon;
 
-    return uInt8List;
-  }
+Future<void> loadDefaultIcon() async {
+  final byteData = await rootBundle.load('assets/icons/Musik_Icon.png');
+  final uInt8List = byteData.buffer.asUint8List();
+
+  defaultIcon = uInt8List;
 }

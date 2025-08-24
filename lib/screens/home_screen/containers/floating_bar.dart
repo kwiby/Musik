@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:musik/audio_controller/audio_controller.dart';
+import 'package:musik/misc/default_icon_loader.dart';
 import 'package:musik/misc/page_navigator.dart';
 import 'package:musik/screens/song_screen/misc/song_text.dart';
 import 'package:musik/screens/song_screen/song_screen.dart';
@@ -60,15 +61,9 @@ class _FloatingBarState extends State<FloatingBar> {
                               // Song album art
                               Hero(
                                 tag: 'floating_bar_image',
-                                child: SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(30),
-                                    child: audioController.getPlayingSongData('decodedByte') != null
-                                        ? Image.memory(audioController.getPlayingSongData('decodedByte'), fit: BoxFit.cover)
-                                        : null,
-                                  ),
+                                child: CircleAvatar(
+                                  radius: 25,
+                                  backgroundImage: audioController.getPlayingSongData('decodedByte') != null ? MemoryImage(audioController.getPlayingSongData('decodedByte')) : MemoryImage(defaultIcon),
                                 ),
                               ),
 
@@ -91,6 +86,8 @@ class _FloatingBarState extends State<FloatingBar> {
                                       tag: 'floating_bar_artist',
                                       child: SongText().getArtistText(13, 20)
                                     ),
+
+                                    const Padding(padding: EdgeInsets.only(bottom: 4)),
                                   ],
                                 ),
                               ),
@@ -119,7 +116,7 @@ class _FloatingBarState extends State<FloatingBar> {
                                     if (mounted) {
                                       setState(() {});
                                     } else {
-                                      log('The state object is not currently in the tree {floating_bar.dart LINE 115}!');
+                                      log('The state object is not currently in the tree {floating_bar.dart -> \'Skip to previous song button\'}!');
                                     }
                                   },
                                   child: Icon(
@@ -147,7 +144,7 @@ class _FloatingBarState extends State<FloatingBar> {
                                     if (mounted) {
                                       setState(() {});
                                     } else {
-                                      log('The state object is not currently in the tree {floating_bar.dart LINE 145}!');
+                                      log('The state object is not currently in the tree {floating_bar.dart -> \'Play/pause button\'}!');
                                     }
                                   },
                                   child: Icon(
@@ -175,7 +172,7 @@ class _FloatingBarState extends State<FloatingBar> {
                                     if (mounted) {
                                       setState(() {});
                                     } else {
-                                      log('The state object is not currently in the tree {floating_bar.dart LINE 173}!');
+                                      log('The state object is not currently in the tree {floating_bar.dart -> \'Skip to next song button\'}!');
                                     }
                                   },
                                   child: Icon(

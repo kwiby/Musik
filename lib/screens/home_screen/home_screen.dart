@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       await platform.invokeMethod('sendToBackground');
     } on PlatformException catch (error) {
-      log("Error sending app to the background {home_screen.dart LINE 30}: $error");
+      log("Error sending app to the background {home_screen.dart -> _sendToBackground()}: $error");
     }
   }
 

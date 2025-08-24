@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:musik/misc/default_icon_loader.dart';
 import 'package:musik/screens/home_screen/home_screen.dart';
 
 import '../../audio_controller/audio_controller.dart';
@@ -94,7 +95,7 @@ class _SongScreenState extends State<SongScreen> {
                             borderRadius: BorderRadius.circular(30),
                             child: audioController.getPlayingSongData('decodedByte') != null
                                 ? Image.memory(audioController.getPlayingSongData('decodedByte'), fit: BoxFit.cover)
-                                : null,
+                                : Image.memory(defaultIcon),
                           ),
                         ),
                       ),
@@ -137,7 +138,7 @@ class _SongScreenState extends State<SongScreen> {
                                   if (mounted) {
                                     setState(() {});
                                   } else {
-                                    log('The state object is not currently in the tree {song_screen.dart LINE 134}!');
+                                    log('The state object is not currently in the tree {song_screen.dart -> \'Skip to previous song button\'}!');
                                   }
                                 },
                                 child: Icon(
@@ -166,7 +167,7 @@ class _SongScreenState extends State<SongScreen> {
                                   if (mounted) {
                                     setState(() {});
                                   } else {
-                                    log('The state object is not currently in the tree {song_screen.dart LINE 163}!');
+                                    log('The state object is not currently in the tree {song_screen.dart \'Play/pause button\'}!');
                                   }
                                 },
                                 child: Icon(
@@ -195,7 +196,7 @@ class _SongScreenState extends State<SongScreen> {
                                   if (mounted) {
                                     setState(() {});
                                   } else {
-                                    log('The state object is not currently in the tree {song_screen.dart LINE 192}!');
+                                    log('The state object is not currently in the tree {song_screen.dart \'Skip to next song button\'}!');
                                   }
                                 },
                                 child: Icon(

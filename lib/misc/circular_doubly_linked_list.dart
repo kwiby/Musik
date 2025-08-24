@@ -26,7 +26,7 @@ class CircularDoublyLinkedList {
       currentNode.next!.prev = newNode; // Set the next node's previous to the new node.
       currentNode.next = newNode; // Set the current node's next to the new node.
     } else {
-      log("Error in adding a song after the previous {circular_doubly_linked_list.dart LINE 23}!");
+      log("Error in adding a song after the previous {circular_doubly_linked_list.dart -> addAfter()}!");
     }
 
     _size++;
@@ -76,12 +76,28 @@ class CircularDoublyLinkedList {
     _size++;
   }
 
-  // Method to get the value of the first node (head).
+  // Method to get the node of a given song.
+  Node? getNode(Map<String, dynamic> songData) {
+    if (_head == null) return null;
+
+    Node currentNode = _head!;
+    do {
+      if (currentNode.value[0]['id'].toString() == songData['id'].toString()) {
+        return currentNode;
+      }
+
+      currentNode = currentNode.next!;
+    } while (currentNode != _head);
+
+    return null;
+  }
+
+  // Method to get the node of the first node (head).
   Node? getStart() {
     return _head; // Just return the value of the head.
   }
 
-  // Method to get the value of the last node.
+  // Method to get the node of the last node.
   Node? getEnd() {
     return _head?.prev; // Return the value of the previous node of the head (which would be the last node).
   }

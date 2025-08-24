@@ -5,14 +5,12 @@ import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:musik/misc/circular_doubly_linked_list.dart';
 
-import '../misc/default_icon_loader.dart';
 import '../screens/home_screen/home_screen.dart';
 
 class AudioController {
   final _audioPlayer = AudioPlayer();
   final CircularDoublyLinkedList _playlist = CircularDoublyLinkedList();
   late Node _currentSong;
-  late Uint8List defaultIcon;
 
   Future<void> init() async {
     await _audioPlayer.setAudioSource(ConcatenatingAudioSource(children: [])); // Set an empty audio source to load the player for the first time in the app's lifecycle, preventing freezing on first song playing (on its loading).
@@ -26,12 +24,10 @@ class AudioController {
         }
       }
     });
-
-    defaultIcon = await DefaultIconLoader.loadDefaultIcon();
   }
 
-  // Method to setup the circular doubly linked list for the playlist.
-  Future<void> setupPlaylist(List<dynamic> songs, Map<String, Uint8List> decodedBytes, int startingIndex) async {
+  // Method to setup the circular doubly linked list for the playlist (only used when the order of the songs are changed -> might even add a moveSong() function and remove this method completely).
+  Future<void> setupNewPlaylist(List<dynamic> songs, Map<String, Uint8List> decodedBytes, int startingIndex) async {
     _playlist.clear();
 
     final int numOfSongs = songs.length;
@@ -47,9 +43,16 @@ class AudioController {
 
       index = (index + 1) % numOfSongs;
     }
+  }
 
-    _currentSong = _playlist.getStart()!;
-    await playNewSongFromPlaylist();
+  // Method to find and set the current song to the clicked on song.
+  Future<void> playCurrentSong(Map<String, dynamic> songData) async {
+    Node? songNode = _playlist.getNode(songData);
+
+    if (songNode != null) {
+      _currentSong = songNode;
+      await playNewSongFromPlaylist();
+    }
   }
 
   // Method to play the next song in the playlist.
@@ -59,7 +62,7 @@ class AudioController {
   }
 
   // Method for the song playing logic, and the fetching of song data.
-  Future<void> playSong(dynamic songData, Uint8List decodedByte) async {
+  Future<void> playSong(Map<String, dynamic> songData, Uint8List decodedByte) async {
     try {
       String filePath = songData['filePath'];
 
@@ -82,7 +85,7 @@ class AudioController {
 
       play();
     } catch (error) {
-      log('Error playing song {audio_controller.dart LINE 91}: $error');
+      log('Error playing song {audio_controller.dart -> playSong()}: $error');
     }
   }
 
