@@ -84,11 +84,13 @@ class _SongScreenState extends State<SongScreen> {
                   Hero(
                     tag: 'floating_bar_image',
                     child: SizedBox(
-                      height: 200,
-                      width: 200,
+                      height: 250,
+                      width: 250,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(30),
-                        child: audioController.getPlayingSongData('decodedByte') != null ? Image.memory(audioController.getPlayingSongData('decodedByte')) : null,
+                        child: audioController.getPlayingSongData('decodedByte') != null
+                            ? Image.memory(audioController.getPlayingSongData('decodedByte'), fit: BoxFit.cover)
+                            : null,
                       ),
                     ),
                   ),
