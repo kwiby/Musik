@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 
-import '../../../audio_controller/audio_controller.dart';
-
 class SongText {
-  Widget getTitleText(double fontSize, double height) {
+  Widget getTitleText(String text, double fontSize, double height) {
     return Material(
       color: Colors.transparent,
       child: SizedBox(
@@ -21,7 +19,7 @@ class SongText {
             // This TextPainter is used as a "ghost text" to first check if the text is long enough and would need scrolling.
             final textPainter = TextPainter(
               text: TextSpan(
-                text: audioController.getPlayingSongData('title'),
+                text: text,
                 style: textStyle,
               ),
               textDirection: TextDirection.ltr,
@@ -33,14 +31,14 @@ class SongText {
             // If text fits, use regular Text widget, otherwise use Marquee
             if (textWidth <= availableWidth) {
               return Text(
-                audioController.getPlayingSongData('title'),
+                text,
                 style: textStyle,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               );
             } else {
               return Marquee(
-                text: audioController.getPlayingSongData('title'),
+                text: text,
                 style: textStyle,
                 scrollAxis: Axis.horizontal,
                 blankSpace: 30,
@@ -50,6 +48,7 @@ class SongText {
                 fadingEdgeEndFraction: 0.1,
                 accelerationDuration: Duration.zero,
                 decelerationDuration: Duration.zero,
+                pauseAfterRound: const Duration(seconds: 1),
               );
             }
           },
@@ -58,7 +57,7 @@ class SongText {
     );
   }
 
-  Widget getArtistText(double fontSize, double height) {
+  Widget getArtistText(String text, double fontSize, double height) {
     return Material(
       color: Colors.transparent,
       child: SizedBox(
@@ -75,7 +74,7 @@ class SongText {
             // This TextPainter is used as a "ghost text" to first check if the text is long enough and would need scrolling.
             final textPainter = TextPainter(
               text: TextSpan(
-                text: audioController.getPlayingSongData('artist'),
+                text: text,
                 style: textStyle,
               ),
               textDirection: TextDirection.ltr,
@@ -87,14 +86,14 @@ class SongText {
             // If text fits, use regular Text widget, otherwise use Marquee
             if (textWidth <= availableWidth) {
               return Text(
-                audioController.getPlayingSongData('artist'),
+                text,
                 style: textStyle,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               );
             } else {
               return Marquee(
-                text: audioController.getPlayingSongData('artist'),
+                text: text,
                 style: textStyle,
                 scrollAxis: Axis.horizontal,
                 blankSpace: 30,
@@ -104,6 +103,7 @@ class SongText {
                 fadingEdgeEndFraction: 0.1,
                 accelerationDuration: Duration.zero,
                 decelerationDuration: Duration.zero,
+                pauseAfterRound: const Duration(seconds: 1),
               );
             }
           },

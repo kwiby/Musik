@@ -10,6 +10,7 @@ import 'package:musik/misc/shared_prefs.dart';
 import 'package:musik/models/add_music_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../../misc/default_icon_loader.dart';
+import '../../../../song_screen/misc/song_text.dart';
 import '../all_music_tab.dart';
 
 // Value notifiers
@@ -17,7 +18,7 @@ ForcedValueNotifier<bool> isLoadingNotifier = ForcedValueNotifier<bool>(true);
 ValueNotifier<Set<int>> _selectedIndexesNotifier = ValueNotifier<Set<int>>({});
 
 // Song data
-List<dynamic> _songs = [];
+List<Map<String, dynamic>> _songs = [];
 final Map<String, Uint8List> _decodedBytes = {};
 
 
@@ -37,6 +38,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
+    _selectedIndexesNotifier.value.clear();
     _fetchAddedSongs();
   }
 
@@ -58,8 +60,9 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
   void _fetchAddedSongs() {
     //sharedPrefs.addedSongs = jsonEncode({}); // Don't do "= ''", but instead do "= jsonEncode({})"!
     if (sharedPrefs.addedSongs.isNotEmpty) {
-      List<dynamic> oldSongs = List.from(_songs);
-      _songs = jsonDecode(sharedPrefs.addedSongs).values.toList();
+      List<Map<String, dynamic>> oldSongs = List.from(_songs);
+      //_songs = jsonDecode(sharedPrefs.addedSongs) .values.toList();
+      _songs = (jsonDecode(sharedPrefs.addedSongs).values.toList() as List).map((x) => x as Map<String, dynamic>).toList();
 
       if (!_areSongListsEqual(oldSongs, _songs)) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -86,7 +89,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
   void _decodeImageBytes() {
     _decodedBytes.clear();
 
-    for (dynamic song in _songs) {
+    for (Map<String, dynamic> song in _songs) {
       //final cleanedBase64String = song['albumArtBase64'].replaceAll(RegExp(r'\s'), '');
       final title = song['title'] as String;
       final albumArtBase64 = song['albumArtBase64'] as String?;
@@ -118,6 +121,22 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
     isLoadingNotifier.value = false;
   }
 
+  // Method to update the songs list in shared preferences confirming the moving of songs.
+  void _updateSharedPrefsAfterMove() {
+    audioController.setupNewPlaylist(_songs, _decodedBytes);
+
+    if (audioController.isPlaying()) {
+      audioController.updateAfterMove(_songs);
+    }
+
+    Map<String, dynamic> newSongsMap = {};
+    for (Map<String, dynamic> song in _songs) {
+      newSongsMap.putIfAbsent(song['id'].toString(), () => song);
+    }
+
+    sharedPrefs.addedSongs = jsonEncode(newSongsMap);
+  }
+
   // Method to remove selected songs.
   void _removeSongs() {
     final sortedSelectedIndexes = _selectedIndexesNotifier.value.toList()..sort((a, b) => b.compareTo(a)); // Sort the selected indexes from highest to lowest (prevents errors as '_songs' shifts while removing other songs)
@@ -135,7 +154,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
     _selectedIndexesNotifier.value.clear();
 
     Map<String, dynamic> selectedSongsMap = {};
-    for (dynamic song in _songs) {
+    for (Map<String, dynamic> song in _songs) {
       selectedSongsMap.putIfAbsent(song['id'].toString(), () => song);
     }
 
@@ -151,6 +170,10 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
 
   // Method to toggle selected tile background colours.
   void toggleSelection(int index) {
+    if (_isInMoveMode) {
+      setState(() => _isInMoveMode = false);
+    }
+
     final selected = Set<int>.from(_selectedIndexesNotifier.value);
 
     if (selected.contains(index)) {
@@ -163,6 +186,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
   }
 
   // -=-  Main Widget  -=-
+  bool _isInMoveMode = false;
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -254,11 +278,18 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                           shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                         ),
                         onPressed: () {
-                          _selectedIndexesNotifier.value.clear();
-                          print('Entering song moving mode!');
+                          if (_songs.isNotEmpty) {
+                            _selectedIndexesNotifier.value.clear();
+
+                            if (_isInMoveMode) {
+                              _updateSharedPrefsAfterMove();
+                            }
+
+                            setState(() => _isInMoveMode = !_isInMoveMode);
+                          }
                         },
                         child: Icon(
-                          Icons.unfold_more_rounded,
+                          _isInMoveMode ? Icons.check_rounded : Icons.unfold_more_rounded,
                           color: Theme.of(context).colorScheme.tertiary,
                         ),
                       ),
@@ -368,17 +399,19 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                           color: Theme.of(context).colorScheme.tertiary,
                         )
                     )
-                ) : ListView.separated(
-                  padding: const EdgeInsets.only(left: 15, right: 15, bottom: 70),
-                  scrollDirection: Axis.vertical,
-                  itemCount: _songs.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final song = _songs[index];
+                ) : ValueListenableBuilder<Set<int>>(
+                  valueListenable: _selectedIndexesNotifier,
+                  builder: (context, value, child) {
+                    return ReorderableListView.builder(
+                      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 70),
+                      scrollDirection: Axis.vertical,
+                      itemCount: _songs.length,
+                      proxyDecorator: (child, index, animation) => child,
+                      itemBuilder: (BuildContext context, int index) {
+                        final song = _songs[index];
 
-                    return ValueListenableBuilder<Set<int>>(
-                      valueListenable: _selectedIndexesNotifier,
-                      builder: (context, value, child) {
                         return ClipRRect(
+                          key: ValueKey(song['id']),
                             borderRadius: BorderRadius.circular(15),
                             child: Material(
                                 color: !_selectedIndexesNotifier.value.contains(index) ? Colors.transparent : Theme.of(context).colorScheme.surface,
@@ -394,49 +427,68 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                                       toggleSelection(index);
                                     },
                                     child: ListTile(
-                                      key: ValueKey(song['id']),
-                                      leading: ClipRRect(
-                                          borderRadius: BorderRadius.circular(10),
-                                          child: _decodedBytes.containsKey(song['title'])
-                                              ? Image(image: MemoryImage(_decodedBytes[song['title']]!), fit: BoxFit.cover, height: 56, width: 56)
-                                              : Image(image: MemoryImage(defaultIcon), fit: BoxFit.cover, height: 56, width: 56),
+                                      leading: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          // Move mode stuff
+                                          _isInMoveMode ? ReorderableDragStartListener(
+                                            index: index,
+                                            child: const Icon(
+                                              Icons.drag_indicator_rounded,
+                                              color: Colors.grey,
+                                              size: 25,
+                                            ),
+                                          ) : const SizedBox.shrink(),
+
+                                          _isInMoveMode
+                                              ? const Padding(padding: EdgeInsets.only(right: 5))
+                                              : const Padding(padding: EdgeInsets.zero),
+
+                                          // Song image
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: _decodedBytes.containsKey(song['title'])
+                                                ? Image(image: MemoryImage(_decodedBytes[song['title']]!), fit: BoxFit.cover, height: 56, width: 56)
+                                                : Image(image: MemoryImage(defaultIcon), fit: BoxFit.cover, height: 56, width: 56),
+                                          ),
+                                        ],
                                       ),
-                                      title: Text(
-                                          song['title'] ?? 'Unknown Title',
-                                          style: TextStyle(
-                                            fontFamily: 'SourGummy',
-                                            fontVariations: const [FontVariation('wght', 400)],
-                                            fontSize: 15,
-                                            color: Theme.of(context).colorScheme.tertiary,
-                                          )
-                                      ),
-                                      subtitle: Text(
-                                          song['artist'] ?? "Unknown Artist",
-                                          style: const TextStyle(
-                                            fontFamily: 'SourGummy',
-                                            fontVariations: [FontVariation('wght', 300)],
-                                            fontSize: 13,
-                                          )
-                                      ),
+                                      title: SongText().getTitleText(song['title'], 15, 20),
+                                      subtitle: SongText().getArtistText(song['artist'], 13, 20),
                                       trailing: Text(
-                                          song['duration'] != null
-                                              ? Duration(milliseconds: song['duration']).toString().split('.').first
-                                              : 'Unknown Duration',
-                                          style: TextStyle(
-                                            fontFamily: 'SourGummy',
-                                            fontVariations: const [FontVariation('wght', 300)],
-                                            fontSize: 13,
-                                            color: Theme.of(context).colorScheme.tertiary,
-                                          )
+                                        song['duration'] != null
+                                            ? Duration(milliseconds: song['duration']).toString().split('.').first
+                                            : 'Unknown Duration',
+                                        style: TextStyle(
+                                          fontFamily: 'SourGummy',
+                                          fontVariations: const [FontVariation('wght', 300)],
+                                          fontSize: 13,
+                                          color: Theme.of(context).colorScheme.tertiary,
+                                        ),
                                       ),
                                     )
                                 )
                             )
                         );
                       },
+                      onReorder: (oldIndex, newIndex) {
+                        if (_isInMoveMode) {
+                          bool doAddAfter = newIndex > oldIndex;
+                          if (doAddAfter) {
+                            newIndex -= 1;
+                          }
+
+                          //audioController.swap(_songs[oldIndex], _songs[newIndex], doAddAfter: doAddAfter);
+
+                          final song = _songs.removeAt(oldIndex);
+                          _songs.insert(newIndex, song);
+
+                          setState(() {});
+                        }
+                      },
+                      //separatorBuilder: (BuildContext context, int index) => const Divider(height: 15, thickness: 0.5),
                     );
                   },
-                  separatorBuilder: (BuildContext context, int index) => const Divider(height: 15, thickness: 0.5),
                 ),
               ),
             ),

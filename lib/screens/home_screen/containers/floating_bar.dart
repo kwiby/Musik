@@ -80,13 +80,13 @@ class _FloatingBarState extends State<FloatingBar> {
                                     // Title
                                     Hero(
                                       tag: 'floating_bar_title',
-                                      child: SongText().getTitleText(15, 20)
+                                      child: SongText().getTitleText(audioController.getPlayingSongData('title'), 15, 20)
                                     ),
 
                                     // Artist
                                     Hero(
                                       tag: 'floating_bar_artist',
-                                      child: SongText().getArtistText(13, 20)
+                                      child: SongText().getArtistText(audioController.getPlayingSongData('artist'), 13, 20)
                                     ),
 
                                     const Padding(padding: EdgeInsets.only(bottom: 4)),

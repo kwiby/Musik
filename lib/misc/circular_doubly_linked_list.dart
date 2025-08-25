@@ -163,6 +163,16 @@ class CircularDoublyLinkedList {
     _size = 0;
   }
 
+  void swap(Node oldNode, Node targetNode, {bool doAddAfter = true}) {
+    remove(oldNode.value);
+
+    if (doAddAfter) {
+      addAfter(targetNode.value[0], oldNode.value);
+    } else {
+      addAfter(targetNode.prev!.value[0], oldNode.value);
+    }
+  }
+
   int get size {
     return _size;
   }

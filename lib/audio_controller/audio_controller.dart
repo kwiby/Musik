@@ -10,7 +10,7 @@ import '../screens/home_screen/home_screen.dart';
 class AudioController {
   final _audioPlayer = AudioPlayer();
   final CircularDoublyLinkedList _playlist = CircularDoublyLinkedList();
-  late Node _currentSong;
+  late Node _currentSongNode;
 
   bool _isLooping = false;
   bool _isShuffling = false;
@@ -53,7 +53,7 @@ class AudioController {
     Node? songNode = _playlist.getNode(songData);
 
     if (songNode != null) {
-      _currentSong = songNode;
+      _currentSongNode = songNode;
       await playNewSongFromPlaylist();
     } else {
       log('Retrieved null value when getting current song node {audio_controller.dart -> playCurrentSong()}');
@@ -62,7 +62,7 @@ class AudioController {
 
   // Method to play the next song in the playlist.
   Future<void> playNewSongFromPlaylist() async {
-    List<dynamic> songData = _currentSong.value;
+    List<dynamic> songData = _currentSongNode.value;
     await playSong(songData[0], songData[1]);
   }
 
@@ -127,17 +127,33 @@ class AudioController {
   }
 
   // Method to add a song.
-  Future<void> addAfter(Map<String, dynamic>? previousSong, Map<String, dynamic> newSongData, Uint8List decodedByte) async {
+  void addAfter(Map<String, dynamic>? previousSong, Map<String, dynamic> newSongData, Uint8List decodedByte) {
     List<dynamic> song = [newSongData, decodedByte];
 
     _playlist.addAfter(previousSong, song);
   }
 
   // Method to remove a song.
-  Future<void> remove(Map<String, dynamic> songData, Uint8List decodedByte) async {
+  void remove(Map<String, dynamic> songData, Uint8List decodedByte) {
     List<dynamic> song = [songData, decodedByte];
 
     _playlist.remove(song);
+  }
+
+  // Method to swap songs when moving them.
+  void swap(Map<String, dynamic> oldSong, Map<String, dynamic> newSong, {bool doAddAfter = true}) {
+    Node oldNode = _playlist.getNode(oldSong)!;
+    Node newNode = _playlist.getNode(newSong)!;
+
+    _playlist.swap(oldNode, newNode, doAddAfter: doAddAfter);
+
+    if (_currentSongNode.value[0]['id'].toString() == oldSong['id'].toString()) {
+      Node? updatedCurrentSongNode = _playlist.getNode(oldSong);
+
+      if (updatedCurrentSongNode != null) {
+        _currentSongNode = updatedCurrentSongNode;
+      }
+    }
   }
 
   // Method to play a song.
@@ -156,9 +172,9 @@ class AudioController {
   Future<void> skipToNext() async {
     if (!_playlist.isEmpty) {
       if (_isShuffling) {
-        _currentSong = _playlist.getRandomNode(_currentSong)!;
+        _currentSongNode = _playlist.getRandomNode(_currentSongNode)!;
       } else {
-        _currentSong = _currentSong.next!;
+        _currentSongNode = _currentSongNode.next!;
       }
 
       await playNewSongFromPlaylist();
@@ -169,12 +185,25 @@ class AudioController {
   Future<void> skipToPrev() async {
     if (!_playlist.isEmpty) {
       if (_isShuffling) {
-        _currentSong = _playlist.getRandomNode(_currentSong)!;
+        _currentSongNode = _playlist.getRandomNode(_currentSongNode)!;
       } else {
-        _currentSong = _currentSong.prev!;
+        _currentSongNode = _currentSongNode.prev!;
       }
 
       await playNewSongFromPlaylist();
+    }
+  }
+
+  // Method to update current song node after moving songs.
+  void updateAfterMove(List<Map<String, dynamic>> songs) {
+    String? currentSongId = audioController.getPlayingSongData('id');
+
+    if (currentSongId != null) {
+      Node? newCurrentNode = audioController._playlist.getNode(songs.firstWhere((song) => song['id'].toString() == currentSongId));
+
+      if (newCurrentNode != null) {
+        audioController._currentSongNode = newCurrentNode;
+      }
     }
   }
 

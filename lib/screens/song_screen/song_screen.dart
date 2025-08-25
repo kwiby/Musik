@@ -135,13 +135,13 @@ class _SongScreenState extends State<SongScreen> {
                       // Title
                       Hero(
                           tag: 'floating_bar_title',
-                          child: SongText().getTitleText(20, 25)
+                          child: SongText().getTitleText(audioController.getPlayingSongData('title'), 20, 25)
                       ),
 
                       // Artist
                       Hero(
                           tag: 'floating_bar_artist',
-                          child: SongText().getArtistText(18, 25)
+                          child: SongText().getArtistText(audioController.getPlayingSongData('artist'), 18, 25)
                       ),
 
                       // Padding between artist and buttons

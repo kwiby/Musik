@@ -23,7 +23,7 @@ class MainActivity: FlutterActivity() {
     private var cacheTimestamp: Long = 0
 
     private val CACHE_VALIDITY_MS_CONSTANT = 60000
-    private val CACHE_VALIDITY_MS_MINUTES = 15 // 15 minutes of cache utilization (set to 0 to remove caching)
+    private val CACHE_VALIDITY_MS_MINUTES = 60 // 60 minutes of cache utilization (set to 0 to remove caching)
     private var cache_validity_ms = CACHE_VALIDITY_MS_CONSTANT * CACHE_VALIDITY_MS_MINUTES
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
