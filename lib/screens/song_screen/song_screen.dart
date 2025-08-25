@@ -74,8 +74,9 @@ class _SongScreenState extends State<SongScreen> {
             ),
 
             // Back button
-            Visibility(
-              visible: _isHeroAnimationCompleted,
+            AnimatedOpacity(
+              opacity: _isHeroAnimationCompleted ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 250),
               child: SafeArea(
                 child: Align(
                   alignment: Alignment.topLeft,
@@ -141,8 +142,9 @@ class _SongScreenState extends State<SongScreen> {
                       const Padding(padding: EdgeInsets.only(bottom: 100)),
 
                       // Song timeline
-                      Visibility(
-                        visible: _isHeroAnimationCompleted,
+                      AnimatedOpacity(
+                        opacity: _isHeroAnimationCompleted ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 250),
                         child: Column(
                           children: [
                             // Position and duration texts
@@ -186,19 +188,20 @@ class _SongScreenState extends State<SongScreen> {
                             // Timeline
                             ValueListenableBuilder(
                               valueListenable: positionNotifier,
-                              builder: (context, value, child) {
+                              builder: (context, position, child) {
                                 return SliderTheme(
                                   data: SliderTheme.of(context).copyWith(
-                                    trackHeight: 15,
-                                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 11),
+                                    trackHeight: 10,
+                                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+                                    padding: const EdgeInsets.only(top: 5, left: 50, bottom: 10, right: 50)
                                   ),
                                   child: Slider(
-                                    activeColor: Theme.of(context).colorScheme.secondary,
-                                    inactiveColor: Theme.of(context).colorScheme.shadow,
                                     min: 0,
                                     max: durationNotifier.value.inMilliseconds.toDouble(),
-                                    value: positionNotifier.value.inMilliseconds.toDouble().clamp(0, durationNotifier.value.inMilliseconds.toDouble()),
+                                    value: position.inMilliseconds.toDouble().clamp(0, durationNotifier.value.inMilliseconds.toDouble()),
                                     onChanged: audioController.seek,
+                                    activeColor: Theme.of(context).colorScheme.secondary,
+                                    inactiveColor: Theme.of(context).colorScheme.shadow,
                                   ),
                                 );
                               },
