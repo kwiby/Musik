@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math' as math;
 
 class CircularDoublyLinkedList {
   int _size = 0;
@@ -90,6 +91,24 @@ class CircularDoublyLinkedList {
     } while (currentNode != _head);
 
     return null;
+  }
+
+  // Method to get a random node of a song.
+  Node? getRandomNode(Node currentSongNode) {
+    if (_head == null) return null;
+
+    int randIndex = math.Random().nextInt(size);
+
+    Node currentNode = _head!;
+    for (int index = 0; index < randIndex; index++) {
+      currentNode = currentNode.next!;
+    }
+
+    if (currentNode != currentSongNode) {
+      return currentNode;
+    } else {
+      return currentNode.next;
+    }
   }
 
   // Method to get the node of the first node (head).

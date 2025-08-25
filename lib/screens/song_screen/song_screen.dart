@@ -12,6 +12,12 @@ import 'misc/song_text.dart';
 ValueNotifier<Duration> positionNotifier = ValueNotifier<Duration>(Duration.zero);
 ValueNotifier<Duration> durationNotifier = ValueNotifier<Duration>(Duration.zero);
 
+// Constants
+const int fadeInDurationCONSTANT = 250;
+const double buttonIconSizeCONSTANT = 30;
+const double mainButtonWidthCONSTANT = 50;
+const double altButtonWidthCONSTANT = 80;
+
 
 class SongScreen extends StatefulWidget {
   const SongScreen({super.key});
@@ -75,8 +81,8 @@ class _SongScreenState extends State<SongScreen> {
 
             // Back button
             AnimatedOpacity(
-              opacity: _isHeroAnimationCompleted ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 250),
+              opacity: _isHeroAnimationCompleted ? 1 : 0,
+              duration: const Duration(milliseconds: fadeInDurationCONSTANT),
               child: SafeArea(
                 child: Align(
                   alignment: Alignment.topLeft,
@@ -92,7 +98,7 @@ class _SongScreenState extends State<SongScreen> {
                       PageNavigator.backButton(context);
                     },
                     child: Icon(
-                      Icons.arrow_back_outlined,
+                      Icons.arrow_back_rounded,
                       color: Theme.of(context).colorScheme.tertiary,
                     ),
                   ),
@@ -143,8 +149,8 @@ class _SongScreenState extends State<SongScreen> {
 
                       // Song timeline
                       AnimatedOpacity(
-                        opacity: _isHeroAnimationCompleted ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 250),
+                        opacity: _isHeroAnimationCompleted ? 1 : 0,
+                        duration: const Duration(milliseconds: fadeInDurationCONSTANT),
                         child: Column(
                           children: [
                             // Position and duration texts
@@ -214,11 +220,36 @@ class _SongScreenState extends State<SongScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          // Loop current song button
+                          AnimatedOpacity(
+                            opacity: _isHeroAnimationCompleted ? 1 : 0,
+                            duration: const Duration(milliseconds: fadeInDurationCONSTANT),
+                            child: SizedBox(
+                              width: altButtonWidthCONSTANT,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                  backgroundColor: WidgetStateColor.transparent,
+                                  shadowColor: WidgetStateColor.transparent,
+                                  shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                                ),
+                                onPressed: () {
+                                  setState(() => audioController.toggleLooping());
+                                },
+                                child: Icon(
+                                  audioController.getIsLooping() ? Icons.change_circle_rounded : Icons.loop_rounded,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  size: buttonIconSizeCONSTANT,
+                                ),
+                              ),
+                            ),
+                          ),
+
                           // Skip to previous song button
                           Hero(
                             tag: 'floating_bar_skipToPrev',
                             child: SizedBox(
-                              width: 60,
+                              width: mainButtonWidthCONSTANT,
                               child: ElevatedButton(
                                 style: ButtonStyle(
                                   padding: const WidgetStatePropertyAll(EdgeInsets.zero),
@@ -235,9 +266,9 @@ class _SongScreenState extends State<SongScreen> {
                                   }
                                 },
                                 child: Icon(
-                                  Icons.skip_previous,
+                                  Icons.skip_previous_rounded,
                                   color: Theme.of(context).colorScheme.tertiary,
-                                  size: 40,
+                                  size: buttonIconSizeCONSTANT,
                                 ),
                               ),
                             ),
@@ -247,7 +278,7 @@ class _SongScreenState extends State<SongScreen> {
                           Hero(
                             tag: 'floating_bar_pause',
                             child: SizedBox(
-                              width: 60,
+                              width: mainButtonWidthCONSTANT,
                               child: ElevatedButton(
                                 style: ButtonStyle(
                                   padding: const WidgetStatePropertyAll(EdgeInsets.zero),
@@ -264,9 +295,9 @@ class _SongScreenState extends State<SongScreen> {
                                   }
                                 },
                                 child: Icon(
-                                  audioController.isPlaying() ? Icons.pause : Icons.play_arrow,
+                                  audioController.isPlaying() ? Icons.pause_rounded : Icons.play_arrow_rounded,
                                   color: Theme.of(context).colorScheme.tertiary,
-                                  size: 40,
+                                  size: buttonIconSizeCONSTANT,
                                 ),
                               ),
                             ),
@@ -276,7 +307,7 @@ class _SongScreenState extends State<SongScreen> {
                           Hero(
                             tag: 'floating_bar_skipToNext',
                             child: SizedBox(
-                              width: 60,
+                              width: mainButtonWidthCONSTANT,
                               child: ElevatedButton(
                                 style: ButtonStyle(
                                   padding: const WidgetStatePropertyAll(EdgeInsets.zero),
@@ -293,15 +324,38 @@ class _SongScreenState extends State<SongScreen> {
                                   }
                                 },
                                 child: Icon(
-                                  Icons.skip_next,
+                                  Icons.skip_next_rounded,
                                   color: Theme.of(context).colorScheme.tertiary,
-                                  size: 40,
+                                  size: buttonIconSizeCONSTANT,
                                 ),
                               ),
                             ),
                           ),
 
-                          const Padding(padding: EdgeInsets.only(right: 10)), // Padding after buttons
+                          // Shuffle songs button
+                          AnimatedOpacity(
+                            opacity: _isHeroAnimationCompleted ? 1 : 0,
+                            duration: const Duration(milliseconds: fadeInDurationCONSTANT),
+                            child: SizedBox(
+                              width: altButtonWidthCONSTANT,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                  backgroundColor: WidgetStateColor.transparent,
+                                  shadowColor: WidgetStateColor.transparent,
+                                  shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                                ),
+                                onPressed: () {
+                                  setState(() => audioController.toggleShuffling());
+                                },
+                                child: Icon(
+                                  audioController.getIsShuffling() ? Icons.shuffle_on_rounded : Icons.shuffle_rounded,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  size: audioController.getIsShuffling() ? buttonIconSizeCONSTANT - 6 : buttonIconSizeCONSTANT,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],

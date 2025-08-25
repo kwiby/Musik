@@ -12,13 +12,20 @@ class AudioController {
   final CircularDoublyLinkedList _playlist = CircularDoublyLinkedList();
   late Node _currentSong;
 
+  bool _isLooping = false;
+  bool _isShuffling = false;
+
   Future<void> init() async {
     await _audioPlayer.setAudioSource(ConcatenatingAudioSource(children: [])); // Set an empty audio source to load the player for the first time in the app's lifecycle, preventing freezing on first song playing (on its loading).
 
     // Song completion listener.
     _audioPlayer.processingStateStream.listen((state) async {
       if (state == ProcessingState.completed) {
-        await skipToNext();
+        if (_isLooping) {
+          playNewSongFromPlaylist();
+        } else {
+          await skipToNext();
+        }
 
         if (!isPlaying()) {
           isPlayingSongNotifier.value = false;
@@ -146,7 +153,12 @@ class AudioController {
   // Method to skip to next song.
   Future<void> skipToNext() async {
     if (!_playlist.isEmpty) {
-      _currentSong = _currentSong.next!;
+      if (_isShuffling) {
+        _currentSong = _playlist.getRandomNode(_currentSong)!;
+      } else {
+        _currentSong = _currentSong.next!;
+      }
+
       await playNewSongFromPlaylist();
     }
   }
@@ -154,9 +166,39 @@ class AudioController {
   // Method to skip to previous song.
   Future<void> skipToPrev() async {
     if (!_playlist.isEmpty) {
-      _currentSong = _currentSong.prev!;
+      if (_isShuffling) {
+        _currentSong = _playlist.getRandomNode(_currentSong)!;
+      } else {
+        _currentSong = _currentSong.prev!;
+      }
+
       await playNewSongFromPlaylist();
     }
+  }
+
+  // Method to seek through a song.
+  Future<void> seek(double milliseconds) async {
+    await _audioPlayer.seek(Duration(milliseconds: milliseconds.toInt()));
+  }
+
+  // Method to toggle looping.
+  void toggleLooping() {
+    _isLooping = !_isLooping;
+  }
+
+  // Method to toggle shuffling.
+  void toggleShuffling() {
+    _isShuffling = !_isShuffling;
+  }
+
+  // Method to get isLooping boolean.
+  bool getIsLooping() {
+    return _isLooping;
+  }
+
+  // Method to get isShuffling boolean.
+  bool getIsShuffling() {
+    return _isShuffling;
   }
 
   // Method to get current position of song
@@ -169,11 +211,7 @@ class AudioController {
     return _audioPlayer.duration!;
   }
 
-  // Method to seek through a song.
-  Future<void> seek(double milliseconds) async {
-    await _audioPlayer.seek(Duration(milliseconds: milliseconds.toInt()));
-  }
-
+  // Method to get the audio player.
   AudioPlayer getAudioPlayer() {
     return _audioPlayer;
   }

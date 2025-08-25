@@ -135,7 +135,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                 isAddingMusicNotifier.value = false;
               },
               child: Icon(
-                Icons.arrow_back_outlined,
+                Icons.arrow_back_rounded,
                 color: Theme.of(context).colorScheme.tertiary,
               ),
             ),
@@ -171,7 +171,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                     openAppSettings();
                   },
                   child: Icon(
-                    Icons.settings,
+                    Icons.settings_rounded,
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                 ),
@@ -191,7 +191,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                     _fetchModelData(true);
                   },
                   child: Icon(
-                    Icons.refresh,
+                    Icons.refresh_rounded,
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                 ),
@@ -221,7 +221,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                 isAddingMusicNotifier.value = false;
               },
               child: Icon(
-                Icons.arrow_back_outlined,
+                Icons.arrow_back_rounded,
                 color: Theme.of(context).colorScheme.tertiary,
               ),
             ),
@@ -237,7 +237,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                 cursorColor: Theme.of(context).colorScheme.inversePrimary,
                 controller: _searchController,
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.search),
+                  prefixIcon: const Icon(Icons.search_rounded),
                   prefixIconColor: WidgetStateColor.resolveWith((states) {
                     if (states.contains(WidgetState.focused)) {
                       return Theme.of(context).colorScheme.inversePrimary;
@@ -276,7 +276,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                   _fetchModelData(false);
                 },
                 child: Icon(
-                  Icons.refresh,
+                  Icons.refresh_rounded,
                   color: Theme.of(context).colorScheme.tertiary,
                 ),
               ),

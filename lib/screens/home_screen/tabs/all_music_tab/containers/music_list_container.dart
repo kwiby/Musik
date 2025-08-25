@@ -204,7 +204,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                             openAppSettings();
                           },
                           child: Icon(
-                            Icons.settings,
+                            Icons.settings_rounded,
                             color: Theme.of(context).colorScheme.tertiary,
                           ),
                         ),
@@ -224,7 +224,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                             _checkPermissionStatus();
                           },
                           child: Icon(
-                            Icons.refresh,
+                            Icons.refresh_rounded,
                             color: Theme.of(context).colorScheme.tertiary,
                           ),
                         ),
@@ -260,7 +260,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                             _removeSongs();
                           },
                           child: Icon(
-                            Icons.delete_forever,
+                            Icons.delete_forever_rounded,
                             color: Theme.of(context).colorScheme.tertiary,
                           ),
                         ),
@@ -284,7 +284,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                       isAddingMusicNotifier.value = true;
                     },
                     child: Icon(
-                      Icons.add,
+                      Icons.add_rounded,
                       color: Theme.of(context).colorScheme.tertiary,
                     ),
                   ),

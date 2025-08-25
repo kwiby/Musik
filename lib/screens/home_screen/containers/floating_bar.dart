@@ -122,7 +122,7 @@ class _FloatingBarState extends State<FloatingBar> {
                                     }
                                   },
                                   child: Icon(
-                                    Icons.skip_previous,
+                                    Icons.skip_previous_rounded,
                                     color: Theme.of(context).colorScheme.tertiary,
                                   ),
                                 ),
@@ -150,7 +150,7 @@ class _FloatingBarState extends State<FloatingBar> {
                                     }
                                   },
                                   child: Icon(
-                                    audioController.isPlaying() ? Icons.pause : Icons.play_arrow,
+                                    audioController.isPlaying() ? Icons.pause_rounded : Icons.play_arrow_rounded,
                                     color: Theme.of(context).colorScheme.tertiary,
                                   ),
                                 ),
@@ -178,7 +178,7 @@ class _FloatingBarState extends State<FloatingBar> {
                                     }
                                   },
                                   child: Icon(
-                                    Icons.skip_next,
+                                    Icons.skip_next_rounded,
                                     color: Theme.of(context).colorScheme.tertiary,
                                   ),
                                 ),
