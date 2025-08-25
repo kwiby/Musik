@@ -13,7 +13,7 @@ ValueNotifier<Duration> positionNotifier = ValueNotifier<Duration>(Duration.zero
 ValueNotifier<Duration> durationNotifier = ValueNotifier<Duration>(Duration.zero);
 
 // Constants
-const int fadeInDurationCONSTANT = 250;
+const int fadeInDurationCONSTANT = 150;
 const double buttonIconSizeCONSTANT = 30;
 const double mainButtonWidthCONSTANT = 50;
 const double altButtonWidthCONSTANT = 80;

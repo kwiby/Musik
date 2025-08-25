@@ -107,6 +107,8 @@ class AudioController {
         return tag == null ? '' : tag.title;
       case 'artist':
         return tag == null ? '' : tag.artist;
+      case 'filePath':
+        return tag == null ? '' : tag.extras?['filePath'];
     }
   }
 

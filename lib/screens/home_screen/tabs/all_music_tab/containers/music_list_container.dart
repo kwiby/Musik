@@ -163,8 +163,6 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
   }
 
   // -=-  Main Widget  -=-
-  //bool _isInSelectionMode = false;
-  //final Set<int> _selectedIndexes = {};
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -237,57 +235,118 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
           children: [
             const Padding(padding: EdgeInsets.only(top: 50)), // Top padding
 
-            // -=-  Remove Song Button  -=-
+            // -=-  Buttons  -=-
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // -=-  Remove Song Button  -=-
-                ValueListenableBuilder<Set<int>>(
-                  valueListenable: _selectedIndexesNotifier,
-                  builder: (context, value, child) {
-                    return Visibility(
-                      visible: value.isNotEmpty,
-                      child: SizedBox(
-                        width: 40,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                            backgroundColor: WidgetStateColor.transparent,
-                            shadowColor: WidgetStateColor.transparent,
-                            shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
-                          ),
-                          onPressed: () { // Logic for when the user removes selected songs.
-                            _removeSongs();
-                          },
-                          child: Icon(
-                            Icons.delete_forever_rounded,
-                            color: Theme.of(context).colorScheme.tertiary,
-                          ),
+                // Editing buttons
+                Row(
+                  children: [
+                    // Move songs button
+                    Container(
+                      width: 40,
+                      margin: const EdgeInsets.only(left: 12),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                          backgroundColor: WidgetStateColor.transparent,
+                          shadowColor: WidgetStateColor.transparent,
+                          shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                        ),
+                        onPressed: () {
+                          _selectedIndexesNotifier.value.clear();
+                          print('Entering song moving mode!');
+                        },
+                        child: Icon(
+                          Icons.unfold_more_rounded,
+                          color: Theme.of(context).colorScheme.tertiary,
                         ),
                       ),
-                    );
-                  },
+                    ),
+
+                    // -=-  Remove Song Button  -=-
+                    ValueListenableBuilder<Set<int>>(
+                      valueListenable: _selectedIndexesNotifier,
+                      builder: (context, value, child) {
+                        return Visibility(
+                          visible: value.isNotEmpty,
+                          child: SizedBox(
+                            width: 40,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                backgroundColor: WidgetStateColor.transparent,
+                                shadowColor: WidgetStateColor.transparent,
+                                shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                              ),
+                              onPressed: () { // Logic for when the user removes selected songs.
+                                _removeSongs();
+                              },
+                              child: Icon(
+                                Icons.delete_outline_rounded,
+                                color: Theme.of(context).colorScheme.tertiary,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
 
-                // -=-  Add Song Button  -=-
-                Container(
-                  width: 40,
-                  margin: const EdgeInsets.only(right: 12),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                      backgroundColor: WidgetStateColor.transparent,
-                      shadowColor: WidgetStateColor.transparent,
-                      shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                // Adding buttons
+                Row(
+                  children: [
+                    // Add to playlist button
+                    ValueListenableBuilder<Set<int>>(
+                      valueListenable: _selectedIndexesNotifier,
+                      builder: (context, value, child) {
+                        return Visibility(
+                          visible: value.isNotEmpty,
+                          child: SizedBox(
+                            width: 40,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                                backgroundColor: WidgetStateColor.transparent,
+                                shadowColor: WidgetStateColor.transparent,
+                                shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                              ),
+                              onPressed: () { // Logic for when the user removes selected songs.
+                                _removeSongs();
+                              },
+                              child: Icon(
+                                Icons.playlist_add_rounded,
+                                color: Theme.of(context).colorScheme.tertiary,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    onPressed: () {
-                      isAddingMusicNotifier.value = true;
-                    },
-                    child: Icon(
-                      Icons.add_rounded,
-                      color: Theme.of(context).colorScheme.tertiary,
+
+                    // -=-  Add Song Button  -=-
+                    Container(
+                      width: 40,
+                      margin: const EdgeInsets.only(right: 12),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                          backgroundColor: WidgetStateColor.transparent,
+                          shadowColor: WidgetStateColor.transparent,
+                          shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
+                        ),
+                        onPressed: () {
+                          _selectedIndexesNotifier.value.clear();
+                          isAddingMusicNotifier.value = true;
+                        },
+                        child: Icon(
+                          Icons.add_rounded,
+                          color: Theme.of(context).colorScheme.tertiary,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
