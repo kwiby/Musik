@@ -3,6 +3,7 @@ import 'package:musik/screens/home_screen/home_screen.dart';
 import 'containers/add_music_container.dart';
 import 'containers/music_list_container.dart';
 
+// Value notifiers
 ValueNotifier<bool> isAddingMusicNotifier = ValueNotifier<bool>(false);
 
 class AllMusicContainer extends StatefulWidget {
@@ -13,6 +14,13 @@ class AllMusicContainer extends StatefulWidget {
 }
 
 class _AllMusicContainerState extends State<AllMusicContainer> {
+  @override
+  void initState() {
+    super.initState();
+
+    isAddingMusicNotifier.value = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(

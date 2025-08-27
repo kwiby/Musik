@@ -23,7 +23,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Users\\moxin\\AppData\\Local\\Android\\Sdk\\ndk\\26.3.11579264"
+			"value" : "C:\\Users\\moxin\\AppData\\Local\\Android\\sdk\\ndk\\26.3.11579264"
 		},
 		{
 			"name" : "ANDROID_PLATFORM",
@@ -75,7 +75,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Users\\moxin\\AppData\\Local\\Android\\Sdk\\ndk\\26.3.11579264"
+			"value" : "C:\\Users\\moxin\\AppData\\Local\\Android\\sdk\\ndk\\26.3.11579264"
 		},
 		{
 			"name" : "CMAKE_AR",

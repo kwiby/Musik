@@ -15,10 +15,11 @@ import '../all_music_tab.dart';
 
 // Value notifiers
 ForcedValueNotifier<bool> isLoadingNotifier = ForcedValueNotifier<bool>(true);
-ValueNotifier<Set<int>> _selectedIndexesNotifier = ValueNotifier<Set<int>>({});
+//ValueNotifier<Set<int>> _selectedIndexesNotifier = ValueNotifier<Set<int>>({});
 
 // Song data
 List<Map<String, dynamic>> _songs = [];
+List<Map<String, dynamic>> _beforeMoveSongs = [];
 final Map<String, Uint8List> _decodedBytes = {};
 
 
@@ -31,6 +32,7 @@ class AllMusicListContainer extends StatefulWidget {
 }
 
 bool _wasPlaylistSetup = false;
+Set<int> _selectedIndexes = {};
 class _AllMusicListContainerState extends State<AllMusicListContainer> with WidgetsBindingObserver {
 
   @override
@@ -38,7 +40,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    _selectedIndexesNotifier.value.clear();
+    _selectedIndexes.clear();
     _fetchAddedSongs();
   }
 
@@ -122,12 +124,14 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
   }
 
   // Method to update the songs list in shared preferences confirming the moving of songs.
-  void _updateSharedPrefsAfterMove() {
+  Future<void> _updateSharedPrefsAfterMove() async {
     audioController.setupNewPlaylist(_songs, _decodedBytes);
 
     if (audioController.isPlaying()) {
       audioController.updateAfterMove(_songs);
     }
+
+    await Future.delayed(Duration.zero);
 
     Map<String, dynamic> newSongsMap = {};
     for (Map<String, dynamic> song in _songs) {
@@ -139,7 +143,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
 
   // Method to remove selected songs.
   void _removeSongs() {
-    final sortedSelectedIndexes = _selectedIndexesNotifier.value.toList()..sort((a, b) => b.compareTo(a)); // Sort the selected indexes from highest to lowest (prevents errors as '_songs' shifts while removing other songs)
+    final sortedSelectedIndexes = _selectedIndexes.toList()..sort((a, b) => b.compareTo(a)); // Sort the selected indexes from highest to lowest (prevents errors as '_songs' shifts while removing other songs)
 
     String? currentSongId = audioController.getPlayingSongData('id');
     for (int index in sortedSelectedIndexes) {
@@ -151,7 +155,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
       _songs.removeAt(index);
     }
 
-    _selectedIndexesNotifier.value.clear();
+    _selectedIndexes.clear();
 
     Map<String, dynamic> selectedSongsMap = {};
     for (Map<String, dynamic> song in _songs) {
@@ -174,7 +178,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
       setState(() => _isInMoveMode = false);
     }
 
-    final selected = Set<int>.from(_selectedIndexesNotifier.value);
+    final selected = Set<int>.from(_selectedIndexes);
 
     if (selected.contains(index)) {
       selected.remove(index);
@@ -182,7 +186,18 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
       selected.add(index);
     }
 
-    _selectedIndexesNotifier.value = selected;
+    setState(() => _selectedIndexes = selected);
+  }
+
+  // Helper method for confirming song moving.
+  bool _hasSongsChangedAfterMove() {
+    for (int i = 0; i < _songs.length; i++) {
+      if (_songs[i]['id'] != _beforeMoveSongs[i]['id']) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   // -=-  Main Widget  -=-
@@ -279,13 +294,21 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                         ),
                         onPressed: () {
                           if (_songs.isNotEmpty) {
-                            _selectedIndexesNotifier.value.clear();
+                            _selectedIndexes.clear();
 
                             if (_isInMoveMode) {
-                              _updateSharedPrefsAfterMove();
+                              if (_hasSongsChangedAfterMove()) {
+                                _updateSharedPrefsAfterMove();
+                              }
+
+                              _isInMoveMode = false;
+                            } else {
+                              _beforeMoveSongs = _songs.map((song) => Map<String, dynamic>.from(song)).toList();
+
+                              _isInMoveMode = true;
                             }
 
-                            setState(() => _isInMoveMode = !_isInMoveMode);
+                            setState(() {});
                           }
                         },
                         child: Icon(
@@ -296,31 +319,26 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                     ),
 
                     // -=-  Remove Song Button  -=-
-                    ValueListenableBuilder<Set<int>>(
-                      valueListenable: _selectedIndexesNotifier,
-                      builder: (context, value, child) {
-                        return Visibility(
-                          visible: value.isNotEmpty,
-                          child: SizedBox(
-                            width: 40,
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                                backgroundColor: WidgetStateColor.transparent,
-                                shadowColor: WidgetStateColor.transparent,
-                                shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
-                              ),
-                              onPressed: () { // Logic for when the user removes selected songs.
-                                _removeSongs();
-                              },
-                              child: Icon(
-                                Icons.delete_outline_rounded,
-                                color: Theme.of(context).colorScheme.tertiary,
-                              ),
-                            ),
+                    Visibility(
+                      visible: _selectedIndexes.isNotEmpty,
+                      child: SizedBox(
+                        width: 40,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                            backgroundColor: WidgetStateColor.transparent,
+                            shadowColor: WidgetStateColor.transparent,
+                            shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                           ),
-                        );
-                      },
+                          onPressed: () { // Logic for when the user removes selected songs.
+                            _removeSongs();
+                          },
+                          child: Icon(
+                            Icons.delete_outline_rounded,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -329,31 +347,26 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                 Row(
                   children: [
                     // Add to playlist button
-                    ValueListenableBuilder<Set<int>>(
-                      valueListenable: _selectedIndexesNotifier,
-                      builder: (context, value, child) {
-                        return Visibility(
-                          visible: value.isNotEmpty,
-                          child: SizedBox(
-                            width: 40,
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                                backgroundColor: WidgetStateColor.transparent,
-                                shadowColor: WidgetStateColor.transparent,
-                                shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
-                              ),
-                              onPressed: () { // Logic for when the user removes selected songs.
-                                _removeSongs();
-                              },
-                              child: Icon(
-                                Icons.playlist_add_rounded,
-                                color: Theme.of(context).colorScheme.tertiary,
-                              ),
-                            ),
+                    Visibility(
+                      visible: _selectedIndexes.isNotEmpty,
+                      child: SizedBox(
+                        width: 40,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                            backgroundColor: WidgetStateColor.transparent,
+                            shadowColor: WidgetStateColor.transparent,
+                            shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                           ),
-                        );
-                      },
+                          onPressed: () { // Logic for when the user removes selected songs.
+                            _removeSongs();
+                          },
+                          child: Icon(
+                            Icons.playlist_add_rounded,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
+                        ),
+                      ),
                     ),
 
                     // -=-  Add Song Button  -=-
@@ -368,7 +381,7 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                           shape: WidgetStateProperty.all<CircleBorder>(const CircleBorder()),
                         ),
                         onPressed: () {
-                          _selectedIndexesNotifier.value.clear();
+                          _selectedIndexes.clear();
                           isAddingMusicNotifier.value = true;
                         },
                         child: Icon(
@@ -399,25 +412,24 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                           color: Theme.of(context).colorScheme.tertiary,
                         )
                     )
-                ) : ValueListenableBuilder<Set<int>>(
-                  valueListenable: _selectedIndexesNotifier,
-                  builder: (context, value, child) {
-                    return ReorderableListView.builder(
-                      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 70),
-                      scrollDirection: Axis.vertical,
-                      itemCount: _songs.length,
-                      proxyDecorator: (child, index, animation) => child,
-                      itemBuilder: (BuildContext context, int index) {
-                        final song = _songs[index];
+                ) : ReorderableListView.builder(
+                  padding: const EdgeInsets.only(left: 15, right: 15, bottom: 70),
+                  scrollDirection: Axis.vertical,
+                  itemCount: _songs.length,
+                  proxyDecorator: (child, index, animation) => child,
+                  itemBuilder: (BuildContext context, int index) {
+                    final song = _songs[index];
 
-                        return ClipRRect(
-                          key: ValueKey(song['id']),
+                    return Column(
+                      key: ValueKey(song['id']),
+                      children: [
+                        ClipRRect(
                             borderRadius: BorderRadius.circular(15),
                             child: Material(
-                                color: !_selectedIndexesNotifier.value.contains(index) ? Colors.transparent : Theme.of(context).colorScheme.surface,
+                                color: !_selectedIndexes.contains(index) ? Colors.transparent : Theme.of(context).colorScheme.surface,
                                 child: InkWell(
                                     onTap: () async {
-                                      if (_selectedIndexesNotifier.value.isNotEmpty) {
+                                      if (_selectedIndexes.isNotEmpty) {
                                         toggleSelection(index);
                                       } else {
                                         await _playSong(index);
@@ -469,26 +481,29 @@ class _AllMusicListContainerState extends State<AllMusicListContainer> with Widg
                                     )
                                 )
                             )
-                        );
-                      },
-                      onReorder: (oldIndex, newIndex) {
-                        if (_isInMoveMode) {
-                          bool doAddAfter = newIndex > oldIndex;
-                          if (doAddAfter) {
-                            newIndex -= 1;
-                          }
+                        ),
 
-                          //audioController.swap(_songs[oldIndex], _songs[newIndex], doAddAfter: doAddAfter);
-
-                          final song = _songs.removeAt(oldIndex);
-                          _songs.insert(newIndex, song);
-
-                          setState(() {});
-                        }
-                      },
-                      //separatorBuilder: (BuildContext context, int index) => const Divider(height: 15, thickness: 0.5),
+                        // Divider
+                        if (index < _songs.length - 1) const Divider(height: 15, thickness: 0.5, indent: 80, endIndent: 5),
+                      ],
                     );
                   },
+                  onReorder: (oldIndex, newIndex) {
+                    if (_isInMoveMode) {
+                      bool doAddAfter = newIndex > oldIndex;
+                      if (doAddAfter) {
+                        newIndex -= 1;
+                      }
+
+                      //audioController.swap(_songs[oldIndex], _songs[newIndex], doAddAfter: doAddAfter);
+
+                      final song = _songs.removeAt(oldIndex);
+                      _songs.insert(newIndex, song);
+
+                      setState(() {});
+                    }
+                  },
+                  //separatorBuilder: (BuildContext context, int index) => const Divider(height: 15, thickness: 0.5),
                 ),
               ),
             ),

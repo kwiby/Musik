@@ -11,7 +11,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86_64"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "ANDROID_NDK",
@@ -23,7 +23,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Users\\moxin\\AppData\\Local\\Android\\Sdk\\ndk\\26.3.11579264"
+			"value" : "C:\\Users\\moxin\\AppData\\Local\\Android\\sdk\\ndk\\26.3.11579264"
 		},
 		{
 			"name" : "ANDROID_PLATFORM",
@@ -63,7 +63,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86_64"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_ANDROID_NDK",
@@ -75,7 +75,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "C:\\Users\\moxin\\AppData\\Local\\Android\\Sdk\\ndk\\26.3.11579264"
+			"value" : "C:\\Users\\moxin\\AppData\\Local\\Android\\sdk\\ndk\\26.3.11579264"
 		},
 		{
 			"name" : "CMAKE_AR",
@@ -151,7 +151,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "d:/GitHub/Musik/android/app/.cxx/Debug/y2d736g3/x86_64"
+			"value" : "d:/GitHub/Musik/android/app/.cxx/Debug/y2d736g3/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -751,7 +751,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "D:\\GitHub\\Musik\\build\\app\\intermediates\\cxx\\Debug\\y2d736g3\\obj\\x86_64"
+			"value" : "D:\\GitHub\\Musik\\build\\app\\intermediates\\cxx\\Debug\\y2d736g3\\obj\\arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -1023,7 +1023,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "D:\\GitHub\\Musik\\build\\app\\intermediates\\cxx\\Debug\\y2d736g3\\obj\\x86_64"
+			"value" : "D:\\GitHub\\Musik\\build\\app\\intermediates\\cxx\\Debug\\y2d736g3\\obj\\arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1331,7 +1331,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "D:/GitHub/Musik/android/app/.cxx/Debug/y2d736g3/x86_64"
+			"value" : "D:/GitHub/Musik/android/app/.cxx/Debug/y2d736g3/arm64-v8a"
 		},
 		{
 			"name" : "Project_IS_TOP_LEVEL",

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:musik/screens/home_screen/home_screen.dart';
-import 'package:musik/screens/home_screen/tabs/all_music_tab/all_music_tab.dart';
 
 class PlaylistsContainer extends Container {
   PlaylistsContainer({super.key});
@@ -62,7 +61,6 @@ class PlaylistsContainer extends Container {
                 ),
                 onPressed: () {
                   tabNotifier.value = 'All Music';
-                  isAddingMusicNotifier.value = false;
                 },
               ),
             ),

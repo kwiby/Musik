@@ -372,6 +372,7 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                                         fontFamily: 'SourGummy',
                                         fontVariations: [FontVariation('wght', 300)],
                                         fontSize: 13,
+                                        color: Colors.grey,
                                       )
                                   ),
                                   trailing: Text(
@@ -391,7 +392,8 @@ class _AddMusicContainerState extends State<AddMusicContainer> {
                   },
                 );
               },
-              separatorBuilder: (BuildContext context, int index) => const Divider(height: 15, thickness: 0.5),
+
+              separatorBuilder: (BuildContext context, int index) => const Divider(height: 15, thickness: 0.5, indent: 80, endIndent: 5),
             ),
           ),
         ),
