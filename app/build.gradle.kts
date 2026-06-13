@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.musik"
+        applicationId = "com.example.musiky"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

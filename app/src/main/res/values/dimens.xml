@@ -1,0 +1,3 @@
+<resources>
+    <dimen name="watermark_padding">16dp</dimen>
+</resources>
