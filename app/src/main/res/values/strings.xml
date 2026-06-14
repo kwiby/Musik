@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">Musik</string>
+    <string name="all_music_tab" translatable="true">All Music</string>
+    <string name="playlists_tab" translatable="true">Playlists</string>
 </resources>
