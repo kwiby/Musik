@@ -5,35 +5,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.musik.data.MusikViewModel
 import com.example.musik.ui.components.MainContainer
 import com.example.musik.ui.components.MusikTopAppBar
 
 @Composable
 fun MusikApp(
-	//viewModel: MusikViewModel = viewModel(),
-	navController: NavHostController = rememberNavController()
+	viewModel: MusikViewModel = viewModel()
 ) {
 	Scaffold(
 		containerColor = MaterialTheme.colorScheme.background,
 		topBar = { MusikTopAppBar() }
 	) { innerPadding ->
-		//Column(modifier = Modifier.padding(innerPadding)) { }
-		//val uiState by viewModel.uiState.collectAsState()
-		MainContainer(modifier = Modifier.padding(innerPadding))
-		/*
-		NavHost(
-			navController = navController,
-			startDestination = Routes.EntryPoint.name,
+		MainContainer(
+			viewModel = viewModel,
 			modifier = Modifier.padding(innerPadding)
-		) {
-			composable(route = Routes.EntryPoint.name) {
-				val context = LocalContext.current
-
-				MainContainer()
-			}
-		}
-		 */
+		)
 	}
 }

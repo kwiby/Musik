@@ -1,15 +1,19 @@
 <resources>
     <dimen name="zero">0dp</dimen>
 
+    <dimen name="xx_small_padding">2dp</dimen>
+    <dimen name="x_small_padding">4dp</dimen>
     <dimen name="small_padding">8dp</dimen>
     <dimen name="medium_padding">16dp</dimen>
     <dimen name="large_padding">32dp</dimen>
+    <dimen name="x_large_padding">64dp</dimen>
+    <dimen name="xx_large_padding">128dp</dimen>
 
     <dimen name="main_container_top_spacing">40dp</dimen>
     <dimen name="main_container_top_corners_radius">48dp</dimen>
     <dimen name="main_container_shadows">4dp</dimen>
 
-    <dimen name="tabs_spacing">30dp</dimen>
+    <dimen name="tabs_spacing">20dp</dimen>
     <dimen name="tabs_shadow_radius">2dp</dimen>
     <dimen name="tabs_shadow_spread">1dp</dimen>
     <dimen name="tabs_shadow_offset">-3dp</dimen>

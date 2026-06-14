@@ -4,6 +4,6 @@ enum class Routes {
 	EntryPoint,
 	AllMusic,
 	Playlists,
-	AddSongs,
-	Stats
+	Stats,
+	AddSongs
 }

@@ -13,19 +13,28 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.example.musik.R
+import com.example.musik.data.MusikViewModel
+import com.example.musik.ui.screens.all_music.AllMusicScreen
+import com.example.musik.ui.screens.all_music.screens.add_songs.AddSongsScreen
+import com.example.musik.ui.screens.playlists.PlaylistsScreen
+import com.example.musik.ui.screens.stats.StatsScreen
 
 @Composable
-fun MainContainer(modifier: Modifier = Modifier) {
-	var selectedTab by remember { mutableIntStateOf(0) }
+fun MainContainer(
+	viewModel: MusikViewModel,
+	modifier: Modifier = Modifier
+) {
+	val allMusicScreenInt = viewModel.allMusicScreenInt
+	val playlistsScreenInt = viewModel.playlistsScreenInt
+	val statsScreenInt = viewModel.statsScreenInt
+	val addSongsScreenInt = viewModel.addSongsScreenInt
+
+	val currentScreen = viewModel.currentScreen
 
 	Box(modifier = modifier.fillMaxSize()) {
 		Column {
@@ -40,7 +49,12 @@ fun MainContainer(modifier: Modifier = Modifier) {
 				shadowElevation = dimensionResource(R.dimen.main_container_shadows),
 				modifier = Modifier.fillMaxSize()
 			) {
-
+				when (currentScreen) {
+					allMusicScreenInt -> AllMusicScreen()//onNavToAddSongsScreen = { viewModel.navTo(addSongsScreenInt) })
+					playlistsScreenInt -> PlaylistsScreen()
+					statsScreenInt -> StatsScreen()
+					addSongsScreenInt -> AddSongsScreen()//onBack = { viewModel.navTo(allMusicScreenInt) })
+				}
 			}
 		}
 
@@ -52,9 +66,11 @@ fun MainContainer(modifier: Modifier = Modifier) {
 				.align(Alignment.TopCenter)
 				.padding(dimensionResource(R.dimen.small_padding))
 		) {
-			TabButton(stringResource(R.string.all_music_tab), isSelected = selectedTab == 0) { selectedTab = 0 }
+			TabButton(stringResource(R.string.all_music_tab), currentScreen == allMusicScreenInt) { viewModel.navTo(allMusicScreenInt) }
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
-			TabButton(stringResource(R.string.playlists_tab), isSelected = selectedTab == 1) { selectedTab = 1 }
+			TabButton(stringResource(R.string.playlists_tab), currentScreen == playlistsScreenInt) { viewModel.navTo(playlistsScreenInt) }
+			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
+			TabButton(stringResource(R.string.stats_tab), currentScreen == statsScreenInt) { viewModel.navTo(statsScreenInt) }
 		}
 	}
 }

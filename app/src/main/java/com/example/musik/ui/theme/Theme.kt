@@ -16,7 +16,9 @@ private val NightColorScheme = darkColorScheme(
     secondary = Color(0xFF282834), // Containers
     background = Color(0xFF1D1D26), // Background
     onPrimary = Color(0xFFC6C6E7), // Title text
-    onSecondary = Color(0xFFFFFFFF), // Text and buttons
+    onSecondary = Color(0xFFFFFFFF), // General text
+    onTertiary = Color(0xFF9E9E9E), // Duration text
+    surface = Color(0xFF353549), // Version text
     onSurface = Color(0xFF15151C) // Shadows
 
     /* Other default colours to override

@@ -51,14 +51,14 @@ val Typography = Typography(
         fontWeight = FontWeight.W400,
         fontSize = 15.sp
     ),
-    bodyMedium = TextStyle( // Song artist
+    bodyMedium = TextStyle( // Song artist and duration
         fontFamily = SourGummy,
         fontWeight = FontWeight.W300,
         fontSize = 13.sp
     ),
-    bodySmall = TextStyle( // Song duration
+    bodySmall = TextStyle( // Version number
         fontFamily = SourGummy,
-        fontWeight = FontWeight.W300,
+        fontWeight = FontWeight.W600,
         fontSize = 13.sp
     ),
 
