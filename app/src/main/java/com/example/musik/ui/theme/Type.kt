@@ -46,6 +46,11 @@ val Typography = Typography(
         fontFamily = SourGummy,
         fontSize = 15.sp
     ),
+    titleSmall = TextStyle( // No permissions msg
+        fontFamily = SourGummy,
+        fontWeight = FontWeight.W400,
+        fontSize = 17.sp
+    ),
     bodyLarge = TextStyle( // Song title
         fontFamily = SourGummy,
         fontWeight = FontWeight.W400,
@@ -60,7 +65,7 @@ val Typography = Typography(
         fontFamily = SourGummy,
         fontWeight = FontWeight.W600,
         fontSize = 13.sp
-    ),
+    )
 
     /* Other default text styles to override
     titleLarge = TextStyle(

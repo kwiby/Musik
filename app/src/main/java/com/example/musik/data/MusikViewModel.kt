@@ -12,10 +12,10 @@ class MusikViewModel : ViewModel() {
 	val addSongsScreenInt = 3
 
 	val entryPointScreenInt = allMusicScreenInt
-	var currentScreen by mutableIntStateOf(entryPointScreenInt)
+	var curScreen by mutableIntStateOf(entryPointScreenInt)
 		private set
 
 	fun navTo(newScreen: Int) {
-		currentScreen = newScreen
+		curScreen = newScreen
 	}
 }

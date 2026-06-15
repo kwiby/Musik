@@ -12,6 +12,7 @@
     <dimen name="main_container_top_spacing">40dp</dimen>
     <dimen name="main_container_top_corners_radius">48dp</dimen>
     <dimen name="main_container_shadows">4dp</dimen>
+    <dimen name="main_container_no_permissions_offset">150dp</dimen>
 
     <dimen name="tabs_spacing">20dp</dimen>
     <dimen name="tabs_shadow_radius">2dp</dimen>

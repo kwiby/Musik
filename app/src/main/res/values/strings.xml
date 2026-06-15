@@ -3,4 +3,5 @@
     <string name="all_music_tab" translatable="true">All Music</string>
     <string name="playlists_tab" translatable="true">Playlists</string>
     <string name="stats_tab" translatable="true">Statistics</string>
+    <string name="no_permissions_msg" translatable="true">Allow audio permissions in settings</string>
 </resources>
