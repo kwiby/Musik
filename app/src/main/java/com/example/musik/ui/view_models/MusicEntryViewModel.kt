@@ -6,10 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.musik.data.models.AudioFile
 import com.example.musik.data.models.MusicDetails
-import com.example.musik.data.models.MusicUiState
 import com.example.musik.data.repository.AudioFileRepository
 import com.example.musik.ui.misc.formatDuration
 import com.example.musik.ui.misc.unformatDuration
+import com.example.musik.ui.models.MusicUiState
 
 class MusicEntryViewModel(private val audioFileRepo: AudioFileRepository): ViewModel() {
 	var musicUiState by mutableStateOf(MusicUiState())
@@ -23,6 +23,12 @@ class MusicEntryViewModel(private val audioFileRepo: AudioFileRepository): ViewM
 	private fun validateInput(uiState: MusicDetails = musicUiState.musicDetails): Boolean {
 		return with(uiState) {
 			filePath.isNotBlank() && title.isNotBlank() && artist.isNotBlank() && duration.isNotBlank()
+		}
+	}
+
+	suspend fun saveAudioFile() {
+		if (validateInput()) {
+			audioFileRepo.insertAudioFile(musicUiState.musicDetails.toAudioFile())
 		}
 	}
 }

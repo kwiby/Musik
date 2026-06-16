@@ -1,4 +1,4 @@
-package com.example.musik.ui.misc
+package com.example.musik.ui
 
 import android.app.Application
 import com.example.musik.data.misc.AppContainer

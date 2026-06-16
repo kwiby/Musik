@@ -10,4 +10,7 @@
     <string name="open_settings_button" translatable="true">Settings</string>
     <string name="add_songs_button" translatable="true">Add Songs</string>
     <string name="move_songs_button" translatable="true">Move Songs</string>
+    <string name="add_selected_music_button" translatable="true">Back</string>
+    <string name="refresh_button" translatable="true">Refresh</string>
+    <string name="back_button" translatable="true">Back</string>
 </resources>

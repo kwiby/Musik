@@ -27,5 +27,7 @@
     <dimen name="tab_top_corners_radius">10dp</dimen>
 
     <!-- All Music Screen -->
-    <dimen name="buttons_padding">10dp</dimen>
+    <dimen name="tabs_buttons_padding">25dp</dimen>
+    <dimen name="buttons_horizontal_padding">12dp</dimen>
+    <dimen name="buttons_vertical_padding">10dp</dimen>
 </resources>

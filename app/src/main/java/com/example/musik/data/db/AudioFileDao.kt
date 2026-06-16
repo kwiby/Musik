@@ -15,7 +15,7 @@ interface AudioFileDao {
 	fun getAllAudioFiles(): Flow<List<AudioFile>>
 
 	@Query("SELECT * from audio_files WHERE id = :id")
-	fun getAudioFileById(id: Int): Flow<AudioFile>
+	fun getAudioFileById(id: Int): Flow<AudioFile?>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insert(audioFile: AudioFile)
