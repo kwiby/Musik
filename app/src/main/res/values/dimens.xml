@@ -30,4 +30,5 @@
     <dimen name="tabs_buttons_padding">25dp</dimen>
     <dimen name="buttons_horizontal_padding">12dp</dimen>
     <dimen name="buttons_vertical_padding">10dp</dimen>
+    <dimen name="no_music_added_offset">75dp</dimen>
 </resources>

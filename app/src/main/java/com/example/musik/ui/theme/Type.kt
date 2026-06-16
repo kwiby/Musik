@@ -1,6 +1,5 @@
 package com.example.musik.ui.theme
 
-import com.example.musik.R
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
@@ -9,6 +8,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.musik.R
 
 @OptIn(ExperimentalTextApi::class)
 val SourGummy = FontFamily(
@@ -46,7 +46,7 @@ val Typography = Typography(
         fontFamily = SourGummy,
         fontSize = 15.sp
     ),
-    titleSmall = TextStyle( // No permissions msg
+    titleSmall = TextStyle( // Info text
         fontFamily = SourGummy,
         fontWeight = FontWeight.W400,
         fontSize = 17.sp

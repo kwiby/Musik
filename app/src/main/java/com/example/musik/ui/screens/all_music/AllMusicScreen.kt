@@ -27,7 +27,7 @@ fun AllMusicScreen() {
 		if (isAddingMusic) {
 			AddMusicScreen { isAddingMusic = false }
 		} else {
-			MusicListScreen { isAddingMusic = true }
+			MusicListScreen() { isAddingMusic = true }
 		}
 	}
 }

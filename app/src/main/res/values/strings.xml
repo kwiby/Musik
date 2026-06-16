@@ -6,6 +6,7 @@
     <string name="stats_tab" translatable="true">Statistics</string>
 
     <string name="no_permissions_msg" translatable="true">Allow audio permissions in settings</string>
+    <string name="no_music_msg" translatable="true">No music added</string>
 
     <string name="open_settings_button" translatable="true">Settings</string>
     <string name="add_songs_button" translatable="true">Add Songs</string>

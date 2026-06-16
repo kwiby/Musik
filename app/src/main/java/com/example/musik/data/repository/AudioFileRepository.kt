@@ -8,6 +8,8 @@ interface AudioFileRepository {
 
 	fun getAudioFileByIdStream(id: Int): Flow<AudioFile?>
 
+	fun getAudioFileCountStream(): Flow<Int>
+
 	suspend fun insertAudioFile(audioFile: AudioFile)
 
 	suspend fun deleteAudioFile(audioFile: AudioFile)

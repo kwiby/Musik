@@ -5,8 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "audio_files")
 data class AudioFile(
-	@PrimaryKey(autoGenerate = true) val id: Int = 0,
-	val filePath: String,
+	@PrimaryKey val id: Long,
+	val contentUri: String,
 	val title: String,
 	val artist: String,
 	val duration: Long, // Milliseconds

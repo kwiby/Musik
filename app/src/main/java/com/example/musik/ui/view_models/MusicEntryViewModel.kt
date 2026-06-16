@@ -4,16 +4,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.musik.data.models.AudioFile
 import com.example.musik.data.models.MusicDetails
 import com.example.musik.data.repository.AudioFileRepository
 import com.example.musik.ui.misc.formatDuration
 import com.example.musik.ui.misc.unformatDuration
 import com.example.musik.ui.models.MusicUiState
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 
 class MusicEntryViewModel(private val audioFileRepo: AudioFileRepository): ViewModel() {
 	var musicUiState by mutableStateOf(MusicUiState())
 		private set
+
+	val audioFileCount: StateFlow<Int> = audioFileRepo
+		.getAudioFileCountStream()
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.WhileSubscribed(5_000),
+			initialValue = 0
+		)
 
 	fun updateUiState(musicDetails: MusicDetails) {
 		musicUiState =
@@ -22,7 +34,7 @@ class MusicEntryViewModel(private val audioFileRepo: AudioFileRepository): ViewM
 
 	private fun validateInput(uiState: MusicDetails = musicUiState.musicDetails): Boolean {
 		return with(uiState) {
-			filePath.isNotBlank() && title.isNotBlank() && artist.isNotBlank() && duration.isNotBlank()
+			contentUri.isNotBlank() && title.isNotBlank() && artist.isNotBlank() && duration.isNotBlank()
 		}
 	}
 
@@ -36,23 +48,23 @@ class MusicEntryViewModel(private val audioFileRepo: AudioFileRepository): ViewM
 // MusicDetails --> AudioFile
 fun MusicDetails.toAudioFile(): AudioFile = AudioFile(
 	id = id,
-	filePath = filePath,
+	contentUri = contentUri,
 	title = title,
 	artist = artist,
 	duration = duration.unformatDuration()
+)
+
+// AudioFile --> MusicDetails
+fun AudioFile.toMusicDetails(): MusicDetails = MusicDetails(
+	id = id,
+	contentUri = contentUri,
+	title = title,
+	artist = artist,
+	duration = duration.formatDuration()
 )
 
 // AudioFile --> MusicUiState
 fun AudioFile.toMusicUiState(isEntryValid: Boolean = false): MusicUiState = MusicUiState(
 	musicDetails = this.toMusicDetails(),
 	isEntryValid = isEntryValid
-)
-
-// AudioFile --> MusicDetails
-fun AudioFile.toMusicDetails(): MusicDetails = MusicDetails(
-	id = id,
-	filePath = filePath,
-	title = title,
-	artist = artist,
-	duration = duration.formatDuration()
 )

@@ -63,7 +63,7 @@ fun MainContainer(
 						Screen.STATS -> StatsScreen()
 					}
 				} else {
-					// ---===---  No Permissions Screen  ---===---
+					// ---===---  No Permissions Msg  ---===---
 					Column(
 						verticalArrangement = Arrangement.Top,
 						horizontalAlignment = Alignment.CenterHorizontally,

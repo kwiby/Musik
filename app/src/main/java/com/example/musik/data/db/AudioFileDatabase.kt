@@ -18,7 +18,7 @@ abstract class AudioFileDatabase: RoomDatabase() {
 			// If the Instance is not null, return it, otherwise create a new database instance.
 			return Instance ?: synchronized(this) {
 				Room.databaseBuilder(context, AudioFileDatabase::class.java, "audio_file_database")
-					.fallbackToDestructiveMigration().build().also {
+					.fallbackToDestructiveMigration(true).build().also {
 						Instance = it
 					}
 			}

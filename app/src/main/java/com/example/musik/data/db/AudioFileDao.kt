@@ -11,11 +11,17 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AudioFileDao {
+	@Query("SELECT * from audio_files WHERE title LIKE '%' || :search || '%'")
+	fun searchAudioFilesByTitle(search: String): Flow<List<AudioFile>>
+
+	@Query("SELECT COUNT(*) FROM audio_files")
+	fun getAudioFileCount(): Flow<Int>
+
 	@Query("SELECT * FROM audio_files ORDER BY title ASC")
 	fun getAllAudioFiles(): Flow<List<AudioFile>>
 
 	@Query("SELECT * from audio_files WHERE id = :id")
-	fun getAudioFileById(id: Int): Flow<AudioFile?>
+	fun getAudioFileById(id: Int): Flow<AudioFile>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun insert(audioFile: AudioFile)
