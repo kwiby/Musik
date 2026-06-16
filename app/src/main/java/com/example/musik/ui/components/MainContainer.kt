@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,31 +25,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.example.musik.R
-import com.example.musik.data.MusikViewModel
-import com.example.musik.data.openPermissionsSettings
-import com.example.musik.data.rememberPermissionHandler
+import com.example.musik.data.misc.openPermissionsSettings
+import com.example.musik.data.misc.rememberPermissionHandler
 import com.example.musik.ui.screens.all_music.AllMusicScreen
-import com.example.musik.ui.screens.all_music.screens.add_songs.AddSongsScreen
 import com.example.musik.ui.screens.playlists.PlaylistsScreen
 import com.example.musik.ui.screens.stats.StatsScreen
+import com.example.musik.ui.view_models.NavViewModel
+import com.example.musik.ui.view_models.Screen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainContainer(
-	viewModel: MusikViewModel,
+	viewModel: NavViewModel,
 	modifier: Modifier = Modifier
 ) {
-	val allMusicScreenInt = viewModel.allMusicScreenInt
-	val playlistsScreenInt = viewModel.playlistsScreenInt
-	val statsScreenInt = viewModel.statsScreenInt
-	val addSongsScreenInt = viewModel.addSongsScreenInt
-
-	val curScreen = viewModel.curScreen
-
 	Box(modifier = modifier.fillMaxSize()) {
 		Column {
 			Spacer(modifier = Modifier.height(dimensionResource(R.dimen.main_container_top_spacing)))
@@ -64,11 +57,10 @@ fun MainContainer(
 				val permissionStatus = rememberPermissionHandler()
 				if (permissionStatus.status.isGranted) {
 					// ---===---  Main Screens  ---===---
-					when (curScreen) {
-						allMusicScreenInt -> AllMusicScreen(onNavToAddSongsScreen = { viewModel.navTo(addSongsScreenInt) })
-						playlistsScreenInt -> PlaylistsScreen()
-						statsScreenInt -> StatsScreen()
-						addSongsScreenInt -> AddSongsScreen()//onBack = { viewModel.navTo(allMusicScreenInt) })
+					when (viewModel.curScreen) {
+						Screen.ALL_MUSIC -> AllMusicScreen()
+						Screen.PLAYLISTS -> PlaylistsScreen()
+						Screen.STATS -> StatsScreen()
 					}
 				} else {
 					// ---===---  No Permissions Screen  ---===---
@@ -87,7 +79,10 @@ fun MainContainer(
 						IconButton(
 							onClick = { openPermissionsSettings(context) }
 						) {
-							Icon(Icons.Default.Settings, contentDescription = "Settings")
+							Icon(
+								Icons.Default.Settings,
+								contentDescription = stringResource(R.string.open_settings_button)
+							)
 						}
 					}
 				}
@@ -102,11 +97,17 @@ fun MainContainer(
 				.align(Alignment.TopCenter)
 				.padding(dimensionResource(R.dimen.small_padding))
 		) {
-			TabButton(stringResource(R.string.all_music_tab), curScreen == allMusicScreenInt) { viewModel.navTo(allMusicScreenInt) }
+			TabButton(stringResource(R.string.all_music_tab), viewModel.curScreen == Screen.ALL_MUSIC) {
+				viewModel.navTo(Screen.ALL_MUSIC)
+			}
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
-			TabButton(stringResource(R.string.playlists_tab), curScreen == playlistsScreenInt) { viewModel.navTo(playlistsScreenInt) }
+			TabButton(stringResource(R.string.playlists_tab),viewModel.curScreen == Screen.PLAYLISTS) {
+				viewModel.navTo(Screen.PLAYLISTS)
+			}
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
-			TabButton(stringResource(R.string.stats_tab), curScreen == statsScreenInt) { viewModel.navTo(statsScreenInt) }
+			TabButton(stringResource(R.string.stats_tab), viewModel.curScreen == Screen.STATS) {
+				viewModel.navTo(Screen.STATS)
+			}
 		}
 	}
 }

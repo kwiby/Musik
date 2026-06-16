@@ -2,7 +2,6 @@ package com.example.musik.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
@@ -16,7 +15,7 @@ private val NightColorScheme = darkColorScheme(
     secondary = Color(0xFF282834), // Containers
     background = Color(0xFF1D1D26), // Background
     onPrimary = Color(0xFFC6C6E7), // Title text
-    onSecondary = Color(0xFFFFFFFF), // General text
+    onSecondary = Color(0xFFFFFFFF), // General text and buttons
     onTertiary = Color(0xFF9E9E9E), // Duration text
     surface = Color(0xFF353549), // Version text
     onSurface = Color(0xFF15151C) // Shadows

@@ -1,0 +1,17 @@
+package com.example.musik.data.repository
+
+import com.example.musik.data.db.AudioFileDao
+import com.example.musik.data.models.AudioFile
+import kotlinx.coroutines.flow.Flow
+
+class OfflineAudioFileRepository(private val audioFileDao: AudioFileDao): AudioFileRepository {
+	override fun getAllAudioFilesStream(): Flow<List<AudioFile>> = audioFileDao.getAllAudioFiles()
+
+	override fun getAudioFileByIdStream(id: Int): Flow<AudioFile?> = audioFileDao.getAudioFileById(id)
+
+	override suspend fun insertAudioFile(audioFile: AudioFile) = audioFileDao.insert(audioFile)
+
+	override suspend fun deleteAudioFile(audioFile: AudioFile) = audioFileDao.delete(audioFile)
+
+	override suspend fun updateAudioFile(audioFile: AudioFile) = audioFileDao.update(audioFile)
+}

@@ -1,6 +1,7 @@
 <resources>
     <dimen name="zero">0dp</dimen>
 
+    <!-- Default Paddings -->
     <dimen name="xx_small_padding">2dp</dimen>
     <dimen name="x_small_padding">4dp</dimen>
     <dimen name="small_padding">8dp</dimen>
@@ -9,11 +10,13 @@
     <dimen name="x_large_padding">64dp</dimen>
     <dimen name="xx_large_padding">128dp</dimen>
 
+    <!-- Main Containers -->
     <dimen name="main_container_top_spacing">40dp</dimen>
     <dimen name="main_container_top_corners_radius">48dp</dimen>
     <dimen name="main_container_shadows">4dp</dimen>
     <dimen name="main_container_no_permissions_offset">150dp</dimen>
 
+    <!-- Tabs -->
     <dimen name="tabs_spacing">20dp</dimen>
     <dimen name="tabs_shadow_radius">2dp</dimen>
     <dimen name="tabs_shadow_spread">1dp</dimen>
@@ -22,4 +25,7 @@
     <dimen name="tab_unselected_height">40dp</dimen>
     <dimen name="tab_selected_height">50dp</dimen>
     <dimen name="tab_top_corners_radius">10dp</dimen>
+
+    <!-- All Music Screen -->
+    <dimen name="buttons_padding">10dp</dimen>
 </resources>

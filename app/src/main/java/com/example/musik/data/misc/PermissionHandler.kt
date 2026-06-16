@@ -1,5 +1,6 @@
-package com.example.musik.data
+package com.example.musik.data.misc
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -16,9 +17,9 @@ import com.google.accompanist.permissions.rememberPermissionState
 @Composable
 fun rememberPermissionHandler(): PermissionState {
 	val permissionStatus = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android Version >= 13
-		rememberPermissionState(android.Manifest.permission.READ_MEDIA_AUDIO)
+		rememberPermissionState(Manifest.permission.READ_MEDIA_AUDIO)
 	} else { // Android Version < 13
-		rememberPermissionState(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+		rememberPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE)
 	}
 
 	return permissionStatus
