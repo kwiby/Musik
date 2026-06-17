@@ -33,4 +33,5 @@
     <dimen name="no_music_added_offset">75dp</dimen>
     <dimen name="horizontal_divider_thickness">0.5dp</dimen>
     <dimen name="horizontal_divider_padding">20dp</dimen>
+    <dimen name="album_art_image_size">54dp</dimen>
 </resources>

@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,16 +27,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.misc.AudioFileListItem
+import com.example.musik.ui.screens.all_music.components.LoadingIndicator
 import com.example.musik.ui.view_models.AddMusicViewModel
-import com.example.musik.ui.view_models.ViewModelProvider
 
 @Composable
 fun AddMusicScreen(
-	viewModel: AddMusicViewModel = viewModel(factory = ViewModelProvider.Factory),
+	viewModel: AddMusicViewModel,
 	onBackToMusicListButtonClick: () -> Unit
 ) {
 	val audioFiles by viewModel.audioFiles.collectAsState()
@@ -87,13 +85,7 @@ fun AddMusicScreen(
 		// ---===---  Music List  ---===---
 		when {
 			isLoading -> {
-				Spacer(modifier = Modifier.height(dimensionResource(R.dimen.x_large_padding)))
-				Box(
-					contentAlignment = Alignment.TopCenter,
-					modifier = Modifier.fillMaxSize()
-				) {
-					CircularProgressIndicator(color = MaterialTheme.colorScheme.onSecondary)
-				}
+				LoadingIndicator()
 			} audioFiles.isEmpty() -> {
 				// ---===---  No Audio Files Msg  ---===---
 				Column(
@@ -108,6 +100,7 @@ fun AddMusicScreen(
 					)
 				}
 			} else -> {
+			// ---===---  Audio File List  ---===---
 				LazyColumn(
 					contentPadding = PaddingValues(
 						bottom = dimensionResource(R.dimen.x_large_padding)
