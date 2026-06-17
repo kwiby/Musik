@@ -7,6 +7,7 @@
 
     <string name="no_permissions_msg" translatable="true">Allow audio permissions in settings</string>
     <string name="no_music_msg" translatable="true">No music added</string>
+    <string name="no_audio_files_msg" translatable="true">No audio files</string>
 
     <string name="open_settings_button" translatable="true">Settings</string>
     <string name="add_songs_button" translatable="true">Add Songs</string>
@@ -14,4 +15,6 @@
     <string name="add_selected_music_button" translatable="true">Back</string>
     <string name="refresh_button" translatable="true">Refresh</string>
     <string name="back_button" translatable="true">Back</string>
+
+    <string name="album_art" translatable="true">Album Art</string>
 </resources>

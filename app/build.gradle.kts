@@ -16,8 +16,8 @@ android {
         applicationId = "com.example.musiky"
         minSdk = 24
         targetSdk = 36
-        versionCode = 16
-        versionName = "1.2.7"
+        versionCode = 17
+        versionName = "1.2.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,6 +40,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)

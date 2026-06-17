@@ -25,7 +25,7 @@ fun AllMusicScreen() {
 		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.tabs_buttons_padding)))
 
 		if (isAddingMusic) {
-			AddMusicScreen { isAddingMusic = false }
+			AddMusicScreen() { isAddingMusic = false }
 		} else {
 			MusicListScreen() { isAddingMusic = true }
 		}

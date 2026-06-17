@@ -4,15 +4,18 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.musik.ui.MusicApplication
+import com.example.musik.ui.MusikApplication
 
-object MusicViewModelProvider {
+object ViewModelProvider {
 	val Factory = viewModelFactory {
 		initializer {
-			MusicEntryViewModel(musicApplication().container.audioFileRepository)
+			MusicEntryViewModel(musikApplication().container.audioFileRepository)
+		}
+		initializer {
+			AddMusicViewModel(musikApplication())
 		}
 	}
 }
 
-fun CreationExtras.musicApplication(): MusicApplication =
-	(this[AndroidViewModelFactory.APPLICATION_KEY] as MusicApplication)
+fun CreationExtras.musikApplication(): MusikApplication =
+	(this[AndroidViewModelFactory.APPLICATION_KEY] as MusikApplication)

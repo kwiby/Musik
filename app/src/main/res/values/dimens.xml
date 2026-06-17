@@ -31,4 +31,6 @@
     <dimen name="buttons_horizontal_padding">12dp</dimen>
     <dimen name="buttons_vertical_padding">10dp</dimen>
     <dimen name="no_music_added_offset">75dp</dimen>
+    <dimen name="horizontal_divider_thickness">0.5dp</dimen>
+    <dimen name="horizontal_divider_padding">20dp</dimen>
 </resources>

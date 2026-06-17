@@ -17,6 +17,7 @@ private val NightColorScheme = darkColorScheme(
     onPrimary = Color(0xFFC6C6E7), // Title text
     onSecondary = Color(0xFFFFFFFF), // General text and buttons
     onTertiary = Color(0xFF9E9E9E), // Duration text
+    onSurfaceVariant = Color(0xFF999999), // Artist text
     surface = Color(0xFF353549), // Version text
     onSurface = Color(0xFF15151C) // Shadows
 

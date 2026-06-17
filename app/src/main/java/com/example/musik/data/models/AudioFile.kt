@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class AudioFile(
 	@PrimaryKey val id: Long,
 	val contentUri: String,
+	val albumArtUri: String,
 	val title: String,
 	val artist: String,
 	val duration: Long, // Milliseconds

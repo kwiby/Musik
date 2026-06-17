@@ -4,7 +4,7 @@ import android.app.Application
 import com.example.musik.data.misc.AppContainer
 import com.example.musik.data.misc.AppDataContainer
 
-class MusicApplication : Application() {
+class MusikApplication : Application() {
 	lateinit var container: AppContainer
 	override fun onCreate() {
 		super.onCreate()

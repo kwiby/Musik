@@ -13,6 +13,7 @@ suspend fun fetchAudioFiles(context: Context): List<AudioFile> = withContext(Dis
 	val contentResolver = context.contentResolver
 	val projection = arrayOf(
 		MediaStore.Audio.Media._ID,
+		MediaStore.Audio.Media.ALBUM_ID,
 		MediaStore.Audio.Media.TITLE,
 		MediaStore.Audio.Media.ARTIST,
 		MediaStore.Audio.Media.DURATION
@@ -20,11 +21,12 @@ suspend fun fetchAudioFiles(context: Context): List<AudioFile> = withContext(Dis
 
 	val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
 	val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
-	val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+	val mediaUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
-	val cursor = contentResolver.query(uri, projection, selection, null, sortOrder)
+	val cursor = contentResolver.query(mediaUri, projection, selection, null, sortOrder)
 	cursor?.use {
 		val idColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
+		val albumIdColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
 		val titleColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
 		val artistColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
 		val durationColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
@@ -34,9 +36,13 @@ suspend fun fetchAudioFiles(context: Context): List<AudioFile> = withContext(Dis
 			val title = it.getString(titleColumn) ?: "Unknown Title"
 			val artist = it.getString(artistColumn) ?: "Unknown Artist"
 			val duration = it.getLong(durationColumn)
-			val fileUri = ContentUris.withAppendedId(uri, id)
 
-			audioFileList.add(AudioFile(id, fileUri.toString(), title, artist, duration))
+			val albumArtUri = ContentUris.withAppendedId(
+				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, it.getLong(albumIdColumn)
+			)
+			val contentUri = ContentUris.withAppendedId(mediaUri, id)
+
+			audioFileList.add(AudioFile(id, contentUri.toString(), albumArtUri.toString(), title, artist, duration))
 		}
 	}
 

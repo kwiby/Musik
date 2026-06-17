@@ -25,60 +25,65 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.view_models.MusicEntryViewModel
-import com.example.musik.ui.view_models.MusicViewModelProvider
+import com.example.musik.ui.view_models.ViewModelProvider
 
 @Composable
 fun MusicListScreen(
-	viewModel: MusicEntryViewModel = viewModel(factory = MusicViewModelProvider.Factory),
+	viewModel: MusicEntryViewModel = viewModel(factory = ViewModelProvider.Factory),
 	onAddMusicButtonClick: () -> Unit
 ) {
 	val dbCount by viewModel.audioFileCount.collectAsStateWithLifecycle()
 
-	// ---===---  All Buttons  ---===---
-	Row(
-		horizontalArrangement = Arrangement.SpaceBetween,
-		modifier = Modifier.fillMaxWidth()
+	Column(
+		verticalArrangement = Arrangement.Top,
+		horizontalAlignment = Alignment.CenterHorizontally
 	) {
-		// ---===---  Editing Buttons  ---===---
-		Row {
-			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
-			CustomIconButton(
-				{  },
-				Icons.Rounded.UnfoldMore,
-				stringResource(R.string.move_songs_button)
-			)
-		}
-
-		// ---===---  Adding Buttons  ---===---
-		Row {
-			CustomIconButton(
-				{ onAddMusicButtonClick() },
-				Icons.Rounded.Add,
-				stringResource(R.string.add_songs_button)
-			)
-			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
-		}
-	}
-
-	Spacer(modifier = Modifier.height(dimensionResource(R.dimen.buttons_vertical_padding)))
-
-	if (dbCount != 0) {
-		// ---===---  Music List  ---===---
-		LazyColumn {
-
-		}
-	} else {
-		// ---===---  No Music Msg  ---===---
-		Column(
-			verticalArrangement = Arrangement.Top,
-			horizontalAlignment = Alignment.CenterHorizontally,
-			modifier = Modifier.offset(y = dimensionResource(R.dimen.no_music_added_offset))
+		// ---===---  All Buttons  ---===---
+		Row(
+			horizontalArrangement = Arrangement.SpaceBetween,
+			modifier = Modifier.fillMaxWidth()
 		) {
-			Text(
-				text = stringResource(R.string.no_music_msg),
-				style = MaterialTheme.typography.titleSmall,
-				color = MaterialTheme.colorScheme.onSecondary
-			)
+			// ---===---  Editing Buttons  ---===---
+			Row {
+				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
+				CustomIconButton(
+					{  },
+					Icons.Rounded.UnfoldMore,
+					stringResource(R.string.move_songs_button)
+				)
+			}
+
+			// ---===---  Adding Buttons  ---===---
+			Row {
+				CustomIconButton(
+					{ onAddMusicButtonClick() },
+					Icons.Rounded.Add,
+					stringResource(R.string.add_songs_button)
+				)
+				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
+			}
+		}
+
+		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.buttons_vertical_padding)))
+
+		if (dbCount != 0) {
+			// ---===---  Music List  ---===---
+			LazyColumn {
+
+			}
+		} else {
+			// ---===---  No Music Msg  ---===---
+			Column(
+				verticalArrangement = Arrangement.Top,
+				horizontalAlignment = Alignment.CenterHorizontally,
+				modifier = Modifier.offset(y = dimensionResource(R.dimen.no_music_added_offset))
+			) {
+				Text(
+					text = stringResource(R.string.no_music_msg),
+					style = MaterialTheme.typography.titleSmall,
+					color = MaterialTheme.colorScheme.onSecondary
+				)
+			}
 		}
 	}
 }
