@@ -36,7 +36,7 @@ fun AudioFileListItem(musicDetails: MusicDetails) {
 				style = MaterialTheme.typography.bodyMedium,
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 				maxLines = 1,
-				overflow = TextOverflow.Ellipsis,
+				overflow = TextOverflow.Ellipsis
 			)
 		},
 		trailingContent = {
@@ -45,7 +45,7 @@ fun AudioFileListItem(musicDetails: MusicDetails) {
 				style = MaterialTheme.typography.bodyMedium,
 				color = MaterialTheme.colorScheme.onSecondary,
 				maxLines = 1,
-				overflow = TextOverflow.Ellipsis,
+				overflow = TextOverflow.Ellipsis
 			)
 		},
 		modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.medium_padding))

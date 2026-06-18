@@ -30,7 +30,9 @@ fun AllMusicScreen(
 		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.tabs_buttons_padding)))
 
 		if (isAddingMusic) {
+			viewModel.clearSearchQuery()
 			viewModel.loadAudioFiles()
+
 			AddMusicScreen(viewModel) { isAddingMusic = false }
 		} else {
 			MusicListScreen { isAddingMusic = true }

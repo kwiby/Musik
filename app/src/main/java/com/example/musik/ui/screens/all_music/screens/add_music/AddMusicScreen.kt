@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,15 +32,17 @@ import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.misc.AudioFileListItem
 import com.example.musik.ui.screens.all_music.components.LoadingIndicator
+import com.example.musik.ui.screens.all_music.screens.add_music.components.AddMusicSearchbar
 import com.example.musik.ui.view_models.AddMusicViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMusicScreen(
 	viewModel: AddMusicViewModel,
 	onBackToMusicListButtonClick: () -> Unit
 ) {
-	val audioFiles by viewModel.audioFiles.collectAsState()
 	val isLoading by viewModel.isLoading.collectAsState()
+	val audioFiles by viewModel.audioFiles.collectAsState()
 
 	Column(
 		verticalArrangement = Arrangement.Top,
@@ -47,8 +50,7 @@ fun AddMusicScreen(
 	) {
 		// ---===---  All Buttons  ---===---
 		Row(
-			horizontalArrangement = Arrangement.SpaceBetween,
-			modifier = Modifier.fillMaxWidth()
+			verticalAlignment = Alignment.CenterVertically
 		) {
 			// ---===---  Back Button  ---===---
 			Row {
@@ -60,11 +62,17 @@ fun AddMusicScreen(
 				)
 			}
 
+			// ---===---  Search Bar  ---===---
+			AddMusicSearchbar(viewModel, Modifier.weight(1f))
+
 			// ---===---  Selection Buttons  ---===---
 			Row {
 				// ---===---  Refresh Button  ---===---
 				CustomIconButton(
-					{ viewModel.loadAudioFiles() },
+					{
+						viewModel.clearSearchQuery()
+						viewModel.loadAudioFiles()
+					},
 					Icons.Rounded.Refresh,
 					stringResource(R.string.refresh_button)
 				)

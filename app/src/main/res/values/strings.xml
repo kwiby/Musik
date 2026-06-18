@@ -17,4 +17,5 @@
     <string name="back_button" translatable="true">Back</string>
 
     <string name="album_art" translatable="true">Album Art</string>
+    <string name="add_music_search_bar" translatable="true">Search audio files</string>
 </resources>

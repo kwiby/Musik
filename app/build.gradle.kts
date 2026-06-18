@@ -16,8 +16,8 @@ android {
         applicationId = "com.example.musiky"
         minSdk = 24
         targetSdk = 36
-        versionCode = 18
-        versionName = "1.2.9"
+        versionCode = 19
+        versionName = "1.2.10"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
