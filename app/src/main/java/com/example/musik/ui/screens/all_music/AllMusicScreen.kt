@@ -16,11 +16,13 @@ import com.example.musik.R
 import com.example.musik.ui.screens.all_music.screens.add_music.AddMusicScreen
 import com.example.musik.ui.screens.all_music.screens.music_list.MusicListScreen
 import com.example.musik.ui.view_models.AddMusicViewModel
+import com.example.musik.ui.view_models.MusicListViewModel
 import com.example.musik.ui.view_models.ViewModelProvider
 
 @Composable
 fun AllMusicScreen(
-	viewModel: AddMusicViewModel = viewModel(factory = ViewModelProvider.Factory)
+	musicListViewModel: MusicListViewModel = viewModel(factory = ViewModelProvider.Factory),
+	addMusicViewModel: AddMusicViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
 	var isAddingMusic by remember { mutableStateOf(false) }
 
@@ -30,11 +32,11 @@ fun AllMusicScreen(
 		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.tabs_buttons_padding)))
 
 		if (isAddingMusic) {
-			viewModel.musicAddingSetup()
+			addMusicViewModel.musicAddingSetup()
 
-			AddMusicScreen(viewModel) { isAddingMusic = false }
+			AddMusicScreen(addMusicViewModel) { isAddingMusic = false }
 		} else {
-			MusicListScreen { isAddingMusic = true }
+			MusicListScreen(musicListViewModel) { isAddingMusic = true }
 		}
 	}
 }
