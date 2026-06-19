@@ -30,7 +30,7 @@ import com.example.musik.ui.view_models.ViewModelProvider
 @Composable
 fun MusicListScreen(
 	viewModel: MusicEntryViewModel = viewModel(factory = ViewModelProvider.Factory),
-	onAddMusicButtonClick: () -> Unit
+	onAddMusic: () -> Unit,
 ) {
 	val dbCount by viewModel.audioFileCount.collectAsStateWithLifecycle()
 
@@ -56,7 +56,7 @@ fun MusicListScreen(
 			// ---===---  Adding Buttons  ---===---
 			Row {
 				CustomIconButton(
-					{ onAddMusicButtonClick() },
+					{ onAddMusic() },
 					Icons.Rounded.Add,
 					stringResource(R.string.add_songs_button)
 				)

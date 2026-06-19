@@ -33,5 +33,7 @@
     <dimen name="no_music_added_offset">75dp</dimen>
     <dimen name="horizontal_divider_thickness">0.5dp</dimen>
     <dimen name="horizontal_divider_padding">20dp</dimen>
-    <dimen name="album_art_image_size">54dp</dimen>
+    <dimen name="vertical_divider_padding">7dp</dimen>
+    <dimen name="album_art_image_size">56dp</dimen>
+    <dimen name="list_item_corner_radius">15dp</dimen>
 </resources>

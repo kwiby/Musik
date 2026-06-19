@@ -1,5 +1,6 @@
 package com.example.musik.ui.screens.all_music.screens.add_music
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +31,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
-import com.example.musik.ui.misc.AudioFileListItem
+import com.example.musik.ui.components.MusicListItem
 import com.example.musik.ui.screens.all_music.components.LoadingIndicator
 import com.example.musik.ui.screens.all_music.screens.add_music.components.AddMusicSearchbar
 import com.example.musik.ui.view_models.AddMusicViewModel
@@ -39,10 +40,15 @@ import com.example.musik.ui.view_models.AddMusicViewModel
 @Composable
 fun AddMusicScreen(
 	viewModel: AddMusicViewModel,
-	onBackToMusicListButtonClick: () -> Unit
+	onBackToMusicList: () -> Unit
 ) {
 	val isLoading by viewModel.isLoading.collectAsState()
 	val audioFiles by viewModel.audioFiles.collectAsState()
+	val selectedIds by viewModel.selectedIds.collectAsState()
+
+	BackHandler(enabled = true) {
+		onBackToMusicList()
+	}
 
 	Column(
 		verticalArrangement = Arrangement.Top,
@@ -56,7 +62,7 @@ fun AddMusicScreen(
 			Row {
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 				CustomIconButton(
-					{ onBackToMusicListButtonClick() },
+					{ onBackToMusicList() },
 					Icons.AutoMirrored.Rounded.ArrowBack,
 					stringResource(R.string.back_button)
 				)
@@ -70,17 +76,18 @@ fun AddMusicScreen(
 				// ---===---  Refresh Button  ---===---
 				CustomIconButton(
 					{
-						viewModel.clearSearchQuery()
-						viewModel.loadAudioFiles()
+						viewModel.refreshButton()
 					},
 					Icons.Rounded.Refresh,
 					stringResource(R.string.refresh_button)
 				)
-				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.zero)))
 
 				// ---===---  Add Selected Music Button  ---===---
 				CustomIconButton(
-					{  },
+					{
+						viewModel.addSelectedMusic()
+						onBackToMusicList()
+					},
 					Icons.Outlined.AddBox,
 					stringResource(R.string.add_selected_music_button)
 				)
@@ -116,16 +123,24 @@ fun AddMusicScreen(
 					modifier = Modifier.fillMaxSize()
 				) {
 					items(audioFiles.size, key = { audioFiles[it].id }) { index ->
-						AudioFileListItem(audioFiles[index])
+						val music = audioFiles[index]
+						MusicListItem(
+							musicDetails = music,
+							isSelected = music.id in selectedIds,
+							onClick = { viewModel.toggleSelection(music.id) }
+						)
 
 						if (index < audioFiles.size - 1) {
 							Box(modifier = Modifier.fillMaxWidth()) {
 								HorizontalDivider(
 									thickness = dimensionResource(R.dimen.horizontal_divider_thickness),
 									modifier = Modifier
-										.fillMaxWidth(0.8f)
+										.fillMaxWidth(0.785f)
 										.align(Alignment.CenterEnd)
-										.padding(horizontal = dimensionResource(R.dimen.horizontal_divider_padding))
+										.padding(
+											horizontal = dimensionResource(R.dimen.horizontal_divider_padding),
+											vertical = dimensionResource(R.dimen.vertical_divider_padding)
+										)
 								)
 							}
 						}

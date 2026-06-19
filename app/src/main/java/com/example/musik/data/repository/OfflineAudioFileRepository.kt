@@ -11,6 +11,12 @@ class OfflineAudioFileRepository(private val audioFileDao: AudioFileDao): AudioF
 
 	override fun getAudioFileCountStream(): Flow<Int> = audioFileDao.getAudioFileCount()
 
+	override suspend fun insertMultipleAudioFiles(audioFiles: List<AudioFile>) = audioFileDao.insertMultiple(audioFiles)
+
+	override suspend fun deleteMultipleAudioFiles(audioFiles: List<AudioFile>) = audioFileDao.deleteMultiple(audioFiles)
+
+	override suspend fun updateMultipleAudioFiles(audioFiles: List<AudioFile>) = audioFileDao.updateMultiple(audioFiles)
+
 	override suspend fun insertAudioFile(audioFile: AudioFile) = audioFileDao.insert(audioFile)
 
 	override suspend fun deleteAudioFile(audioFile: AudioFile) = audioFileDao.delete(audioFile)

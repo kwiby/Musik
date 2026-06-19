@@ -19,7 +19,8 @@ private val NightColorScheme = darkColorScheme(
     onTertiary = Color(0xFF9E9E9E), // Duration text
     onSurfaceVariant = Color(0xFF999999), // Artist text
     surface = Color(0xFF353549), // Version text
-    onSurface = Color(0xFF15151C) // Shadows
+    onSurface = Color(0xFF15151C), // Shadows
+    secondaryContainer = Color(0xFF212126) // Text field background
 
     /* Other default colours to override
     background = Color(0xFFFFFBFE),

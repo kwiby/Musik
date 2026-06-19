@@ -12,7 +12,10 @@ object ViewModelProvider {
 			MusicEntryViewModel(musikApplication().container.audioFileRepository)
 		}
 		initializer {
-			AddMusicViewModel(musikApplication())
+			AddMusicViewModel(
+				musikApplication(),
+				musikApplication().container.audioFileRepository
+				)
 		}
 	}
 }

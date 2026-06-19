@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -31,18 +32,25 @@ fun AddMusicSearchbar(
 		value = searchQuery,
 		onValueChange = { viewModel.onSearchQueryChange(it) },
 		placeholder = { Text(
-			text = stringResource(R.string.add_music_search_bar)
+			text = stringResource(R.string.add_music_search_bar),
+			style = MaterialTheme.typography.bodyLarge
 		) },
-		leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+		leadingIcon =
+			{
+				Icon(Icons.Default.Search,
+				contentDescription = stringResource(R.string.add_music_search_bar))
+			},
 		singleLine = true,
+		shape = MaterialTheme.shapes.extraLarge,
 		colors = TextFieldDefaults.colors(
-			focusedContainerColor = MaterialTheme.colorScheme.secondary,
-			unfocusedContainerColor = MaterialTheme.colorScheme.secondary,
 			focusedLeadingIconColor = MaterialTheme.colorScheme.onSecondary,
-			focusedIndicatorColor = MaterialTheme.colorScheme.onSecondary,
 			cursorColor = MaterialTheme.colorScheme.onSecondary,
+			focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+			unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
 			focusedTextColor = MaterialTheme.colorScheme.onSecondary,
 			unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
+			focusedIndicatorColor = Color.Transparent,
+			unfocusedIndicatorColor = Color.Transparent
 		),
 		keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
 		keyboardActions = KeyboardActions(

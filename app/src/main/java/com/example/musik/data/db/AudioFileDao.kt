@@ -23,7 +23,16 @@ interface AudioFileDao {
 	@Query("SELECT * from audio_files WHERE id = :id")
 	fun getAudioFileById(id: Int): Flow<AudioFile>
 
-	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	@Insert(onConflict = OnConflictStrategy.IGNORE)
+	suspend fun insertMultiple(audioFiles: List<AudioFile>)
+
+	@Delete
+	suspend fun deleteMultiple(audioFiles: List<AudioFile>)
+
+	@Update
+	suspend fun updateMultiple(audioFiles: List<AudioFile>)
+
+	@Insert(onConflict = OnConflictStrategy.IGNORE)
 	suspend fun insert(audioFile: AudioFile)
 
 	@Delete

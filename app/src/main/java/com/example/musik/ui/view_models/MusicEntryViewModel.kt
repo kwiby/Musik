@@ -27,18 +27,9 @@ class MusicEntryViewModel(private val audioFileRepo: AudioFileRepository): ViewM
 			initialValue = 0
 		)
 
-	fun updateUiState(musicDetails: MusicDetails) {
-		musicUiState =
-			MusicUiState(musicDetails = musicDetails, isEntryValid = validateInput(musicDetails))
-	}
-
 	private fun validateInput(uiState: MusicDetails = musicUiState.musicDetails): Boolean {
 		return with(uiState) {
 			contentUri.isNotBlank()
-					&& albumArtUri.isNotBlank() 
-					&& title.isNotBlank()
-					&& artist.isNotBlank()
-					&& duration.isNotBlank()
 		}
 	}
 
@@ -46,6 +37,10 @@ class MusicEntryViewModel(private val audioFileRepo: AudioFileRepository): ViewM
 		if (validateInput()) {
 			audioFileRepo.insertAudioFile(musicUiState.musicDetails.toAudioFile())
 		}
+	}
+
+	fun updateUiState(musicDetails: MusicDetails) {
+		musicUiState = MusicUiState(musicDetails = musicDetails, isEntryValid = validateInput(musicDetails))
 	}
 }
 

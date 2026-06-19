@@ -14,8 +14,8 @@ fun Long.formatDuration(): String {
 
 fun String.unformatDuration(): Long {
 	val sections = this.split(":")
-	require(sections.size == 2) {
-		val eMsg = "Duration format is NOT proper, must be 'H...H:MM:SS'!"
+	require(sections.size == 3) {
+		val eMsg = "Duration format is NOT proper, must be 'H...H:MM:SS' ==> $this"
 
 		Log.e("DurationConverter", eMsg)
 		eMsg
