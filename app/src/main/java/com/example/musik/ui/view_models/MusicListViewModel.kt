@@ -25,11 +25,11 @@ class MusicListViewModel(audioFileRepo: AudioFileRepository): ViewModel() {
 
 	val uiState: StateFlow<MusicUiState> = audioFileRepo
 		.getAllAudioFilesStream()
-		.map<List<AudioFile>, MusicUiState> { audioFiles ->
-			if (audioFiles.isEmpty()) {
+		.map<List<AudioFile>, MusicUiState> { musicList ->
+			if (musicList.isEmpty()) {
 				MusicUiState.Empty
 			} else {
-				MusicUiState.Success(audioFiles.map { it.toMusicDetails() })
+				MusicUiState.Success(musicList.map { it.toMusicDetails() })
 			}
 		}
 		.onStart { emit(MusicUiState.Loading) }

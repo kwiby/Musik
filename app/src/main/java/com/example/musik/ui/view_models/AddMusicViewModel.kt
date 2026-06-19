@@ -35,7 +35,10 @@ class AddMusicViewModel(
 				}
 			}
 		}
-		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.WhileSubscribed(5_000),
+			initialValue = emptyList())
 
 	private val _isLoading = MutableStateFlow(false)
 	val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -54,14 +57,16 @@ class AddMusicViewModel(
 
 	private var loadJob: Job? = null
 	private fun loadAudioFiles() {
-		_isLoading.value = true
 		loadJob?.cancel()
+		_isLoading.value = true
 
 		loadJob = viewModelScope.launch(Dispatchers.IO) {
 			try {
-				_allAudioFiles.value = fetchAudioFiles(getApplication()).map {
+				 val files = fetchAudioFiles(getApplication()).map {
 					it.toMusicDetails()
 				}
+
+				_allAudioFiles.value = files
 			} finally {
 				_isLoading.value = false
 			}
