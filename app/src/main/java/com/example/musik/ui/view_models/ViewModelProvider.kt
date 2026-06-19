@@ -9,7 +9,7 @@ import com.example.musik.ui.MusikApplication
 object ViewModelProvider {
 	val Factory = viewModelFactory {
 		initializer {
-			MusicEntryViewModel(musikApplication().container.audioFileRepository)
+			MusicListViewModel(musikApplication().container.audioFileRepository)
 		}
 		initializer {
 			AddMusicViewModel(

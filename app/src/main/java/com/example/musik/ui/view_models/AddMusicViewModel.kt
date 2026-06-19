@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddMusicViewModel(
 	application: Application,
@@ -36,11 +37,11 @@ class AddMusicViewModel(
 		}
 		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-	private val _selectedIds = MutableStateFlow<Set<Long>>(emptySet())
-	val selectedIds: StateFlow<Set<Long>> = _selectedIds.asStateFlow()
-
 	private val _isLoading = MutableStateFlow(false)
 	val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+	private val _selectedIds = MutableStateFlow<Set<Long>>(emptySet())
+	val selectedIds: StateFlow<Set<Long>> = _selectedIds.asStateFlow()
 
 
 	private fun clearSearchQuery() {
@@ -49,10 +50,6 @@ class AddMusicViewModel(
 
 	private fun clearSelection() {
 		_selectedIds.value = emptySet()
-	}
-
-	private fun getSelectedMusic(): List<MusicDetails> {
-		return audioFiles.value.filter { it.id in _selectedIds.value }
 	}
 
 	private var loadJob: Job? = null
@@ -71,9 +68,9 @@ class AddMusicViewModel(
 		}
 	}
 
-	fun addSelectedMusic() {
-		val selectedMusic = getSelectedMusic()
-		viewModelScope.launch(Dispatchers.IO) {
+	suspend fun addSelectedMusic() {
+		val selectedMusic = audioFiles.value.filter { it.id in _selectedIds.value }
+		withContext(Dispatchers.IO) {
 			audioFileRepo.insertMultipleAudioFiles(selectedMusic.map { it.toAudioFile() })
 		}
 

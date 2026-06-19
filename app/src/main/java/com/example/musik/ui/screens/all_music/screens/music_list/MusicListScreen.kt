@@ -2,8 +2,10 @@ package com.example.musik.ui.screens.all_music.screens.music_list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -21,18 +23,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
-import com.example.musik.ui.view_models.MusicEntryViewModel
-import com.example.musik.ui.view_models.ViewModelProvider
+import com.example.musik.ui.components.MusicListItem
+import com.example.musik.ui.screens.all_music.components.ListDivider
+import com.example.musik.ui.screens.all_music.components.LoadingIndicator
+import com.example.musik.ui.view_models.MusicListViewModel
 
 @Composable
 fun MusicListScreen(
-	viewModel: MusicEntryViewModel = viewModel(factory = ViewModelProvider.Factory),
+	viewModel: MusicListViewModel,
 	onAddMusic: () -> Unit,
 ) {
-	val dbCount by viewModel.audioFileCount.collectAsStateWithLifecycle()
+	val selectedIds by viewModel.selectedIds.collectAsStateWithLifecycle()
 
 	Column(
 		verticalArrangement = Arrangement.Top,
@@ -47,7 +50,9 @@ fun MusicListScreen(
 			Row {
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 				CustomIconButton(
-					{  },
+					{
+						viewModel.moveMusicButton()
+					},
 					Icons.Rounded.UnfoldMore,
 					stringResource(R.string.move_songs_button)
 				)
@@ -56,7 +61,10 @@ fun MusicListScreen(
 			// ---===---  Adding Buttons  ---===---
 			Row {
 				CustomIconButton(
-					{ onAddMusic() },
+					{
+						viewModel.addingButton()
+						onAddMusic()
+					},
 					Icons.Rounded.Add,
 					stringResource(R.string.add_songs_button)
 				)
@@ -66,23 +74,46 @@ fun MusicListScreen(
 
 		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.buttons_vertical_padding)))
 
-		if (dbCount != 0) {
-			// ---===---  Music List  ---===---
-			LazyColumn {
-
+		when(val state = viewModel.uiState.collectAsStateWithLifecycle().value) {
+			is MusicListViewModel.MusicUiState.Loading -> {
+				LoadingIndicator()
 			}
-		} else {
-			// ---===---  No Music Msg  ---===---
-			Column(
-				verticalArrangement = Arrangement.Top,
-				horizontalAlignment = Alignment.CenterHorizontally,
-				modifier = Modifier.offset(y = dimensionResource(R.dimen.no_music_added_offset))
-			) {
-				Text(
-					text = stringResource(R.string.no_music_msg),
-					style = MaterialTheme.typography.titleSmall,
-					color = MaterialTheme.colorScheme.onSecondary
-				)
+			is MusicListViewModel.MusicUiState.Empty -> {
+				// ---===---  No Music Msg  ---===---
+				Column(
+					verticalArrangement = Arrangement.Top,
+					horizontalAlignment = Alignment.CenterHorizontally,
+					modifier = Modifier.offset(y = dimensionResource(R.dimen.no_music_added_offset))
+				) {
+					Text(
+						text = stringResource(R.string.no_music_msg),
+						style = MaterialTheme.typography.titleSmall,
+						color = MaterialTheme.colorScheme.onSecondary
+					)
+				}
+			}
+			is MusicListViewModel.MusicUiState.Success -> {
+				// ---===---  Music List  ---===---
+				LazyColumn(
+					contentPadding = PaddingValues(
+						bottom = dimensionResource(R.dimen.x_large_padding)
+					),
+					modifier = Modifier.fillMaxSize()
+				) {
+					items(
+						count = state.musicList.size,
+						key = { state.musicList[it].id }
+					) { index ->
+						val music = state.musicList[index]
+						MusicListItem(
+							musicDetails = music,
+							isSelected = music.id in selectedIds,
+							onClick = { viewModel.toggleSelection(music.id) }
+						)
+
+						ListDivider(index, state.musicList)
+					}
+				}
 			}
 		}
 	}
