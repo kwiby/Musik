@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.UnfoldMore
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -29,6 +31,7 @@ import com.example.musik.ui.components.MusicListItem
 import com.example.musik.ui.screens.all_music.components.ListDivider
 import com.example.musik.ui.screens.all_music.components.LoadingIndicator
 import com.example.musik.ui.view_models.MusicListViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun MusicListScreen(
@@ -36,6 +39,9 @@ fun MusicListScreen(
 	onAddMusic: () -> Unit,
 ) {
 	val selectedIds by viewModel.selectedIds.collectAsStateWithLifecycle()
+	val isInSelectionMode by viewModel.isInSelectionMode.collectAsStateWithLifecycle()
+
+	val scope = rememberCoroutineScope()
 
 	Column(
 		verticalArrangement = Arrangement.Top,
@@ -49,25 +55,42 @@ fun MusicListScreen(
 			// ---===---  Editing Buttons  ---===---
 			Row {
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
+
+				// ---===---  Move Music Button  ---===---
 				CustomIconButton(
 					{
 						viewModel.moveMusicButton()
 					},
 					Icons.Rounded.UnfoldMore,
-					stringResource(R.string.move_songs_button)
+					stringResource(R.string.move_music_button)
 				)
+
+				// ---===---  Remove Music Button  ---===---
+				if (isInSelectionMode) {
+					CustomIconButton(
+						{
+							scope.launch {
+								viewModel.removeMusicButton()
+							}
+						},
+						Icons.Rounded.DeleteOutline,
+						stringResource(R.string.remove_music_button)
+					)
+				}
 			}
 
 			// ---===---  Adding Buttons  ---===---
 			Row {
+				// ---===---  Add Music Button  ---===---
 				CustomIconButton(
 					{
 						viewModel.addingButton()
 						onAddMusic()
 					},
 					Icons.Rounded.Add,
-					stringResource(R.string.add_songs_button)
+					stringResource(R.string.add_music_button)
 				)
+
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 			}
 		}
@@ -108,7 +131,8 @@ fun MusicListScreen(
 						MusicListItem(
 							musicDetails = music,
 							isSelected = music.id in selectedIds,
-							onClick = { viewModel.toggleSelection(music.id) }
+							onClick = { viewModel.handleTap(music.id) },
+							onLongClick = { viewModel.handleHold(music.id) }
 						)
 
 						ListDivider(index, state.musicList)

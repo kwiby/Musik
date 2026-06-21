@@ -1,6 +1,6 @@
 package com.example.musik.ui.components
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +24,8 @@ import com.example.musik.data.models.MusicDetails
 fun MusicListItem(
 	musicDetails: MusicDetails,
 	isSelected: Boolean,
-	onClick: () -> Unit
+	onClick: () -> Unit = {},
+	onLongClick: () -> Unit = {}
 ) {
 	val interactionSource = remember { MutableInteractionSource() }
 
@@ -37,13 +38,14 @@ fun MusicListItem(
 		modifier = Modifier
 			.padding(horizontal = dimensionResource(R.dimen.medium_padding))
 			.clip(RoundedCornerShape(dimensionResource(R.dimen.list_item_corner_radius)))
-			.clickable(
+			.combinedClickable(
 				interactionSource = interactionSource,
 				indication = ripple(
 					bounded = true,
 					color = MaterialTheme.colorScheme.onPrimary
 				),
-				onClick = onClick
+				onClick = onClick,
+				onLongClick = onLongClick
 			)
 	) {
 		ListItem(

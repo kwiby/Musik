@@ -10,6 +10,8 @@ interface AudioFileRepository {
 
 	fun getAudioFileCountStream(): Flow<Int>
 
+	suspend fun deleteMultipleAudioFilesById(ids: Set<Long>)
+
 	suspend fun insertMultipleAudioFiles(audioFiles: List<AudioFile>)
 
 	suspend fun deleteMultipleAudioFiles(audioFiles: List<AudioFile>)

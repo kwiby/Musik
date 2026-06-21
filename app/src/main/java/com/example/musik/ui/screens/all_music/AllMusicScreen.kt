@@ -33,9 +33,9 @@ fun AllMusicScreen(
 
 		if (isAddingMusic) {
 			addMusicViewModel.musicAddingSetup()
-
 			AddMusicScreen(addMusicViewModel) { isAddingMusic = false }
 		} else {
+			musicListViewModel.musicListSetup()
 			MusicListScreen(musicListViewModel) { isAddingMusic = true }
 		}
 	}

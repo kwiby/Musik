@@ -5,11 +5,13 @@ import com.example.musik.data.models.AudioFile
 import kotlinx.coroutines.flow.Flow
 
 class OfflineAudioFileRepository(private val audioFileDao: AudioFileDao): AudioFileRepository {
-	override fun getAllAudioFilesStream(): Flow<List<AudioFile>> = audioFileDao.getAllAudioFiles()
+	override fun getAllAudioFilesStream(): Flow<List<AudioFile>> = audioFileDao.getAll()
 
-	override fun getAudioFileByIdStream(id: Int): Flow<AudioFile?> = audioFileDao.getAudioFileById(id)
+	override fun getAudioFileByIdStream(id: Int): Flow<AudioFile?> = audioFileDao.getById(id)
 
-	override fun getAudioFileCountStream(): Flow<Int> = audioFileDao.getAudioFileCount()
+	override fun getAudioFileCountStream(): Flow<Int> = audioFileDao.getCount()
+
+	override suspend fun deleteMultipleAudioFilesById(ids: Set<Long>) = audioFileDao.deleteMultipleById(ids)
 
 	override suspend fun insertMultipleAudioFiles(audioFiles: List<AudioFile>) = audioFileDao.insertMultiple(audioFiles)
 
