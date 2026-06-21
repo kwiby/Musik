@@ -7,16 +7,17 @@ import com.example.musik.data.models.MusicDetails
 import com.example.musik.data.repository.AudioFileRepository
 import com.example.musik.ui.misc.formatDuration
 import com.example.musik.ui.misc.unformatDuration
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 
-class MusicListViewModel(audioFileRepo: AudioFileRepository): ViewModel() {
+class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewModel() {
 	sealed interface MusicUiState {
 		data object Loading: MusicUiState
 		data object Empty: MusicUiState
@@ -32,7 +33,6 @@ class MusicListViewModel(audioFileRepo: AudioFileRepository): ViewModel() {
 				MusicUiState.Success(musicList.map { it.toMusicDetails() })
 			}
 		}
-		.onStart { emit(MusicUiState.Loading) }
 		.stateIn(
 			scope = viewModelScope,
 			started = SharingStarted.WhileSubscribed(5_000),
@@ -42,12 +42,16 @@ class MusicListViewModel(audioFileRepo: AudioFileRepository): ViewModel() {
 	private val _selectedIds = MutableStateFlow<Set<Long>>(emptySet())
 	val selectedIds: StateFlow<Set<Long>> = _selectedIds.asStateFlow()
 
+	val isInSelectionMode: StateFlow<Boolean> = _selectedIds
+		.map { it.isNotEmpty() }
+		.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
 
 	private fun clearSelection() {
 		_selectedIds.value = emptySet()
 	}
 
-	fun toggleSelection(id: Long) {
+	private fun updateSelection(id: Long) {
 		_selectedIds.update { current ->
 			if (id in current) {
 				current - id
@@ -57,11 +61,36 @@ class MusicListViewModel(audioFileRepo: AudioFileRepository): ViewModel() {
 		}
 	}
 
+	fun handleTap(id: Long) {
+		if (isInSelectionMode.value) {
+			updateSelection(id)
+		} else {
+			// Play Music
+		}
+	}
+
+	fun handleHold(id: Long) {
+		updateSelection(id)
+	}
+
 	fun moveMusicButton() {
 		clearSelection()
 	}
 
+	suspend fun removeMusicButton() {
+		val selectedMusic = _selectedIds.value
+		withContext(Dispatchers.IO) {
+			audioFileRepo.deleteMultipleAudioFilesById(selectedMusic)
+		}
+
+		clearSelection()
+	}
+
 	fun addingButton() {
+		clearSelection()
+	}
+
+	fun musicListSetup() {
 		clearSelection()
 	}
 }

@@ -45,11 +45,11 @@ fun AddMusicScreen(
 	val audioFiles by viewModel.audioFiles.collectAsStateWithLifecycle()
 	val selectedIds by viewModel.selectedIds.collectAsStateWithLifecycle()
 
+	val scope = rememberCoroutineScope()
+
 	BackHandler(enabled = true) {
 		onBackToMusicList()
 	}
-
-	val scope = rememberCoroutineScope()
 
 	Column(
 		verticalArrangement = Arrangement.Top,
@@ -133,7 +133,8 @@ fun AddMusicScreen(
 						MusicListItem(
 							musicDetails = music,
 							isSelected = music.id in selectedIds,
-							onClick = { viewModel.toggleSelection(music.id) }
+							onClick = { viewModel.toggleSelection(music.id) },
+							onLongClick = { viewModel.toggleSelection(music.id) }
 						)
 
 						ListDivider(index, audioFiles)

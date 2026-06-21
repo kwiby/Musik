@@ -10,8 +10,9 @@
     <string name="no_audio_files_msg" translatable="true">No audio files</string>
 
     <string name="open_settings_button" translatable="true">Settings</string>
-    <string name="add_songs_button" translatable="true">Add Songs</string>
-    <string name="move_songs_button" translatable="true">Move Songs</string>
+    <string name="add_music_button" translatable="true">Add Music</string>
+    <string name="move_music_button" translatable="true">Move Music</string>
+    <string name="remove_music_button" translatable="true">Remove Music</string>
     <string name="add_selected_music_button" translatable="true">Back</string>
     <string name="refresh_button" translatable="true">Refresh</string>
     <string name="back_button" translatable="true">Back</string>
