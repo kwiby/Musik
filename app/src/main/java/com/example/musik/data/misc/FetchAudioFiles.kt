@@ -3,6 +3,7 @@ package com.example.musik.data.misc
 import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
+import androidx.core.net.toUri
 import com.example.musik.data.models.AudioFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -38,7 +39,7 @@ suspend fun fetchAudioFiles(context: Context): List<AudioFile> = withContext(Dis
 			val duration = it.getLong(durationColumn)
 
 			val albumArtUri = ContentUris.withAppendedId(
-				MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, it.getLong(albumIdColumn)
+				"content://media/external/audio/albumart".toUri(), it.getLong(albumIdColumn)
 			)
 			val contentUri = ContentUris.withAppendedId(mediaUri, id)
 

@@ -46,9 +46,16 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		.map { it.isNotEmpty() }
 		.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+	private val _isInMoveMode = MutableStateFlow(false)
+	val isInMoveMode: StateFlow<Boolean> = _isInMoveMode.asStateFlow()
+
 
 	private fun clearSelection() {
 		_selectedIds.value = emptySet()
+	}
+
+	private fun setMoveMode(value: Boolean) {
+		_isInMoveMode.value = value
 	}
 
 	private fun updateSelection(id: Long) {
@@ -61,11 +68,21 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		}
 	}
 
-	fun handleTap(id: Long) {
+	suspend fun removeMusicButton() {
+		val selectedMusic = _selectedIds.value
+		withContext(Dispatchers.IO) {
+			audioFileRepo.deleteMultipleAudioFilesById(selectedMusic)
+		}
+
+		clearSelection()
+		setMoveMode(false)
+	}
+
+	fun handleTap(id: Long, onPlayMusic: () -> Unit) {
 		if (isInSelectionMode.value) {
 			updateSelection(id)
 		} else {
-			// Play Music
+			onPlayMusic()
 		}
 	}
 
@@ -75,23 +92,37 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 
 	fun moveMusicButton() {
 		clearSelection()
+		setMoveMode(true)
 	}
 
-	suspend fun removeMusicButton() {
-		val selectedMusic = _selectedIds.value
-		withContext(Dispatchers.IO) {
-			audioFileRepo.deleteMultipleAudioFilesById(selectedMusic)
-		}
-
-		clearSelection()
+	fun confirmMoveButton() {
+		setMoveMode(false)
 	}
 
-	fun addingButton() {
+	fun onMove(fromIndex: Int, toIndex: Int) {
+
+	}
+
+	fun addingButton(onAddMusicButtonClick: () -> Unit) {
 		clearSelection()
+		setMoveMode(false)
+
+		onAddMusicButtonClick()
+	}
+
+	fun addToPlaylistButton() {
+		clearSelection()
+		setMoveMode(false)
+	}
+
+	fun addYtMusicButton() {
+		clearSelection()
+		setMoveMode(false)
 	}
 
 	fun musicListSetup() {
 		clearSelection()
+		setMoveMode(false)
 	}
 }
 

@@ -12,11 +12,15 @@
     <string name="open_settings_button" translatable="true">Settings</string>
     <string name="add_music_button" translatable="true">Add Music</string>
     <string name="move_music_button" translatable="true">Move Music</string>
+    <string name="confirm_move_button" translatable="true">Confirm Move</string>
     <string name="remove_music_button" translatable="true">Remove Music</string>
     <string name="add_selected_music_button" translatable="true">Back</string>
+    <string name="add_yt_music_button">Add Music from YouTube</string>
+    <string name="add_to_playlist_button">Add to Playlist</string>
     <string name="refresh_button" translatable="true">Refresh</string>
     <string name="back_button" translatable="true">Back</string>
 
     <string name="album_art" translatable="true">Album Art</string>
     <string name="add_music_search_bar" translatable="true">Search audio files</string>
+    <string name="move_music" translatable="true">Move Music</string>
 </resources>

@@ -24,9 +24,9 @@ class AddMusicViewModel(
 ): AndroidViewModel(application) {
 	val searchQuery = MutableStateFlow("")
 
-	private val _allAudioFiles = MutableStateFlow<List<MusicDetails>>(emptyList())
+	private val _audioFiles = MutableStateFlow<List<MusicDetails>>(emptyList())
 	val audioFiles: StateFlow<List<MusicDetails>> = searchQuery
-		.combine(_allAudioFiles) { query, files ->
+		.combine(_audioFiles) { query, files ->
 			if (query.isBlank()) {
 				files
 			} else {
@@ -66,7 +66,7 @@ class AddMusicViewModel(
 					it.toMusicDetails()
 				}
 
-				_allAudioFiles.value = files
+				_audioFiles.value = files
 			} finally {
 				_isLoading.value = false
 			}
@@ -74,7 +74,7 @@ class AddMusicViewModel(
 	}
 
 	suspend fun addSelectedMusic() {
-		val selectedMusic = audioFiles.value.filter { it.id in _selectedIds.value }
+		val selectedMusic = _audioFiles.value.filter { it.id in _selectedIds.value }
 		withContext(Dispatchers.IO) {
 			audioFileRepo.insertMultipleAudioFiles(selectedMusic.map { it.toAudioFile() })
 		}
