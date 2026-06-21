@@ -11,11 +11,16 @@ object ViewModelProvider {
 		initializer {
 			MusicListViewModel(musikApplication().container.audioFileRepository)
 		}
+
 		initializer {
 			AddMusicViewModel(
 				musikApplication(),
 				musikApplication().container.audioFileRepository
 				)
+		}
+
+		initializer {
+			PlaybackViewModel(musikApplication())
 		}
 	}
 }
