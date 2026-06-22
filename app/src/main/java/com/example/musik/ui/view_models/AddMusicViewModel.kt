@@ -98,12 +98,10 @@ class AddMusicViewModel(
 	}
 
 	fun refreshButton() {
-		clearSelection()
-		clearSearchQuery()
-		loadAudioFiles()
+		resetMusicAdding()
 	}
 
-	fun musicAddingSetup() {
+	fun resetMusicAdding() {
 		clearSelection()
 		clearSearchQuery()
 		loadAudioFiles()

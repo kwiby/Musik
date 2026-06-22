@@ -8,15 +8,17 @@ import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import com.example.musik.R
 
 @Composable
 fun CustomIconButton(
-	onClick: () -> Unit,
 	iconImageVector: ImageVector,
-	contentDescription: String
+	contentDescription: String,
+	colour: Color = MaterialTheme.colorScheme.onSecondary,
+	onClick: () -> Unit
 ) {
 	CompositionLocalProvider(
 		LocalContentColor provides MaterialTheme.colorScheme.primary,
@@ -24,7 +26,7 @@ fun CustomIconButton(
 	) {
 		IconButton(
 			colors = IconButtonDefaults.iconButtonColors(
-				contentColor = MaterialTheme.colorScheme.onSecondary
+				contentColor = colour
 			),
 
 			onClick = onClick

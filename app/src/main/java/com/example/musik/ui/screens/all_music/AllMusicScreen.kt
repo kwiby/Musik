@@ -34,10 +34,10 @@ fun AllMusicScreen(
 		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.tabs_buttons_padding)))
 
 		if (isAddingMusic) {
-			addMusicViewModel.musicAddingSetup()
+			addMusicViewModel.resetMusicAdding()
 			AddMusicScreen(addMusicViewModel) { isAddingMusic = false }
 		} else {
-			musicListViewModel.musicListSetup()
+			musicListViewModel.resetMusicList()
 			MusicListScreen(musicListViewModel, playbackViewModel) { isAddingMusic = true }
 		}
 	}

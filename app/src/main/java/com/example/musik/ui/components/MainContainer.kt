@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -76,13 +74,11 @@ fun MainContainer(
 						)
 
 						val context = LocalContext.current
-						IconButton(
-							onClick = { openPermissionsSettings(context) }
+						CustomIconButton(
+							Icons.Rounded.Settings,
+							stringResource(R.string.settings_button)
 						) {
-							Icon(
-								Icons.Default.Settings,
-								contentDescription = stringResource(R.string.open_settings_button)
-							)
+							openPermissionsSettings(context)
 						}
 					}
 				}

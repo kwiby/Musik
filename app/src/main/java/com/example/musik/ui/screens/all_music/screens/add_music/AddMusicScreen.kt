@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -47,7 +48,12 @@ fun AddMusicScreen(
 
 	val scope = rememberCoroutineScope()
 
-	BackHandler(enabled = true) {
+	DisposableEffect(Unit) {
+		onDispose {
+			viewModel.resetMusicAdding()
+		}
+	}
+	BackHandler(true) { // Always enabled in this screen
 		onBackToMusicList()
 	}
 
@@ -63,10 +69,11 @@ fun AddMusicScreen(
 			Row {
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 				CustomIconButton(
-					{ onBackToMusicList() },
 					Icons.AutoMirrored.Rounded.ArrowBack,
 					stringResource(R.string.back_button)
-				)
+				) {
+					onBackToMusicList()
+				}
 			}
 
 			// ---===---  Search Bar  ---===---
@@ -76,24 +83,22 @@ fun AddMusicScreen(
 			Row {
 				// ---===---  Refresh Button  ---===---
 				CustomIconButton(
-					{
-						viewModel.refreshButton()
-					},
 					Icons.Rounded.Refresh,
 					stringResource(R.string.refresh_button)
-				)
+				) {
+					viewModel.refreshButton()
+				}
 
 				// ---===---  Add Selected Music Button  ---===---
 				CustomIconButton(
-					{
-						scope.launch {
-							viewModel.addSelectedMusic()
-							onBackToMusicList()
-						}
-					},
 					Icons.Outlined.AddBox,
 					stringResource(R.string.add_selected_music_button)
-				)
+				) {
+					scope.launch {
+						viewModel.addSelectedMusic()
+						onBackToMusicList()
+					}
+				}
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 			}
 		}

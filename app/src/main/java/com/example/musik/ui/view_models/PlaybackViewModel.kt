@@ -2,9 +2,9 @@ package com.example.musik.ui.view_models
 
 import android.app.Application
 import android.content.ComponentName
-import android.net.Uri
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -12,6 +12,7 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.example.musik.data.services.PlaybackService
+import com.example.musik.ui.misc.unformatDuration
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 
@@ -23,6 +24,8 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 	val isPlaying = mutableStateOf(false)
 	val isShuffling = mutableStateOf(false)
 	val loopMode = mutableIntStateOf(Player.REPEAT_MODE_OFF)
+
+	val currentMusicId get() = mediaController?.currentMediaItem?.mediaId
 
 
 	private fun observePlayer() {
@@ -52,15 +55,16 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		super.onCleared()
 	}
 
-	fun play(uri: Uri, artworkUri: Uri, title: String, artist: String, duration: Long) {
+	fun play(id: Long, contentUri: String, artworkUri: String, title: String, artist: String, duration: String) {
 		val mediaItem = MediaItem.Builder()
-			.setUri(uri)
+			.setMediaId(id.toString())
+			.setUri(contentUri.toUri())
 			.setMediaMetadata(
 				MediaMetadata.Builder()
 					.setTitle(title)
 					.setArtist(artist)
-					.setDurationMs(duration)
-					.setArtworkUri(artworkUri)
+					.setDurationMs(duration.unformatDuration())
+					.setArtworkUri(artworkUri.toUri())
 					.build()
 			).build()
 
@@ -70,7 +74,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 			controller.prepare()
 			controller.play()
 		} else {
-			android.util.Log.e("PlaybackViewModel", "Cannot play: mediaController is not ready.")
+			android.util.Log.e("PlaybackViewModel", "Cannot play music: mediaController is not ready.")
 		}
 	}
 
@@ -106,9 +110,17 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		mediaController?.addMediaItems(items)
 	}
 
+	fun removeCurrentMusic() {
+		val controller = mediaController ?: return
+
+		controller.stop()
+		controller.removeMediaItem(controller.currentMediaItemIndex)
+	}
+
 	fun skipNext() = mediaController?.seekToNextMediaItem()
 
 	fun skipPrev() = mediaController?.seekToPreviousMediaItem()
+
 
 
 	init {

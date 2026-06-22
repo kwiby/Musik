@@ -9,7 +9,7 @@
     <string name="no_music_msg" translatable="true">No music added</string>
     <string name="no_audio_files_msg" translatable="true">No audio files</string>
 
-    <string name="open_settings_button" translatable="true">Settings</string>
+    <string name="settings_button" translatable="true">Settings</string>
     <string name="add_music_button" translatable="true">Add Music</string>
     <string name="move_music_button" translatable="true">Move Music</string>
     <string name="confirm_move_button" translatable="true">Confirm Move</string>

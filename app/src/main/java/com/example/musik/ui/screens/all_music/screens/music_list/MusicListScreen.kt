@@ -1,5 +1,6 @@
 package com.example.musik.ui.screens.all_music.screens.music_list
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.rounded.UnfoldMore
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -30,12 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.MusicListItem
-import com.example.musik.ui.misc.unformatDuration
 import com.example.musik.ui.screens.all_music.components.ListDivider
 import com.example.musik.ui.screens.all_music.components.LoadingIndicator
 import com.example.musik.ui.view_models.MusicListViewModel
@@ -61,6 +61,15 @@ fun MusicListScreen(
 
 	val scope = rememberCoroutineScope()
 
+	DisposableEffect(Unit) {
+		onDispose {
+			viewModel.resetMusicList()
+		}
+	}
+	BackHandler(isInSelectionMode || isInMoveMode) {
+		viewModel.handleBack()
+	}
+
 	Column(
 		verticalArrangement = Arrangement.Top,
 		horizontalAlignment = Alignment.CenterHorizontally
@@ -77,33 +86,35 @@ fun MusicListScreen(
 				// ---===---  Move Music Button  ---===---
 				if (isInMoveMode) {
 					CustomIconButton(
-						{
-							viewModel.confirmMoveButton()
-						},
 						Icons.Rounded.Check,
 						stringResource(R.string.confirm_move_button)
-					)
+					) {
+						viewModel.confirmMoveButton()
+					}
 				} else {
 					CustomIconButton(
-						{
-							viewModel.moveMusicButton()
-						},
 						Icons.Rounded.UnfoldMore,
 						stringResource(R.string.move_music_button)
-					)
+					) {
+						viewModel.moveMusicButton()
+					}
 				}
 
 				// ---===---  Remove Music Button  ---===---
 				if (isInSelectionMode) {
 					CustomIconButton(
-						{
-							scope.launch {
-								viewModel.removeMusicButton()
-							}
-						},
+
 						Icons.Rounded.DeleteOutline,
 						stringResource(R.string.remove_music_button)
-					)
+					) {
+						scope.launch {
+							viewModel.removeMusicButton(
+								playbackViewModel.currentMusicId
+							) {
+								playbackViewModel.removeCurrentMusic()
+							}
+						}
+					}
 				}
 			}
 
@@ -112,31 +123,28 @@ fun MusicListScreen(
 				// ---===---  Add to Playlist Button  ---===---
 				if (isInSelectionMode) {
 					CustomIconButton(
-						{
-							viewModel.addToPlaylistButton()
-						},
 						Icons.AutoMirrored.Rounded.PlaylistAdd,
 						stringResource(R.string.add_to_playlist_button)
-					)
+					) {
+						viewModel.addToPlaylistButton()
+					}
 				}
 
 				// ---===---  Add YouTube Music Button  ---===---
 				CustomIconButton(
-					{
-						viewModel.addYtMusicButton()
-					},
 					Icons.Rounded.SmartDisplay,
 					stringResource(R.string.add_yt_music_button)
-				)
+				) {
+					viewModel.addYtMusicButton()
+				}
 
 				// ---===---  Add Music Button  ---===---
 				CustomIconButton(
-					{
-						viewModel.addingButton { onAddMusic() }
-					},
 					Icons.Rounded.Add,
 					stringResource(R.string.add_music_button)
-				)
+				) {
+					viewModel.addingButton { onAddMusic() }
+				}
 
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 			}
@@ -192,14 +200,15 @@ fun MusicListScreen(
 									music.id
 								) {
 									playbackViewModel.play(
-										music.contentUri.toUri(),
-										music.albumArtUri.toUri(),
+										music.id,
+										music.contentUri,
+										music.albumArtUri,
 										music.title,
 										music.artist,
-										music.duration.unformatDuration()
+										music.duration
 									)
 								}
-								},
+										  },
 								onLongClick = { viewModel.handleHold(music.id) },
 								isInMoveMode = isInMoveMode,
 								reorderableScope = this,
