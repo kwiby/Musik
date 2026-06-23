@@ -24,6 +24,14 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		data class Success(val musicList: List<MusicDetails>): MusicUiState
 	}
 
+	/*
+	Have a variable to hold the CircularDoublyLinkedList, then for the uiState value, upon success,
+	iterate through the CircularDoublyLinkedList to map each index to the corresponding MusicDetail
+	held within the CircularDoublyLinkedList.
+
+	Furthermore, to handle adding/removing from the CircularDoublyLinkedList, implement separate
+	functions for them.
+	 */
 	val uiState: StateFlow<MusicUiState> = audioFileRepo
 		.getAllAudioFilesStream()
 		.map<List<AudioFile>, MusicUiState> { musicList ->
