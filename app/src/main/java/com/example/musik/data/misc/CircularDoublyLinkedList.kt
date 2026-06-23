@@ -17,6 +17,7 @@ class CircularDoublyLinkedList {
 
 	val isEmpty: Boolean get() = _head == null && _tail == null
 
+
 	fun addStart(newMusicDetails: MusicDetails) {
 		val newNode = Node(newMusicDetails)
 
@@ -169,13 +170,13 @@ class CircularDoublyLinkedList {
 		}
 	}
 
-	fun getStart(): MusicDetails {
+	fun getStartMusicDetails(): MusicDetails {
 		check(isHeadAndTailNotNull)
 
 		return _head!!.musicDetails
 	}
 
-	fun getEnd(): MusicDetails {
+	fun getEndMusicDetails(): MusicDetails {
 		check(isHeadAndTailNotNull)
 
 		return _tail!!.musicDetails
@@ -185,5 +186,22 @@ class CircularDoublyLinkedList {
 		_head = null
 		_tail = null
 		_size = 0
+	}
+
+
+	fun toList(): List<MusicDetails> {
+		if (isEmpty) {
+			return emptyList()
+		} else {
+			val result = mutableListOf<MusicDetails>()
+			var curNode: Node = _head!!
+
+			repeat(_size) {
+				result.add(curNode.musicDetails)
+				curNode = curNode.next
+			}
+
+			return result
+		}
 	}
 }

@@ -2,6 +2,7 @@ package com.example.musik.ui.view_models
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.musik.data.misc.CircularDoublyLinkedList
 import com.example.musik.data.models.AudioFile
 import com.example.musik.data.models.MusicDetails
 import com.example.musik.data.repository.AudioFileRepository
@@ -18,30 +19,50 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
 class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewModel() {
+	private val _queue: CircularDoublyLinkedList = CircularDoublyLinkedList()
+
 	sealed interface MusicUiState {
 		data object Loading: MusicUiState
 		data object Empty: MusicUiState
 		data class Success(val musicList: List<MusicDetails>): MusicUiState
 	}
 
-	/*
-	Have a variable to hold the CircularDoublyLinkedList, then for the uiState value, upon success,
-	iterate through the CircularDoublyLinkedList to map each index to the corresponding MusicDetail
-	held within the CircularDoublyLinkedList.
-
-	Furthermore, to handle adding/removing from the CircularDoublyLinkedList, implement separate
-	functions for them.
-	 */
 	val uiState: StateFlow<MusicUiState> = audioFileRepo
 		.getAllAudioFilesStream()
 		.map<List<AudioFile>, MusicUiState> { musicList ->
 			if (musicList.isEmpty()) {
 				MusicUiState.Empty
 			} else {
-				MusicUiState.Success(musicList.map { it.toMusicDetails() })
+				val newMusicDetails = musicList.map { it.toMusicDetails() }
+				val curMusicDetails = _queue.toList()
+
+				/*
+				Filters the DB list such that only values that are NOT in the CDLL are kept, which
+				are then added to the end of the CDLL iteratively
+
+				EX:
+					DB Emits: [A, B, C, D]  =>  'D' was added to the DB
+					CDLL Contains: [A, B, C]  =>  'D' has NOT yet been added to the CDLL
+					Filter Keeps: [D]  =>  As such, 'D' is the only filtered item
+					Final CDLL: [A, B, C, D]  =>  Finally, 'D' is added to the CDLL
+				 */
+				newMusicDetails.filter { it !in curMusicDetails }.forEach { _queue.addEnd(it) }
+
+				/*
+				Filters the DB list such that only values that ARE in the CDLL but are NOT in the DB
+				are kept, which are then removed from the CDLL iteratively
+
+				EX:
+					DB Emits: [A, C, D]  =>  'B' was deleted from the DB
+					CDLL Contains: [A, B, C, D]  =>  'B' has NOT yet been deleted from the CDLL
+					Filter Keeps: [B]  =>  As such, 'B' is the only filtered item
+					Final CDLL: [A, C, D]  =>  Finally, 'B' is removed from the CDLL
+				 */
+				curMusicDetails.filter { it !in newMusicDetails }.forEach { _queue.remove(it) }
+
+				MusicUiState.Success(_queue.toList())
 			}
-		}
-		.stateIn(
+		}.stateIn(
 			scope = viewModelScope,
 			started = SharingStarted.WhileSubscribed(5_000),
 			initialValue = MusicUiState.Loading
@@ -94,7 +115,6 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 	}
 
 	fun onMove(fromIndex: Int, toIndex: Int) {
-
 	}
 
 	fun addingButton(onAddMusicButtonClick: () -> Unit) {
