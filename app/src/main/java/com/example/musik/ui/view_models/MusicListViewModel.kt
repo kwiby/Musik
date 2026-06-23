@@ -24,6 +24,14 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		data class Success(val musicList: List<MusicDetails>): MusicUiState
 	}
 
+	/*
+	Have a variable to hold the CircularDoublyLinkedList, then for the uiState value, upon success,
+	iterate through the CircularDoublyLinkedList to map each index to the corresponding MusicDetail
+	held within the CircularDoublyLinkedList.
+
+	Furthermore, to handle adding/removing from the CircularDoublyLinkedList, implement separate
+	functions for them.
+	 */
 	val uiState: StateFlow<MusicUiState> = audioFileRepo
 		.getAllAudioFilesStream()
 		.map<List<AudioFile>, MusicUiState> { musicList ->
@@ -54,8 +62,8 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		_selectedIds.value = emptySet()
 	}
 
-	private fun disableMoveMode() {
-		_isInMoveMode.value = false
+	private fun setMoveMode(bool: Boolean) {
+		_isInMoveMode.value = bool
 	}
 
 	private fun updateSelection(id: Long) {
@@ -109,11 +117,12 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 	}
 
 	fun moveMusicButton() {
-		resetMusicList()
+		clearSelection()
+		setMoveMode(true)
 	}
 
 	fun confirmMoveButton() {
-		disableMoveMode()
+		setMoveMode(false)
 	}
 
 	fun addToPlaylistButton() {
@@ -130,7 +139,7 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 
 	fun resetMusicList() {
 		clearSelection()
-		disableMoveMode()
+		setMoveMode(false)
 	}
 }
 

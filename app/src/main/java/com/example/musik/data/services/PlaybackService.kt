@@ -35,7 +35,10 @@ class PlaybackService: MediaSessionService() {
 
 	override fun onDestroy() {
 		mediaSession?.run {
-			player.release()
+			if (player.isCommandAvailable(androidx.media3.common.Player.COMMAND_STOP)) {
+				player.release()
+			}
+
 			release()
 			mediaSession = null
 		}
@@ -45,14 +48,6 @@ class PlaybackService: MediaSessionService() {
 
 	override fun onTaskRemoved(rootIntent: Intent?) {
 		super.onTaskRemoved(rootIntent)
-
-		mediaSession?.run {
-			player.stop()
-			player.release()
-			release()
-			mediaSession = null
-		}
-
 		stopSelf()
 	}
 }

@@ -1,27 +1,24 @@
 package com.example.musik.data.misc
 
-/*
+import android.util.Log
+import com.example.musik.data.models.MusicDetails
+
 class CircularDoublyLinkedList {
-	class Node(val id: Int) {
+	class Node(val musicDetails: MusicDetails) {
 		lateinit var next: Node
 		lateinit var prev: Node
 	}
 
 	private var _head: Node? = null
-	private var _tail: Node? = null
+	private var _tail: Node? = null // Not needed, just for readability (could just do _head.prev)
 	private var _size: Int = 0
 
-	private val isHeadAndTailNotNull get() = _head != null && _tail != null
+	private val isHeadAndTailNotNull: Boolean get() = _head != null && _tail != null
 
-	val isEmpty get() = _head == null && _tail == null
+	val isEmpty: Boolean get() = _head == null && _tail == null
 
-	fun addAfter() {
-		// TODO: Finish implementation
-
-	}
-
-	fun addStart(newId: Int) {
-		val newNode = Node(newId)
+	fun addStart(newMusicDetails: MusicDetails) {
+		val newNode = Node(newMusicDetails)
 
 		if (isEmpty) {
 			newNode.next = newNode
@@ -41,8 +38,8 @@ class CircularDoublyLinkedList {
 		_size++
 	}
 
-	fun addEnd(newId: Int) {
-		val newNode = Node(newId)
+	fun addEnd(newMusicDetails: MusicDetails) {
+		val newNode = Node(newMusicDetails)
 
 		if (isEmpty) {
 			newNode.next = newNode
@@ -62,70 +59,131 @@ class CircularDoublyLinkedList {
 		_size++
 	}
 
-	fun remove(id: Int) {
-		fun removeNode(node: Node) {
-			check(_head != _tail)
-
-			node.next.prev = node.prev
-			node.prev.next = node.next
-
-			if (node == _head) {
-				_head = node.next
-			} else if (node == _tail) {
-				_tail = node.prev
-			}
-
-			_size--
-		}
-
+	fun addAfterAnother(musicDetailsOld: MusicDetails, musicDetailsNew: MusicDetails) {
 		check(isHeadAndTailNotNull)
+
+		val newNode = Node(musicDetailsNew)
+
+		var curNode: Node = _head!!
+		do {
+			if (curNode.musicDetails == musicDetailsOld) {
+				if (curNode == _tail) {
+					_tail = newNode
+				}
+
+				newNode.next = curNode.next
+				newNode.prev = curNode
+				curNode.next.prev = newNode
+				curNode.next = newNode
+
+				_size++
+
+				break
+			} else {
+				curNode = curNode.next
+			}
+		} while (curNode != _head && curNode.musicDetails != musicDetailsOld)
+	}
+
+	// remove() returns whether or not the execution ran correctly or not
+	fun remove(musicDetails: MusicDetails): Boolean {
+		check(isHeadAndTailNotNull)
+
 		if (_size == 1) {
-			_head = null
-			_tail = null
+			if (musicDetails != _head!!.musicDetails) {
+				return false
+			} else {
+				_head = null
+				_tail = null
 
-			_size--
+				_size--
+
+				return true
+			}
 		} else {
-			var curNode = _head!!
-			while (curNode != _tail) {
-				if (curNode.id == id) {
-					removeNode(curNode)
+			var curNode: Node = _head!!
+			do {
+				if (curNode.musicDetails == musicDetails) {
+					curNode.next.prev = curNode.prev
+					curNode.prev.next = curNode.next
+					when (curNode) {
+						_head -> _head = curNode.next
+						_tail -> _tail = curNode.prev
+					}
 
-					break
+					_size--
+
+					return true
 				} else {
 					curNode = curNode.next
+				}
+			} while (curNode != _head)
+		}
 
-					if (curNode.id == id) {
-						removeNode(curNode)
+		return false
+	}
 
-						break
-					}
+	fun swap(musicDetails1: MusicDetails, musicDetails2: MusicDetails) {
+		remove(musicDetails1)
+		addAfterAnother(musicDetails2, musicDetails1)
+	}
+
+	fun getNode(musicDetails: MusicDetails): Node? {
+		check(isHeadAndTailNotNull)
+
+		var curNode: Node = _head!!
+		do {
+			if (curNode.musicDetails == musicDetails) {
+				return curNode
+			} else {
+				curNode = curNode.next
+			}
+		} while (curNode != _head)
+
+		Log.e("CircularDoublyLinkedList", "ID does not match with any node!")
+		return null
+	}
+
+	// This function gets a random node EXCLUDING the provided id
+	fun getRandomNode(musicDetails: MusicDetails): Node? {
+		check(isHeadAndTailNotNull)
+
+		if (_size == 1) {
+			return _head
+		} else {
+			var curNode: Node = _head!!
+			if (curNode.musicDetails == musicDetails) {
+				curNode = curNode.next
+			}
+
+			val randNum: Int = (0..<(_size - 1)).random()
+			repeat(randNum) {
+				curNode = curNode.next
+
+				if (curNode.musicDetails == musicDetails) {
+					curNode = curNode.next
 				}
 			}
+
+			return curNode
 		}
+	}
+
+	fun getStart(): MusicDetails {
+		check(isHeadAndTailNotNull)
+
+		return _head!!.musicDetails
+	}
+
+	fun getEnd(): MusicDetails {
+		check(isHeadAndTailNotNull)
+
+		return _tail!!.musicDetails
 	}
 
 	fun clear() {
-		// TODO: Finish implementation
-	}
-
-	fun swap() {
-		// TODO: Finish implementation
-	}
-
-	fun getNode(): Node? {
-		// TODO: Finish implementation
-	}
-
-	fun getRandomNode(): Node? {
-		// TODO: Finish implementation
-	}
-
-	fun getStart(): Node? {
-		// TODO: Finish implementation
-	}
-
-	fun getEnd(): Node? {
-		// TODO: Finish implementation
+		_head = null
+		_tail = null
+		_size = 0
 	}
 }
- */

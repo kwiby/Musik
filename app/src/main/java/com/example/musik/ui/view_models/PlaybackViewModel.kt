@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ComponentName
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.media3.common.MediaItem
@@ -14,7 +15,6 @@ import androidx.media3.session.SessionToken
 import com.example.musik.data.services.PlaybackService
 import com.example.musik.ui.misc.unformatDuration
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.common.util.concurrent.MoreExecutors
 
 class PlaybackViewModel(application: Application) : AndroidViewModel(application) {
 	private var controllerFuture: ListenableFuture<MediaController>? = null
@@ -139,6 +139,6 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 				observePlayer()
 			}
-		}, MoreExecutors.directExecutor())
+		}, ContextCompat.getMainExecutor(application))
 	}
 }
