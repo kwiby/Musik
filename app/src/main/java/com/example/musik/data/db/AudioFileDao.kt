@@ -14,14 +14,17 @@ interface AudioFileDao {
 	@Query("SELECT * from audio_files WHERE title LIKE '%' || :search || '%'")
 	fun searchByTitle(search: String): Flow<List<AudioFile>>
 
-	@Query("SELECT COUNT(*) FROM audio_files")
-	fun getCount(): Flow<Int>
-
-	@Query("SELECT * FROM audio_files ORDER BY title ASC")
-	fun getAll(): Flow<List<AudioFile>>
-
 	@Query("SELECT * from audio_files WHERE id = :id")
 	fun getById(id: Int): Flow<AudioFile>
+
+	@Query("SELECT * FROM audio_files ORDER BY orderPos ASC")
+	fun getAll(): Flow<List<AudioFile>>
+
+	@Query("SELECT COUNT(*) FROM audio_files")
+	suspend fun getCount(): Int
+
+	@Query("UPDATE audio_files SET orderPos = :orderPos WHERE id = :id")
+	suspend fun updateOrderPos(id: Long, orderPos: Int)
 
 	@Query("DELETE FROM audio_files WHERE id IN (:ids)")
 	suspend fun deleteMultipleById(ids: Set<Long>)

@@ -76,7 +76,21 @@ class AddMusicViewModel(
 	suspend fun addSelectedMusic() {
 		val selectedMusic = _audioFiles.value.filter { it.id in _selectedIds.value }
 		withContext(Dispatchers.IO) {
+			val curCount = audioFileRepo.getAudioFileCount()
+			audioFileRepo.insertMultipleAudioFiles(
+				selectedMusic.mapIndexed { index, music ->
+					music.toAudioFile().copy(orderPos = curCount + index)
+				}
+			)
+
+			/*
+			Above code is to add the orderPos value when adding audio files. Originally, orderPos
+			would only be set when music reordering confirm button was pressed. If the above feature
+			is not needed, consider switching to the below code (as of writing this, the DB should
+			return the list in insertion order, as all orderPos values are 0 WITH the bottom code):
+
 			audioFileRepo.insertMultipleAudioFiles(selectedMusic.map { it.toAudioFile() })
+			 */
 		}
 
 		clearSelection()
