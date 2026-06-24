@@ -25,7 +25,8 @@ import kotlinx.coroutines.withContext
 
 class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewModel() {
 	private val _queue: CircularDoublyLinkedList = CircularDoublyLinkedList()
-	private var _previousQueue: List<MusicDetails> = emptyList()
+	private var _previousQueueForSync: List<MusicDetails> = emptyList()
+	private var _queueBeforeMove: List<MusicDetails> = emptyList()
 	private val _manualQueue = MutableStateFlow<List<MusicDetails>?>(null)
 
 	sealed interface MusicUiState {
@@ -66,11 +67,11 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 				emptyList()
 			}
 
-			if (newQueue.size >= _previousQueue.size && newQueue != _previousQueue) {
-				_previousQueue = newQueue
+			if (newQueue != _previousQueueForSync) {
+				_previousQueueForSync = newQueue
 				newQueue
 			} else {
-				_previousQueue = newQueue
+				_previousQueueForSync = newQueue
 				null // null = don't sync
 			}
 		}
@@ -106,6 +107,18 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		}
 	}
 
+	private fun revertQueueToBeforeMove() {
+		if (_queueBeforeMove.isEmpty()) {
+			return
+		} else {
+			_queue.clear()
+			_queueBeforeMove.forEach { _queue.addEnd(it) }
+			_manualQueue.value = _queue.toList()
+
+			_queueBeforeMove = emptyList()
+		}
+	}
+
 	suspend fun removeMusicButton(playbackViewModel: PlaybackViewModel) {
 		val selectedMusic = _selectedIds.value
 
@@ -117,11 +130,7 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		resetMusicList()
 	}
 
-	fun onMove(
-		fromIndex: Int,
-		toIndex: Int,
-		moveQueueItemFunction: (Int, Int) -> Unit
-	) {
+	fun onMove(fromIndex: Int, toIndex: Int) {
 		val list = _queue.toList().toMutableList()
 		val moved = list.removeAt(fromIndex)
 		list.add(toIndex, moved)
@@ -130,8 +139,6 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		list.forEach { _queue.addEnd(it) }
 
 		_manualQueue.value = _queue.toList()
-
-		moveQueueItemFunction(fromIndex, toIndex)
 	}
 
 	fun addingButton(onAddMusicButtonClick: () -> Unit) {
@@ -151,12 +158,23 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		updateSelection(id)
 	}
 
-	fun moveMusicButton() {
+	fun enterMoveModeButton() {
+		_queueBeforeMove = _queue.toList()
+
 		clearSelection()
 		setMoveMode(true)
 	}
 
-	fun confirmMoveButton() {
+	fun confirmMoveButton(playbackViewModel: PlaybackViewModel) {
+		val queue = _queue.toList()
+		playbackViewModel.setQueue(queue.map { it.toMediaItem() })
+		_queueBeforeMove = emptyList()
+
+		setMoveMode(false)
+	}
+
+	fun exitMoveModeButton() {
+		revertQueueToBeforeMove()
 		setMoveMode(false)
 	}
 
@@ -174,6 +192,9 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 
 	fun resetMusicList() {
 		clearSelection()
+		if (_isInMoveMode.value) {
+			revertQueueToBeforeMove()
+		}
 		setMoveMode(false)
 	}
 }

@@ -11,8 +11,9 @@
 
     <string name="settings_button" translatable="true">Settings</string>
     <string name="add_music_button" translatable="true">Add Music</string>
-    <string name="move_music_button" translatable="true">Move Music</string>
+    <string name="enter_move_mode_button" translatable="true">Move Music</string>
     <string name="confirm_move_button" translatable="true">Confirm Move</string>
+    <string name="exit_move_mode_button" translatable="true">Exit Move</string>
     <string name="remove_music_button" translatable="true">Remove Music</string>
     <string name="add_selected_music_button" translatable="true">Back</string>
     <string name="add_yt_music_button">Add Music from YouTube</string>

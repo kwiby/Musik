@@ -75,13 +75,13 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 		super.onCleared()
 	}
-
+	
 	fun setQueue(items: List<MediaItem>) {
 		val controller = mediaController ?: return
 
-		val currentIds = (0 until controller.mediaItemCount)
-			.map { controller.getMediaItemAt(it).mediaId }
-
+		val currentIds = (0 until controller.mediaItemCount).map {
+			controller.getMediaItemAt(it).mediaId
+		}
 		val newIds = items.map { it.mediaId }
 
 		if (currentIds == newIds) {
@@ -95,24 +95,63 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 			return
 		}
 
-		/*
-		// Fallback for reorders (full replace)
-		val currentId = controller.currentMediaItem?.mediaId
-		val startIndex = items.indexOfFirst { it.mediaId == currentId }.coerceAtLeast(0)
-		val wasPlaying = controller.isPlaying
-
-		controller.setMediaItems(items, startIndex, C.TIME_UNSET)
-		if (wasPlaying) {
-			controller.prepare()
+		// Reorder (confirm or revert)
+		newIds.forEachIndexed { targetIndex, id ->
+			val currentIndex = (0 until controller.mediaItemCount).indexOfFirst {
+				controller.getMediaItemAt(it).mediaId == id
+			}
+			if (currentIndex != targetIndex) {
+				controller.moveMediaItem(currentIndex, targetIndex)
+			}
 		}
-		*/
 	}
+
+	/*
+	fun setQueue(items: List<MediaItem>) {
+		val controller = mediaController ?: return
+
+		val currentIds = (0 until controller.mediaItemCount)
+			.map { controller.getMediaItemAt(it).mediaId }
+		val newIds = items.map { it.mediaId }
+
+		if (currentIds == newIds) return
+
+		// Remove items no longer in the new list (reverse order to keep indices stable)
+		val newIdSet = newIds.toHashSet()
+		for (i in controller.mediaItemCount - 1 downTo 0) {
+			if (controller.getMediaItemAt(i).mediaId !in newIdSet) {
+				controller.removeMediaItem(i)
+			}
+		}
+
+		// Add items not yet in the queue
+		val presentIds = (0 until controller.mediaItemCount)
+			.map { controller.getMediaItemAt(it).mediaId }
+			.toHashSet()
+		items.forEach { item ->
+			if (item.mediaId !in presentIds) {
+				controller.addMediaItems(listOf(item))
+			}
+		}
+
+		// Move items into their correct positions
+		items.forEachIndexed { targetIndex, item ->
+			val currentIndex = (0 until controller.mediaItemCount).indexOfFirst {
+				controller.getMediaItemAt(it).mediaId == item.mediaId
+			}
+			if (currentIndex != -1 && currentIndex != targetIndex) {
+				controller.moveMediaItem(currentIndex, targetIndex)
+			}
+		}
+	}*/
 
 	fun play(id: Long) {
 		val controller = mediaController
+
 		if (controller != null) {
-			val targetIndex = (0 until controller.mediaItemCount)
-				.firstOrNull { controller.getMediaItemAt(it).mediaId == id.toString() }
+			val targetIndex = (0 until controller.mediaItemCount).firstOrNull {
+				controller.getMediaItemAt(it).mediaId == id.toString()
+			}
 
 			if (targetIndex != null) {
 				controller.seekToDefaultPosition(targetIndex)
@@ -127,9 +166,11 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 	fun removeFromQueue(ids: Set<Long>) {
 		val controller = mediaController ?: return
-		val indicesToRemove = (0 until controller.mediaItemCount)
-			.filter { controller.getMediaItemAt(it).mediaId.toLongOrNull() in ids }
-			.sortedDescending()
+
+		val indicesToRemove = (0 until controller.mediaItemCount).filter {
+			controller.getMediaItemAt(it).mediaId.toLongOrNull() in ids
+		}.sortedDescending()
+		// Need descending index order to remove from end, preventing shifting issues
 
 		val currentlyPlayingRemoved = controller.currentMediaItem?.mediaId?.toLongOrNull() in ids
 		if (currentlyPlayingRemoved) {
@@ -144,22 +185,22 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 	}
 
 	fun cycleLoopMode() {
-		val nextVal = when (mediaController?.repeatMode) {
+		val nextLoopMode = when (mediaController?.repeatMode) {
 			Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE // Loop current music
 			Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_ALL // Loop whole queue
 			Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_OFF // No loop
-			else -> Player.REPEAT_MODE_OFF
+			else -> Player.REPEAT_MODE_OFF // Default value just in case
 		}
 
-		mediaController?.repeatMode = nextVal
-		loopMode.intValue = nextVal
+		mediaController?.repeatMode = nextLoopMode
+		loopMode.intValue = nextLoopMode
 	}
 
 	fun toggleShuffle() {
-		val nextVal = !isShuffling.value
+		val nextShuffleMode = !isShuffling.value
 
-		mediaController?.shuffleModeEnabled = nextVal
-		isShuffling.value = nextVal
+		mediaController?.shuffleModeEnabled = nextShuffleMode
+		isShuffling.value = nextShuffleMode
 	}
 
 	fun togglePlayPause() {
@@ -191,8 +232,9 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 	init {
 		val application: Application = getApplication()
-		val sessionToken =
-			SessionToken(application, ComponentName(application, PlaybackService::class.java))
+		val sessionToken = SessionToken(
+			application, ComponentName(application, PlaybackService::class.java)
+		)
 
 		controllerFuture = MediaController.Builder(application, sessionToken).buildAsync()
 		controllerFuture?.addListener({
