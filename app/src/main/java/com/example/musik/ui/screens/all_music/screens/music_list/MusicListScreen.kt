@@ -17,9 +17,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.SmartDisplay
+import androidx.compose.material.icons.rounded.UnfoldLess
 import androidx.compose.material.icons.rounded.UnfoldMore
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,12 +35,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
+import com.example.musik.playback.PlaybackViewModel
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.MusicListItem
 import com.example.musik.ui.screens.all_music.components.ListDivider
 import com.example.musik.ui.screens.all_music.components.LoadingIndicator
 import com.example.musik.ui.view_models.MusicListViewModel
-import com.example.musik.ui.view_models.PlaybackViewModel
+import com.example.musik.ui.view_models.toMediaItem
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -55,15 +56,21 @@ fun MusicListScreen(
 	val isInSelectionMode by viewModel.isInSelectionMode.collectAsStateWithLifecycle()
 	val isInMoveMode by viewModel.isInMoveMode.collectAsStateWithLifecycle()
 
+	val queueSyncEvent by viewModel.queueSyncEvent.collectAsStateWithLifecycle()
+
 	val lazyListState = rememberLazyListState()
 	val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
-		viewModel.onMove(from.index, to.index)
+		viewModel.onMove(from.index, to.index) { fromIndex, toIndex ->
+			playbackViewModel.moveQueueItem(fromIndex, toIndex)
+		}
 	}
 
 	val scope = rememberCoroutineScope()
 
-	LaunchedEffect(Unit) {
-		viewModel.removeMusicButton(playbackViewModel)
+	LaunchedEffect(queueSyncEvent) {
+		queueSyncEvent?.let { q ->
+			playbackViewModel.setQueue(q.map { it.toMediaItem() })
+		}
 	}
 	DisposableEffect(Unit) {
 		onDispose {
@@ -90,7 +97,7 @@ fun MusicListScreen(
 				// ---===---  Move Music Button  ---===---
 				if (isInMoveMode) {
 					CustomIconButton(
-						Icons.Rounded.Check,
+						Icons.Rounded.UnfoldLess,
 						stringResource(R.string.confirm_move_button)
 					) {
 						viewModel.confirmMoveButton()
@@ -198,14 +205,7 @@ fun MusicListScreen(
 								onClick = { viewModel.handleTap(
 									music.id
 								) {
-									playbackViewModel.play(
-										music.id,
-										music.contentUri,
-										music.albumArtUri,
-										music.title,
-										music.artist,
-										music.duration
-									)
+									playbackViewModel.play(music.id)
 								}
 										  },
 								onLongClick = { viewModel.handleHold(music.id) },

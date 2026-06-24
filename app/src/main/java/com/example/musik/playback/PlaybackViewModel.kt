@@ -1,7 +1,8 @@
-package com.example.musik.ui.view_models
+package com.example.musik.playback
 
 import android.app.Application
 import android.content.ComponentName
+import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
@@ -12,7 +13,6 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.example.musik.data.services.PlaybackService
 import com.example.musik.ui.misc.unformatDuration
 import com.google.common.util.concurrent.ListenableFuture
 
@@ -76,17 +76,71 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		super.onCleared()
 	}
 
-	fun play(id: Long, contentUri: String, artworkUri: String, title: String, artist: String, duration: String) {
-		val mediaItem = createMediaItem(id, contentUri, artworkUri, title, artist, duration)
+	fun setQueue(items: List<MediaItem>) {
+		val controller = mediaController ?: return
 
+		val currentIds = (0 until controller.mediaItemCount)
+			.map { controller.getMediaItemAt(it).mediaId }
+
+		val newIds = items.map { it.mediaId }
+
+		if (currentIds == newIds) {
+			return
+		}
+
+		// Find items that are actually new and append them
+		val toAdd = items.filter { it.mediaId !in currentIds }
+		if (toAdd.isNotEmpty()) {
+			controller.addMediaItems(toAdd)
+			return
+		}
+
+		/*
+		// Fallback for reorders (full replace)
+		val currentId = controller.currentMediaItem?.mediaId
+		val startIndex = items.indexOfFirst { it.mediaId == currentId }.coerceAtLeast(0)
+		val wasPlaying = controller.isPlaying
+
+		controller.setMediaItems(items, startIndex, C.TIME_UNSET)
+		if (wasPlaying) {
+			controller.prepare()
+		}
+		*/
+	}
+
+	fun play(id: Long) {
 		val controller = mediaController
 		if (controller != null) {
-			controller.setMediaItem(mediaItem)
-			controller.prepare()
-			controller.play()
+			val targetIndex = (0 until controller.mediaItemCount)
+				.firstOrNull { controller.getMediaItemAt(it).mediaId == id.toString() }
+
+			if (targetIndex != null) {
+				controller.seekToDefaultPosition(targetIndex)
+				controller.play()
+			} else {
+				Log.e("PlaybackViewModel", "Track $id not found in queue.")
+			}
 		} else {
-			android.util.Log.e("PlaybackViewModel", "Cannot play music: mediaController is not ready.")
+			Log.e("PlaybackViewModel", "Cannot play music: mediaController is not ready.")
 		}
+	}
+
+	fun removeFromQueue(ids: Set<Long>) {
+		val controller = mediaController ?: return
+		val indicesToRemove = (0 until controller.mediaItemCount)
+			.filter { controller.getMediaItemAt(it).mediaId.toLongOrNull() in ids }
+			.sortedDescending()
+
+		val currentlyPlayingRemoved = controller.currentMediaItem?.mediaId?.toLongOrNull() in ids
+		if (currentlyPlayingRemoved) {
+			controller.stop()
+		}
+
+		indicesToRemove.forEach { controller.removeMediaItem(it) }
+	}
+
+	fun moveQueueItem(from: Int, to: Int) {
+		mediaController?.moveMediaItem(from, to)
 	}
 
 	fun cycleLoopMode() {
@@ -103,6 +157,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 	fun toggleShuffle() {
 		val nextVal = !isShuffling.value
+
 		mediaController?.shuffleModeEnabled = nextVal
 		isShuffling.value = nextVal
 	}
@@ -136,7 +191,8 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 	init {
 		val application: Application = getApplication()
-		val sessionToken = SessionToken(application, ComponentName(application, PlaybackService::class.java))
+		val sessionToken =
+			SessionToken(application, ComponentName(application, PlaybackService::class.java))
 
 		controllerFuture = MediaController.Builder(application, sessionToken).buildAsync()
 		controllerFuture?.addListener({

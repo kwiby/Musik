@@ -17,7 +17,7 @@ import com.example.musik.ui.screens.all_music.screens.add_music.AddMusicScreen
 import com.example.musik.ui.screens.all_music.screens.music_list.MusicListScreen
 import com.example.musik.ui.view_models.AddMusicViewModel
 import com.example.musik.ui.view_models.MusicListViewModel
-import com.example.musik.ui.view_models.PlaybackViewModel
+import com.example.musik.playback.PlaybackViewModel
 import com.example.musik.ui.view_models.ViewModelProvider
 
 @Composable
