@@ -10,5 +10,5 @@ data class AudioFile(
 	val albumArtUri: String,
 	val title: String,
 	val artist: String,
-	val duration: Long, // Milliseconds
+	val duration: Long // Milliseconds
 )
