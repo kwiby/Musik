@@ -28,6 +28,27 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 	val currentMusicId get() = mediaController?.currentMediaItem?.mediaId
 
 
+	private fun createMediaItem(
+		id: Long,
+		contentUri: String,
+		artworkUri: String,
+		title: String,
+		artist: String,
+		duration: String
+	): MediaItem {
+		return MediaItem.Builder()
+			.setMediaId(id.toString())
+			.setUri(contentUri.toUri())
+			.setMediaMetadata(
+				MediaMetadata.Builder()
+					.setTitle(title)
+					.setArtist(artist)
+					.setDurationMs(duration.unformatDuration())
+					.setArtworkUri(artworkUri.toUri())
+					.build()
+			).build()
+	}
+
 	private fun observePlayer() {
 		mediaController?.addListener(object : Player.Listener {
 			override fun onIsPlayingChanged(playing: Boolean) {
@@ -56,17 +77,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 	}
 
 	fun play(id: Long, contentUri: String, artworkUri: String, title: String, artist: String, duration: String) {
-		val mediaItem = MediaItem.Builder()
-			.setMediaId(id.toString())
-			.setUri(contentUri.toUri())
-			.setMediaMetadata(
-				MediaMetadata.Builder()
-					.setTitle(title)
-					.setArtist(artist)
-					.setDurationMs(duration.unformatDuration())
-					.setArtworkUri(artworkUri.toUri())
-					.build()
-			).build()
+		val mediaItem = createMediaItem(id, contentUri, artworkUri, title, artist, duration)
 
 		val controller = mediaController
 		if (controller != null) {

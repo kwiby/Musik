@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -61,6 +62,9 @@ fun MusicListScreen(
 
 	val scope = rememberCoroutineScope()
 
+	LaunchedEffect(Unit) {
+		viewModel.removeMusicButton(playbackViewModel)
+	}
 	DisposableEffect(Unit) {
 		onDispose {
 			viewModel.resetMusicList()
@@ -103,16 +107,11 @@ fun MusicListScreen(
 				// ---===---  Remove Music Button  ---===---
 				if (isInSelectionMode) {
 					CustomIconButton(
-
 						Icons.Rounded.DeleteOutline,
 						stringResource(R.string.remove_music_button)
 					) {
 						scope.launch {
-							viewModel.removeMusicButton(
-								playbackViewModel.currentMusicId
-							) {
-								playbackViewModel.removeCurrentMusic()
-							}
+							viewModel.removeMusicButton(playbackViewModel)
 						}
 					}
 				}

@@ -98,13 +98,13 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 	}
 
 	suspend fun removeMusicButton(
-		currentMusicId: String?,
-		removeCurrentMusicFunction: () -> Unit
+		playbackViewModel: PlaybackViewModel
 	) {
 		val selectedMusic = _selectedIds.value
 
-		if (currentMusicId != null && currentMusicId.toLong() in selectedMusic) {
-			removeCurrentMusicFunction()
+		if (playbackViewModel.currentMusicId != null
+			&& playbackViewModel.currentMusicId!!.toLong() in selectedMusic) {
+			playbackViewModel.removeCurrentMusic()
 		}
 
 		withContext(Dispatchers.IO) {
