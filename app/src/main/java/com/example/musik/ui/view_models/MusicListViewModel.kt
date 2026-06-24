@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewModel() {
@@ -41,10 +42,11 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 			MusicUiState.Empty
 		} else {
 			val newMusicDetails = musicList.map { it.toMusicDetails() }
-			val curMusicDetails = _queue.toList()
+			val newIds = newMusicDetails.map { it.id }
+			val curIds = _queue.map { it.id }
 
-			newMusicDetails.filter { it !in curMusicDetails }.forEach { _queue.add(it) }
-			curMusicDetails.filter { it !in newMusicDetails }.forEach { _queue.remove(it) }
+			newMusicDetails.filter { it.id !in curIds }.forEach { _queue.add(it) }
+			_queue.removeAll { it.id !in newIds }
 
 			if (manualQueue != null) {
 				_manualQueue.value = null
@@ -170,6 +172,10 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		_queueBeforeMove = emptyList()
 
 		setMoveMode(false)
+
+		viewModelScope.launch(Dispatchers.IO) {
+			audioFileRepo.updateMultipleOrderPos(queue.map { it.id })
+		}
 	}
 
 	fun exitMoveModeButton() {
@@ -220,7 +226,8 @@ fun MusicDetails.toAudioFile(): AudioFile = AudioFile(
 	albumArtUri = albumArtUri,
 	title = title,
 	artist = artist,
-	duration = duration.unformatDuration()
+	duration = duration.unformatDuration(),
+	orderPos = orderPos
 )
 
 // AudioFile --> MusicDetails
@@ -230,5 +237,6 @@ fun AudioFile.toMusicDetails(): MusicDetails = MusicDetails(
 	albumArtUri = albumArtUri,
 	title = title,
 	artist = artist,
-	duration = duration.formatDuration()
+	duration = duration.formatDuration(),
+	orderPos = orderPos
 )

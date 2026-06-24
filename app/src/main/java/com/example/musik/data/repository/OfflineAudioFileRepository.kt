@@ -9,7 +9,13 @@ class OfflineAudioFileRepository(private val audioFileDao: AudioFileDao): AudioF
 
 	override fun getAudioFileByIdStream(id: Int): Flow<AudioFile?> = audioFileDao.getById(id)
 
-	override fun getAudioFileCountStream(): Flow<Int> = audioFileDao.getCount()
+	override suspend fun getAudioFileCount(): Int = audioFileDao.getCount()
+
+	override suspend fun updateMultipleOrderPos(orderedIds: List<Long>) {
+		orderedIds.forEachIndexed { index, id ->
+			audioFileDao.updateOrderPos(id, index)
+		}
+	}
 
 	override suspend fun deleteMultipleAudioFilesById(ids: Set<Long>) = audioFileDao.deleteMultipleById(ids)
 

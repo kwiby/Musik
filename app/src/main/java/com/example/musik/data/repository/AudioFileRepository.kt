@@ -8,7 +8,9 @@ interface AudioFileRepository {
 
 	fun getAudioFileByIdStream(id: Int): Flow<AudioFile?>
 
-	fun getAudioFileCountStream(): Flow<Int>
+	suspend fun getAudioFileCount(): Int
+
+	suspend fun updateMultipleOrderPos(orderedIds: List<Long>)
 
 	suspend fun deleteMultipleAudioFilesById(ids: Set<Long>)
 
