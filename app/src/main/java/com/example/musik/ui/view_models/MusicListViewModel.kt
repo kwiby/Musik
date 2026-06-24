@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import com.example.musik.data.misc.CircularDoublyLinkedList
 import com.example.musik.data.models.AudioFile
 import com.example.musik.data.models.MusicDetails
 import com.example.musik.data.repository.AudioFileRepository
@@ -24,7 +23,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
 class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewModel() {
-	private val _queue: CircularDoublyLinkedList = CircularDoublyLinkedList()
+	private val _queue = mutableListOf<MusicDetails>()
 	private var _previousQueueForSync: List<MusicDetails> = emptyList()
 	private var _queueBeforeMove: List<MusicDetails> = emptyList()
 	private val _manualQueue = MutableStateFlow<List<MusicDetails>?>(null)
@@ -44,7 +43,7 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 			val newMusicDetails = musicList.map { it.toMusicDetails() }
 			val curMusicDetails = _queue.toList()
 
-			newMusicDetails.filter { it !in curMusicDetails }.forEach { _queue.addEnd(it) }
+			newMusicDetails.filter { it !in curMusicDetails }.forEach { _queue.add(it) }
 			curMusicDetails.filter { it !in newMusicDetails }.forEach { _queue.remove(it) }
 
 			if (manualQueue != null) {
@@ -112,7 +111,7 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 			return
 		} else {
 			_queue.clear()
-			_queueBeforeMove.forEach { _queue.addEnd(it) }
+			_queueBeforeMove.forEach { _queue.add(it) }
 			_manualQueue.value = _queue.toList()
 
 			_queueBeforeMove = emptyList()
@@ -136,7 +135,7 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		list.add(toIndex, moved)
 
 		_queue.clear()
-		list.forEach { _queue.addEnd(it) }
+		list.forEach { _queue.add(it) }
 
 		_manualQueue.value = _queue.toList()
 	}

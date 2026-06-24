@@ -96,6 +96,25 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		}
 
 		// Reorder (confirm or revert)
+		val idToIndex = (0 until controller.mediaItemCount).associateBy {
+			controller.getMediaItemAt(it).mediaId
+		}.toMutableMap()
+
+		newIds.forEachIndexed { targetIndex, id ->
+			val currentIndex = idToIndex[id] ?: return@forEachIndexed
+			if (currentIndex != targetIndex) {
+				controller.moveMediaItem(currentIndex, targetIndex)
+				idToIndex.entries.forEach { entry ->
+					when {
+						entry.key == id -> entry.setValue(targetIndex)
+						entry.value in minOf(currentIndex, targetIndex)..maxOf(currentIndex, targetIndex) ->
+							entry.setValue(if (currentIndex < targetIndex) entry.value - 1 else entry.value + 1)
+					}
+				}
+			}
+		}
+
+		/* BACKUP CODE FOR REORDERING!!!
 		newIds.forEachIndexed { targetIndex, id ->
 			val currentIndex = (0 until controller.mediaItemCount).indexOfFirst {
 				controller.getMediaItemAt(it).mediaId == id
@@ -103,47 +122,8 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 			if (currentIndex != targetIndex) {
 				controller.moveMediaItem(currentIndex, targetIndex)
 			}
-		}
+		}*/
 	}
-
-	/*
-	fun setQueue(items: List<MediaItem>) {
-		val controller = mediaController ?: return
-
-		val currentIds = (0 until controller.mediaItemCount)
-			.map { controller.getMediaItemAt(it).mediaId }
-		val newIds = items.map { it.mediaId }
-
-		if (currentIds == newIds) return
-
-		// Remove items no longer in the new list (reverse order to keep indices stable)
-		val newIdSet = newIds.toHashSet()
-		for (i in controller.mediaItemCount - 1 downTo 0) {
-			if (controller.getMediaItemAt(i).mediaId !in newIdSet) {
-				controller.removeMediaItem(i)
-			}
-		}
-
-		// Add items not yet in the queue
-		val presentIds = (0 until controller.mediaItemCount)
-			.map { controller.getMediaItemAt(it).mediaId }
-			.toHashSet()
-		items.forEach { item ->
-			if (item.mediaId !in presentIds) {
-				controller.addMediaItems(listOf(item))
-			}
-		}
-
-		// Move items into their correct positions
-		items.forEachIndexed { targetIndex, item ->
-			val currentIndex = (0 until controller.mediaItemCount).indexOfFirst {
-				controller.getMediaItemAt(it).mediaId == item.mediaId
-			}
-			if (currentIndex != -1 && currentIndex != targetIndex) {
-				controller.moveMediaItem(currentIndex, targetIndex)
-			}
-		}
-	}*/
 
 	fun play(id: Long) {
 		val controller = mediaController
