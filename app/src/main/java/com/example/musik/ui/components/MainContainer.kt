@@ -36,7 +36,7 @@ import com.google.accompanist.permissions.isGranted
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainContainer(
-	viewModel: NavViewModel,
+	navViewModel: NavViewModel,
 	modifier: Modifier = Modifier
 ) {
 	Box(modifier = modifier.fillMaxSize()) {
@@ -55,7 +55,7 @@ fun MainContainer(
 				val permissionStatus = rememberPermissionHandler()
 				if (permissionStatus.status.isGranted) {
 					// ---===---  Main Screens  ---===---
-					when (viewModel.curScreen) {
+					when (navViewModel.curScreen) {
 						Screen.ALL_MUSIC -> AllMusicScreen()
 						Screen.PLAYLISTS -> PlaylistsScreen()
 						Screen.STATS -> StatsScreen()
@@ -93,16 +93,16 @@ fun MainContainer(
 				.align(Alignment.TopCenter)
 				.padding(dimensionResource(R.dimen.small_padding))
 		) {
-			TabButton(stringResource(R.string.all_music_tab), viewModel.curScreen == Screen.ALL_MUSIC) {
-				viewModel.navTo(Screen.ALL_MUSIC)
+			TabButton(stringResource(R.string.all_music_tab), navViewModel.curScreen == Screen.ALL_MUSIC) {
+				navViewModel.navTo(Screen.ALL_MUSIC)
 			}
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
-			TabButton(stringResource(R.string.playlists_tab),viewModel.curScreen == Screen.PLAYLISTS) {
-				viewModel.navTo(Screen.PLAYLISTS)
+			TabButton(stringResource(R.string.playlists_tab),navViewModel.curScreen == Screen.PLAYLISTS) {
+				navViewModel.navTo(Screen.PLAYLISTS)
 			}
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
-			TabButton(stringResource(R.string.stats_tab), viewModel.curScreen == Screen.STATS) {
-				viewModel.navTo(Screen.STATS)
+			TabButton(stringResource(R.string.stats_tab), navViewModel.curScreen == Screen.STATS) {
+				navViewModel.navTo(Screen.STATS)
 			}
 		}
 	}

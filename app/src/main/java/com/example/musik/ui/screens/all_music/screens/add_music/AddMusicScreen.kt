@@ -39,18 +39,18 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMusicScreen(
-	viewModel: AddMusicViewModel,
+	addMusicViewModel: AddMusicViewModel,
 	onBackToMusicList: () -> Unit
 ) {
-	val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
-	val audioFiles by viewModel.audioFiles.collectAsStateWithLifecycle()
-	val selectedIds by viewModel.selectedIds.collectAsStateWithLifecycle()
+	val isLoading by addMusicViewModel.isLoading.collectAsStateWithLifecycle()
+	val audioFiles by addMusicViewModel.audioFiles.collectAsStateWithLifecycle()
+	val selectedIds by addMusicViewModel.selectedIds.collectAsStateWithLifecycle()
 
 	val scope = rememberCoroutineScope()
 
 	DisposableEffect(Unit) {
 		onDispose {
-			viewModel.resetMusicAdding()
+			addMusicViewModel.resetMusicAdding()
 		}
 	}
 	BackHandler(true) { // Always enabled in this screen
@@ -77,7 +77,7 @@ fun AddMusicScreen(
 			}
 
 			// ---===---  Search Bar  ---===---
-			AddMusicSearchbar(viewModel, Modifier.weight(1f))
+			AddMusicSearchbar(addMusicViewModel, Modifier.weight(1f))
 
 			// ---===---  Selection Buttons  ---===---
 			Row {
@@ -86,7 +86,7 @@ fun AddMusicScreen(
 					Icons.Rounded.Refresh,
 					stringResource(R.string.refresh_button)
 				) {
-					viewModel.refreshButton()
+					addMusicViewModel.refreshButton()
 				}
 
 				// ---===---  Add Selected Music Button  ---===---
@@ -95,7 +95,7 @@ fun AddMusicScreen(
 					stringResource(R.string.add_selected_music_button)
 				) {
 					scope.launch {
-						viewModel.addSelectedMusic()
+						addMusicViewModel.addSelectedMusic()
 						onBackToMusicList()
 					}
 				}
@@ -138,8 +138,8 @@ fun AddMusicScreen(
 						MusicListItem(
 							musicDetails = music,
 							isSelected = music.id in selectedIds,
-							onClick = { viewModel.toggleSelection(music.id) },
-							onLongClick = { viewModel.toggleSelection(music.id) }
+							onClick = { addMusicViewModel.toggleSelection(music.id) },
+							onLongClick = { addMusicViewModel.toggleSelection(music.id) }
 						)
 
 						ListDivider(index, audioFiles)

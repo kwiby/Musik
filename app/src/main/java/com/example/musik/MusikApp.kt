@@ -17,7 +17,7 @@ import com.google.accompanist.permissions.isGranted
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MusikApp(
-	viewModel: NavViewModel = viewModel()
+	navViewModel: NavViewModel = viewModel()
 ) {
 	val permissionStatus = rememberPermissionHandler()
 	if (!permissionStatus.status.isGranted) {
@@ -29,7 +29,7 @@ fun MusikApp(
 		topBar = { MusikTopAppBar() }
 	) { innerPadding ->
 		MainContainer(
-			viewModel = viewModel,
+			navViewModel = navViewModel,
 			modifier = Modifier.padding(innerPadding)
 		)
 	}

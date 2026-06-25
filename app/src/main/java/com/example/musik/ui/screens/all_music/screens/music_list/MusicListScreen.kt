@@ -49,22 +49,22 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun MusicListScreen(
-	viewModel: MusicListViewModel,
+	musicListViewModel: MusicListViewModel,
 	playbackViewModel: PlaybackViewModel,
 	onAddMusic: () -> Unit
 ) {
-	val selectedIds by viewModel.selectedIds.collectAsStateWithLifecycle()
-	val isInSelectionMode by viewModel.isInSelectionMode.collectAsStateWithLifecycle()
-	val isInMoveMode by viewModel.isInMoveMode.collectAsStateWithLifecycle()
+	val selectedIds by musicListViewModel.selectedIds.collectAsStateWithLifecycle()
+	val isInSelectionMode by musicListViewModel.isInSelectionMode.collectAsStateWithLifecycle()
+	val isInMoveMode by musicListViewModel.isInMoveMode.collectAsStateWithLifecycle()
 
 	val scope = rememberCoroutineScope()
 
 	val lazyListState = rememberLazyListState()
 	val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
-		viewModel.onMove(from.index, to.index)
+		musicListViewModel.onMove(from.index, to.index)
 	}
 
-	val queueSyncEvent by viewModel.queueSyncEvent.collectAsStateWithLifecycle()
+	val queueSyncEvent by musicListViewModel.queueSyncEvent.collectAsStateWithLifecycle()
 	LaunchedEffect(queueSyncEvent) {
 		if (!isInMoveMode) {
 			queueSyncEvent?.let { q ->
@@ -74,11 +74,11 @@ fun MusicListScreen(
 	}
 	DisposableEffect(Unit) {
 		onDispose {
-			viewModel.resetMusicList()
+			musicListViewModel.resetMusicList()
 		}
 	}
 	BackHandler(isInSelectionMode || isInMoveMode) {
-		viewModel.handleBack()
+		musicListViewModel.handleBack()
 	}
 
 	Column(
@@ -101,14 +101,14 @@ fun MusicListScreen(
 						Icons.Rounded.Check,
 						stringResource(R.string.confirm_move_button)
 					) {
-						viewModel.confirmMoveButton(playbackViewModel)
+						musicListViewModel.confirmMoveButton(playbackViewModel)
 					}
 					// ---===---  Exit Move Mode Button  ---===---
 					CustomIconButton(
 						Icons.Rounded.Close,
 						stringResource(R.string.exit_move_mode_button)
 					) {
-						viewModel.exitMoveModeButton()
+						musicListViewModel.exitMoveModeButton()
 					}
 				} else {
 					// ---===---  Enter Move Mode Button  ---===---
@@ -116,7 +116,7 @@ fun MusicListScreen(
 						Icons.Rounded.UnfoldMore,
 						stringResource(R.string.enter_move_mode_button)
 					) {
-						viewModel.enterMoveModeButton()
+						musicListViewModel.enterMoveModeButton()
 					}
 				}
 
@@ -127,7 +127,7 @@ fun MusicListScreen(
 						stringResource(R.string.remove_music_button)
 					) {
 						scope.launch {
-							viewModel.removeMusicButton(playbackViewModel)
+							musicListViewModel.removeMusicButton(playbackViewModel)
 						}
 					}
 				}
@@ -141,7 +141,7 @@ fun MusicListScreen(
 						Icons.AutoMirrored.Rounded.PlaylistAdd,
 						stringResource(R.string.add_to_playlist_button)
 					) {
-						viewModel.addToPlaylistButton()
+						musicListViewModel.addToPlaylistButton()
 					}
 				}
 
@@ -150,7 +150,7 @@ fun MusicListScreen(
 					Icons.Rounded.SmartDisplay,
 					stringResource(R.string.add_yt_music_button)
 				) {
-					viewModel.addYtMusicButton()
+					musicListViewModel.addYtMusicButton()
 				}
 
 				// ---===---  Add Music Button  ---===---
@@ -158,7 +158,7 @@ fun MusicListScreen(
 					Icons.Rounded.Add,
 					stringResource(R.string.add_music_button)
 				) {
-					viewModel.addingButton { onAddMusic() }
+					musicListViewModel.addingButton { onAddMusic() }
 				}
 
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
@@ -167,7 +167,7 @@ fun MusicListScreen(
 
 		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.buttons_vertical_padding)))
 
-		when(val state = viewModel.uiState.collectAsStateWithLifecycle().value) {
+		when(val state = musicListViewModel.uiState.collectAsStateWithLifecycle().value) {
 			is MusicListViewModel.MusicUiState.Loading -> {
 				LoadingIndicator()
 			}
@@ -211,13 +211,13 @@ fun MusicListScreen(
 							MusicListItem(
 								musicDetails = music,
 								isSelected = music.id in selectedIds,
-								onClick = { viewModel.handleTap(
+								onClick = { musicListViewModel.handleTap(
 									music.id
 								) {
 									playbackViewModel.play(music.id)
 								}
 										  },
-								onLongClick = { viewModel.handleHold(music.id) },
+								onLongClick = { musicListViewModel.handleHold(music.id) },
 								isInMoveMode = isInMoveMode,
 								reorderableScope = this,
 								modifier = Modifier.shadow(elevation)
