@@ -10,13 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
 import com.example.musik.ui.view_models.AddMusicViewModel
 
@@ -25,7 +25,7 @@ fun AddMusicSearchbar(
 	viewModel: AddMusicViewModel,
 	modifier: Modifier = Modifier
 ) {
-	val searchQuery by viewModel.searchQuery.collectAsState()
+	val searchQuery by viewModel.searchQuery .collectAsStateWithLifecycle()
 	val focusManager = LocalFocusManager.current
 
 	TextField(

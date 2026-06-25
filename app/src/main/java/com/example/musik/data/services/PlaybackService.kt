@@ -1,9 +1,10 @@
-package com.example.musik.playback
+package com.example.musik.data.services
 
 import android.app.PendingIntent
 import android.content.Intent
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
@@ -46,7 +47,7 @@ class PlaybackService: MediaSessionService() {
 
 	override fun onDestroy() {
 		mediaSession?.run {
-			if (player.isCommandAvailable(androidx.media3.common.Player.COMMAND_STOP)) {
+			if (player.isCommandAvailable(Player.COMMAND_STOP)) {
 				player.release()
 			}
 

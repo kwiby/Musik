@@ -1,4 +1,4 @@
-package com.example.musik.playback
+package com.example.musik.ui.view_models
 
 import android.app.Application
 import android.content.ComponentName
@@ -6,19 +6,19 @@ import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.example.musik.ui.misc.unformatDuration
+import com.example.musik.data.services.PlaybackService
 import com.google.common.util.concurrent.ListenableFuture
 
 class PlaybackViewModel(application: Application) : AndroidViewModel(application) {
 	private var controllerFuture: ListenableFuture<MediaController>? = null
 	private var mediaController: MediaController? = null
+	private var skipInProgress = false
 
 	val currentTrack = mutableStateOf<MediaItem?>(null)
 	val isPlaying = mutableStateOf(false)
@@ -26,8 +26,11 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 	val loopMode = mutableIntStateOf(Player.REPEAT_MODE_OFF)
 
 	val currentMusicId get() = mediaController?.currentMediaItem?.mediaId
+	val hasPrevious = mutableStateOf(false)
+	val hasNext = mutableStateOf(false)
 
 
+	/*
 	private fun createMediaItem(
 		id: Long,
 		contentUri: String,
@@ -48,19 +51,34 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 					.build()
 			).build()
 	}
+	 */
 
 	private fun observePlayer() {
 		mediaController?.addListener(object : Player.Listener {
 			override fun onIsPlayingChanged(playing: Boolean) {
+				// Use this code to keep the pause button icon displaying between skips
+				val state = mediaController?.playbackState
+				if (skipInProgress && !playing && state == Player.STATE_BUFFERING) {
+					return
+				}
+				skipInProgress = false
+				//
+
 				isPlaying.value = playing
 			}
 
 			override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 				currentTrack.value = mediaItem
+				updateSkipStates()
+			}
+
+			override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+				updateSkipStates()
 			}
 
 			override fun onShuffleModeEnabledChanged(isShuffleModeEnabled: Boolean) {
 				isShuffling.value = isShuffleModeEnabled
+				updateSkipStates()
 			}
 
 			override fun onRepeatModeChanged(newMode: Int) {
@@ -75,7 +93,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 		super.onCleared()
 	}
-	
+
 	fun setQueue(items: List<MediaItem>) {
 		val controller = mediaController ?: return
 
@@ -155,6 +173,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		val currentlyPlayingRemoved = controller.currentMediaItem?.mediaId?.toLongOrNull() in ids
 		if (currentlyPlayingRemoved) {
 			controller.stop()
+			isPlaying.value = false
 		}
 
 		indicesToRemove.forEach { controller.removeMediaItem(it) }
@@ -197,17 +216,22 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		mediaController?.addMediaItems(items)
 	}
 
-	fun removeCurrentMusic() {
-		val controller = mediaController ?: return
-
-		controller.stop()
-		controller.removeMediaItem(controller.currentMediaItemIndex)
+	// seekToPrevious() is alternative
+	fun skipPrev() {
+		skipInProgress = true
+		mediaController?.seekToPreviousMediaItem()
 	}
 
-	fun skipNext() = mediaController?.seekToNextMediaItem()
+	// seekToNext() is alternative
+	fun skipNext() {
+		skipInProgress = true
+		mediaController?.seekToNextMediaItem()
+	}
 
-	fun skipPrev() = mediaController?.seekToPreviousMediaItem()
-
+	private fun updateSkipStates() {
+		hasPrevious.value = mediaController?.hasPreviousMediaItem() ?: false
+		hasNext.value = mediaController?.hasNextMediaItem() ?: false
+	}
 
 
 	init {
@@ -226,6 +250,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 				isShuffling.value = player.shuffleModeEnabled
 				loopMode.intValue = player.repeatMode
 
+				updateSkipStates()
 				observePlayer()
 			}
 		}, ContextCompat.getMainExecutor(application))

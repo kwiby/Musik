@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -22,8 +21,6 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.SmartDisplay
 import androidx.compose.material.icons.rounded.UnfoldMore
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -36,12 +33,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
-import com.example.musik.playback.PlaybackViewModel
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.MusicListItem
+import com.example.musik.ui.components.info.NoMusicMsg
 import com.example.musik.ui.screens.all_music.components.ListDivider
 import com.example.musik.ui.screens.all_music.components.LoadingIndicator
 import com.example.musik.ui.view_models.MusicListViewModel
+import com.example.musik.ui.view_models.PlaybackViewModel
 import com.example.musik.ui.view_models.toMediaItem
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
@@ -173,17 +171,7 @@ fun MusicListScreen(
 			}
 			is MusicListViewModel.MusicUiState.Empty -> {
 				// ---===---  No Music Msg  ---===---
-				Column(
-					verticalArrangement = Arrangement.Top,
-					horizontalAlignment = Alignment.CenterHorizontally,
-					modifier = Modifier.offset(y = dimensionResource(R.dimen.no_music_added_offset))
-				) {
-					Text(
-						text = stringResource(R.string.no_music_msg),
-						style = MaterialTheme.typography.titleSmall,
-						color = MaterialTheme.colorScheme.onSecondary
-					)
-				}
+				NoMusicMsg()
 			}
 			is MusicListViewModel.MusicUiState.Success -> {
 				// ---===---  Music List  ---===---

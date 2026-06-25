@@ -24,4 +24,8 @@
     <string name="album_art" translatable="true">Album Art</string>
     <string name="add_music_search_bar" translatable="true">Search audio files</string>
     <string name="move_music" translatable="true">Move Music</string>
+
+    <string name="skip_prev" translatable="true">Skip to Previous</string>
+    <string name="play_pause" translatable="true">Play/Pause</string>
+    <string name="skip_next" translatable="true">Skip to Next</string>
 </resources>

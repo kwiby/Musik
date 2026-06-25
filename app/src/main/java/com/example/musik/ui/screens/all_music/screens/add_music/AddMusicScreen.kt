@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -16,8 +15,6 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.MusicListItem
+import com.example.musik.ui.components.info.NoAudioFilesMsg
 import com.example.musik.ui.screens.all_music.components.ListDivider
 import com.example.musik.ui.screens.all_music.components.LoadingIndicator
 import com.example.musik.ui.screens.all_music.screens.add_music.components.AddMusicSearchbar
@@ -111,17 +109,7 @@ fun AddMusicScreen(
 				LoadingIndicator()
 			} audioFiles.isEmpty() -> {
 				// ---===---  No Audio Files Msg  ---===---
-				Column(
-					verticalArrangement = Arrangement.Top,
-					horizontalAlignment = Alignment.CenterHorizontally,
-					modifier = Modifier.offset(y = dimensionResource(R.dimen.no_music_added_offset))
-				) {
-					Text(
-						text = stringResource(R.string.no_audio_files_msg),
-						style = MaterialTheme.typography.titleSmall,
-						color = MaterialTheme.colorScheme.onSecondary
-					)
-				}
+				NoAudioFilesMsg()
 			} else -> {
 			// ---===---  Audio File List  ---===---
 				LazyColumn(

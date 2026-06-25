@@ -8,11 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -20,13 +22,17 @@ import coil3.request.crossfade
 import com.example.musik.R
 
 @Composable
-fun AlbumArtImage(contentUri: String) {
+fun AlbumArtImage(
+	contentUri: String,
+	size: Dp = dimensionResource(R.dimen.album_art_image_size),
+	shape: Shape = MaterialTheme.shapes.small
+) {
 	val context = LocalContext.current
 
 	Box(
 		modifier = Modifier
-			.size(dimensionResource(R.dimen.album_art_image_size))
-			.clip(MaterialTheme.shapes.small),
+			.size(size)
+			.clip(shape),
 		contentAlignment = Alignment.Center
 	) {
 		AsyncImage(

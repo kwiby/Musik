@@ -7,28 +7,24 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.example.musik.R
-import com.example.musik.data.misc.openPermissionsSettings
 import com.example.musik.data.misc.rememberPermissionHandler
+import com.example.musik.ui.components.info.NoPermsMsg
 import com.example.musik.ui.screens.all_music.AllMusicScreen
 import com.example.musik.ui.screens.playlists.PlaylistsScreen
 import com.example.musik.ui.screens.stats.StatsScreen
 import com.example.musik.ui.view_models.NavViewModel
+import com.example.musik.ui.view_models.PlaybackViewModel
 import com.example.musik.ui.view_models.Screen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -37,6 +33,7 @@ import com.google.accompanist.permissions.isGranted
 @Composable
 fun MainContainer(
 	navViewModel: NavViewModel,
+	playbackViewModel: PlaybackViewModel,
 	modifier: Modifier = Modifier
 ) {
 	Box(modifier = modifier.fillMaxSize()) {
@@ -56,41 +53,23 @@ fun MainContainer(
 				if (permissionStatus.status.isGranted) {
 					// ---===---  Main Screens  ---===---
 					when (navViewModel.curScreen) {
-						Screen.ALL_MUSIC -> AllMusicScreen()
+						Screen.ALL_MUSIC -> AllMusicScreen(playbackViewModel = playbackViewModel)
 						Screen.PLAYLISTS -> PlaylistsScreen()
 						Screen.STATS -> StatsScreen()
 					}
 				} else {
 					// ---===---  No Permissions Msg  ---===---
-					Column(
-						verticalArrangement = Arrangement.Top,
-						horizontalAlignment = Alignment.CenterHorizontally,
-						modifier = Modifier.offset(y = dimensionResource(R.dimen.main_container_no_permissions_offset))
-					) {
-						Text(
-							text = stringResource(R.string.no_permissions_msg),
-							style = MaterialTheme.typography.titleSmall,
-							color = MaterialTheme.colorScheme.onSecondary
-						)
-
-						val context = LocalContext.current
-						CustomIconButton(
-							Icons.Rounded.Settings,
-							stringResource(R.string.settings_button)
-						) {
-							openPermissionsSettings(context)
-						}
-					}
+					NoPermsMsg()
 				}
 			}
 		}
 
-		// ---===---  TABS  ---===---
+		// ---===---  Tabs  ---===---
 		Row(
 			horizontalArrangement = Arrangement.Center,
-			verticalAlignment = Alignment.Bottom,
+			verticalAlignment = Alignment.Bottom, // To align the bottom of the tabs together
 			modifier = Modifier
-				.align(Alignment.TopCenter)
+				.align(Alignment.TopCenter) // To actually position the tabs at the top
 				.padding(dimensionResource(R.dimen.small_padding))
 		) {
 			TabButton(stringResource(R.string.all_music_tab), navViewModel.curScreen == Screen.ALL_MUSIC) {
@@ -105,5 +84,7 @@ fun MainContainer(
 				navViewModel.navTo(Screen.STATS)
 			}
 		}
+
+		PlayerBar(playbackViewModel)
 	}
 }

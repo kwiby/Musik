@@ -11,13 +11,16 @@ import com.example.musik.data.misc.rememberPermissionHandler
 import com.example.musik.ui.components.MainContainer
 import com.example.musik.ui.components.MusikTopAppBar
 import com.example.musik.ui.view_models.NavViewModel
+import com.example.musik.ui.view_models.PlaybackViewModel
+import com.example.musik.ui.view_models.ViewModelProvider
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MusikApp(
-	navViewModel: NavViewModel = viewModel()
+	navViewModel: NavViewModel = viewModel(),
+	playbackViewModel: PlaybackViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
 	val permissionStatus = rememberPermissionHandler()
 	if (!permissionStatus.status.isGranted) {
@@ -30,6 +33,7 @@ fun MusikApp(
 	) { innerPadding ->
 		MainContainer(
 			navViewModel = navViewModel,
+			playbackViewModel = playbackViewModel,
 			modifier = Modifier.padding(innerPadding)
 		)
 	}

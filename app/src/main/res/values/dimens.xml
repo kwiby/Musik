@@ -36,4 +36,10 @@
     <dimen name="vertical_divider_padding">7dp</dimen>
     <dimen name="album_art_image_size">56dp</dimen>
     <dimen name="list_item_corner_radius">15dp</dimen>
+
+    <!-- Player -->
+    <dimen name="player_bar_height">60dp</dimen>
+    <dimen name="player_bar_image_size">50dp</dimen>
+    <dimen name="player_bar_image_left_padding">5dp</dimen>
+    <dimen name="player_bar_image_right_padding">10dp</dimen>
 </resources>
