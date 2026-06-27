@@ -10,6 +10,7 @@ import com.example.musik.data.misc.RequestPermissions
 import com.example.musik.data.misc.rememberPermissionHandler
 import com.example.musik.ui.components.MainContainer
 import com.example.musik.ui.components.MusikTopAppBar
+import com.example.musik.ui.screens.player.PlayerScreen
 import com.example.musik.ui.view_models.NavViewModel
 import com.example.musik.ui.view_models.PlaybackViewModel
 import com.example.musik.ui.view_models.ViewModelProvider
@@ -27,14 +28,20 @@ fun MusikApp(
 		RequestPermissions(permissionStatus)
 	}
 
-	Scaffold(
-		containerColor = MaterialTheme.colorScheme.background,
-		topBar = { MusikTopAppBar() }
-	) { innerPadding ->
-		MainContainer(
-			navViewModel = navViewModel,
-			playbackViewModel = playbackViewModel,
-			modifier = Modifier.padding(innerPadding)
-		)
+	if (playbackViewModel.isPlayerScreenOpen.value) {
+		PlayerScreen(playbackViewModel = playbackViewModel)
+	} else {
+		Scaffold(
+			containerColor = MaterialTheme.colorScheme.background,
+			topBar = { MusikTopAppBar() }
+		) { innerPadding ->
+			MainContainer(
+				navViewModel = navViewModel,
+				playbackViewModel = playbackViewModel,
+				modifier = Modifier.padding(innerPadding)
+			)
+		}
 	}
+
+
 }

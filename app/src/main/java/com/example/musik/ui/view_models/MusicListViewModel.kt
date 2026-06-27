@@ -38,6 +38,7 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		audioFileRepo.getAllAudioFilesStream(), _manualQueue
 	) { musicList, manualQueue ->
 		if (musicList.isEmpty()) {
+			_queue.clear()
 			MusicUiState.Empty
 		} else {
 			val newMusicDetails = musicList.map { it.toMusicDetails() }
@@ -166,7 +167,14 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 	}
 
 	fun confirmMoveButton(playbackViewModel: PlaybackViewModel) {
+		val currentUiState = uiState.value
+		if (currentUiState !is MusicUiState.Success) {
+			setMoveMode(false)
+			return
+		}
+
 		val queue = _queue.toList()
+
 		playbackViewModel.setQueue(queue.map { it.toMediaItem() })
 		_queueBeforeMove = emptyList()
 

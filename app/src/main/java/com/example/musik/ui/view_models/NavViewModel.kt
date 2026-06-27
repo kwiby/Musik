@@ -5,18 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-enum class Screen {
+enum class Tabs {
 	ALL_MUSIC,
 	PLAYLISTS,
 	STATS
 }
 
 class NavViewModel : ViewModel() {
-	val entryPointScreen: Screen = Screen.ALL_MUSIC
-	var curScreen by mutableStateOf(entryPointScreen)
+	val entryPointScreen: Tabs = Tabs.ALL_MUSIC
+	var curTab by mutableStateOf(entryPointScreen)
 		private set
 
-	fun navTo(newScreen: Screen) {
-		curScreen = newScreen
+	fun navTo(newTab: Tabs) {
+		curTab = newTab
 	}
 }

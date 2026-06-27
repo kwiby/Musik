@@ -48,7 +48,7 @@ fun PlayerBar(playbackViewModel: PlaybackViewModel) {
 		exit = slideOutVertically(targetOffsetY = { it })
 	) {
 		if (curMusic != null) {
-			val musicInfo = playbackViewModel.currentTrack.value!!.mediaMetadata
+			val metadata = playbackViewModel.currentTrack.value!!.mediaMetadata
 
 			Box(
 				modifier = Modifier.fillMaxHeight()
@@ -70,7 +70,8 @@ fun PlayerBar(playbackViewModel: PlaybackViewModel) {
 						modifier = Modifier
 							.height(dimensionResource(R.dimen.player_bar_height))
 							.fillMaxSize()
-							.align(Alignment.BottomCenter)
+							.align(Alignment.BottomCenter),
+						onClick = { playbackViewModel.isPlayerScreenOpen.value = true }
 					) {
 						Row(
 							horizontalArrangement = Arrangement.SpaceBetween,
@@ -86,7 +87,7 @@ fun PlayerBar(playbackViewModel: PlaybackViewModel) {
 								// --===--  Music Art  --===--
 
 								Crossfade(
-									targetState = musicInfo.artworkUri.toString()
+									targetState = metadata.artworkUri.toString()
 								) { artworkUri ->
 									AlbumArtImage(
 										artworkUri,
@@ -103,13 +104,13 @@ fun PlayerBar(playbackViewModel: PlaybackViewModel) {
 								) {
 									// --===--  Music Title  --===--
 									AnimatedContent(
-										targetState = musicInfo.title.toString(),
+										targetState = metadata.title.toString(),
 										transitionSpec = { fadeIn() togetherWith fadeOut() },
 										modifier = Modifier.fillMaxWidth()
 									) { title ->
 										Text(
 											text = title,
-											style = MaterialTheme.typography.bodyLarge.copy(),
+											style = MaterialTheme.typography.bodyLarge,
 											color = MaterialTheme.colorScheme.onSecondary,
 											maxLines = 1,
 											softWrap = false,
@@ -121,7 +122,7 @@ fun PlayerBar(playbackViewModel: PlaybackViewModel) {
 
 									// --===--  Music Artist  --===--
 									AnimatedContent(
-										targetState = musicInfo.artist.toString(),
+										targetState = metadata.artist.toString(),
 										transitionSpec = { fadeIn() togetherWith fadeOut() },
 										modifier = Modifier.fillMaxWidth()
 									) { artist ->

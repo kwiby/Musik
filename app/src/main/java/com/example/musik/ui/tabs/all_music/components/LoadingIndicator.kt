@@ -1,4 +1,4 @@
-package com.example.musik.ui.screens.all_music.components
+package com.example.musik.ui.tabs.all_music.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
