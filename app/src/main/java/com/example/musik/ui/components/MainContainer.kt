@@ -20,12 +20,12 @@ import androidx.compose.ui.res.stringResource
 import com.example.musik.R
 import com.example.musik.data.misc.rememberPermissionHandler
 import com.example.musik.ui.components.info.NoPermsMsg
-import com.example.musik.ui.screens.all_music.AllMusicScreen
-import com.example.musik.ui.screens.playlists.PlaylistsScreen
-import com.example.musik.ui.screens.stats.StatsScreen
+import com.example.musik.ui.tabs.all_music.AllMusicTab
+import com.example.musik.ui.tabs.playlists.PlaylistsTab
+import com.example.musik.ui.tabs.stats.StatsTab
 import com.example.musik.ui.view_models.NavViewModel
 import com.example.musik.ui.view_models.PlaybackViewModel
-import com.example.musik.ui.view_models.Screen
+import com.example.musik.ui.view_models.Tabs
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 
@@ -52,10 +52,10 @@ fun MainContainer(
 				val permissionStatus = rememberPermissionHandler()
 				if (permissionStatus.status.isGranted) {
 					// ---===---  Main Screens  ---===---
-					when (navViewModel.curScreen) {
-						Screen.ALL_MUSIC -> AllMusicScreen(playbackViewModel = playbackViewModel)
-						Screen.PLAYLISTS -> PlaylistsScreen()
-						Screen.STATS -> StatsScreen()
+					when (navViewModel.curTab) {
+						Tabs.ALL_MUSIC -> AllMusicTab(playbackViewModel = playbackViewModel)
+						Tabs.PLAYLISTS -> PlaylistsTab()
+						Tabs.STATS -> StatsTab()
 					}
 				} else {
 					// ---===---  No Permissions Msg  ---===---
@@ -72,16 +72,16 @@ fun MainContainer(
 				.align(Alignment.TopCenter) // To actually position the tabs at the top
 				.padding(dimensionResource(R.dimen.small_padding))
 		) {
-			TabButton(stringResource(R.string.all_music_tab), navViewModel.curScreen == Screen.ALL_MUSIC) {
-				navViewModel.navTo(Screen.ALL_MUSIC)
+			TabButton(stringResource(R.string.all_music_tab), navViewModel.curTab == Tabs.ALL_MUSIC) {
+				navViewModel.navTo(Tabs.ALL_MUSIC)
 			}
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
-			TabButton(stringResource(R.string.playlists_tab),navViewModel.curScreen == Screen.PLAYLISTS) {
-				navViewModel.navTo(Screen.PLAYLISTS)
+			TabButton(stringResource(R.string.playlists_tab),navViewModel.curTab == Tabs.PLAYLISTS) {
+				navViewModel.navTo(Tabs.PLAYLISTS)
 			}
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
-			TabButton(stringResource(R.string.stats_tab), navViewModel.curScreen == Screen.STATS) {
-				navViewModel.navTo(Screen.STATS)
+			TabButton(stringResource(R.string.stats_tab), navViewModel.curTab == Tabs.STATS) {
+				navViewModel.navTo(Tabs.STATS)
 			}
 		}
 

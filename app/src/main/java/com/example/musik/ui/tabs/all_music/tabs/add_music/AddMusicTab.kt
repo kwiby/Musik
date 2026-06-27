@@ -1,4 +1,4 @@
-package com.example.musik.ui.screens.all_music.screens.add_music
+package com.example.musik.ui.tabs.all_music.tabs.add_music
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -28,9 +28,9 @@ import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.MusicListItem
 import com.example.musik.ui.components.info.NoAudioFilesMsg
-import com.example.musik.ui.screens.all_music.components.ListDivider
-import com.example.musik.ui.screens.all_music.components.LoadingIndicator
-import com.example.musik.ui.screens.all_music.screens.add_music.components.AddMusicSearchbar
+import com.example.musik.ui.tabs.all_music.components.ListDivider
+import com.example.musik.ui.tabs.all_music.components.LoadingIndicator
+import com.example.musik.ui.tabs.all_music.tabs.add_music.components.AddMusicSearchbar
 import com.example.musik.ui.view_models.AddMusicViewModel
 import kotlinx.coroutines.launch
 

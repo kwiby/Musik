@@ -1,4 +1,4 @@
-package com.example.musik.ui.screens.all_music.screens.add_music.components
+package com.example.musik.ui.tabs.all_music.tabs.add_music.components
 
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions

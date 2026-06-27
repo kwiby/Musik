@@ -1,4 +1,4 @@
-package com.example.musik.ui.screens.all_music.screens.music_list
+package com.example.musik.ui.tabs.all_music.tabs.music_list
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
@@ -36,8 +36,8 @@ import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.MusicListItem
 import com.example.musik.ui.components.info.NoMusicMsg
-import com.example.musik.ui.screens.all_music.components.ListDivider
-import com.example.musik.ui.screens.all_music.components.LoadingIndicator
+import com.example.musik.ui.tabs.all_music.components.ListDivider
+import com.example.musik.ui.tabs.all_music.components.LoadingIndicator
 import com.example.musik.ui.view_models.MusicListViewModel
 import com.example.musik.ui.view_models.PlaybackViewModel
 import com.example.musik.ui.view_models.toMediaItem
@@ -202,7 +202,7 @@ fun MusicListScreen(
 								onClick = { musicListViewModel.handleTap(
 									music.id
 								) {
-									playbackViewModel.play(music.id)
+									playbackViewModel.start(music.id)
 								}
 										  },
 								onLongClick = { musicListViewModel.handleHold(music.id) },
