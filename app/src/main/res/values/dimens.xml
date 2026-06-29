@@ -49,4 +49,6 @@
     <dimen name="player_screen_image_bottom_padding">15dp</dimen>
     <dimen name="player_screen_image_size">250dp</dimen>
     <dimen name="player_screen_timeline_top_padding">100dp</dimen>
+    <dimen name="thumb_size">20dp</dimen>
+    <dimen name="thumb_shadow_elevation">5dp</dimen>
 </resources>

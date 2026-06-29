@@ -71,7 +71,7 @@ fun PlayerBar(playbackViewModel: PlaybackViewModel) {
 							.height(dimensionResource(R.dimen.player_bar_height))
 							.fillMaxSize()
 							.align(Alignment.BottomCenter),
-						onClick = { playbackViewModel.isPlayerScreenOpen.value = true }
+						onClick = { playbackViewModel.onPlayerScreenOpenChanged(true) }
 					) {
 						Row(
 							horizontalArrangement = Arrangement.SpaceBetween,

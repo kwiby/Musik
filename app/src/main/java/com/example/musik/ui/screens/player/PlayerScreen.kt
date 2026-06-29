@@ -7,23 +7,32 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +44,7 @@ import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.misc.formatDuration
 import com.example.musik.ui.view_models.PlaybackViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerScreen(playbackViewModel: PlaybackViewModel) {
 	val musicInfo = playbackViewModel.currentTrack.value
@@ -42,9 +52,11 @@ fun PlayerScreen(playbackViewModel: PlaybackViewModel) {
 		Log.wtf("PlayerScreen", "How TF is 'musicInfo' null, WTF did you do?!?!")
 	}
 	val metadata = musicInfo!!.mediaMetadata
+	val curPos = playbackViewModel.currentPos.longValue
 
 	val isPlayerScreenOpen = playbackViewModel.isPlayerScreenOpen.value
 	val isPlaying = playbackViewModel.isPlaying.value
+
 	LaunchedEffect(isPlayerScreenOpen, isPlaying) {
 		playbackViewModel.onPlayerScreenOpenChanged(isPlayerScreenOpen)
 	}
@@ -142,16 +154,16 @@ fun PlayerScreen(playbackViewModel: PlaybackViewModel) {
 
 			Spacer(Modifier.height(dimensionResource(R.dimen.player_screen_timeline_top_padding)))
 
-			// --===--  Timeline and Controls  --===--
+			// --===--  Seekbar and Controls  --===--
 			Column {
 				// --===--  Duration  --===--
 				Row(
 					horizontalArrangement = Arrangement.SpaceAround,
 					modifier = Modifier.fillMaxWidth()
 				) {
-					// --===--  Current Duration Position  --===--
+					// --===--  Current Position  --===--
 					Text(
-						text = playbackViewModel.currentPos.longValue.formatDuration(),
+						text = curPos.formatDuration(),
 						style = MaterialTheme.typography.bodyMedium.copy(
 							color = MaterialTheme.colorScheme.onSecondary,
 							fontSize = 15.sp
@@ -167,6 +179,45 @@ fun PlayerScreen(playbackViewModel: PlaybackViewModel) {
 							fontSize = 15.sp
 						)
 					)
+				}
+
+				// --===--  Seekbar  --===--
+				Row(
+					horizontalArrangement = Arrangement.Center
+				) {
+					Spacer(Modifier.width(dimensionResource(R.dimen.large_padding)))
+
+					Slider(
+						value = curPos.toFloat(),
+						onValueChange = { playbackViewModel.seekTo(it.toLong()) },
+						valueRange = 0f..(metadata.durationMs?.toFloat() ?: 0f),
+						thumb = {
+							Box(
+								modifier = Modifier
+									.shadow(
+										elevation = dimensionResource(R.dimen.thumb_shadow_elevation),
+										shape = CircleShape
+									)
+									.size(dimensionResource(R.dimen.thumb_size))
+									.clip(CircleShape)
+									.background(MaterialTheme.colorScheme.outlineVariant)
+							)
+						},
+						track = { sliderState ->
+							SliderDefaults.Track(
+								sliderState = sliderState,
+								drawStopIndicator = null,
+								thumbTrackGapSize = dimensionResource(R.dimen.zero),
+								colors = SliderDefaults.colors(
+									activeTrackColor = MaterialTheme.colorScheme.outline,
+									inactiveTrackColor = MaterialTheme.colorScheme.onSurface
+								)
+							)
+						},
+						modifier = Modifier.weight(1f)
+					)
+
+					Spacer(Modifier.width(dimensionResource(R.dimen.large_padding)))
 				}
 			}
 		}

@@ -72,7 +72,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 	private fun observePlayer() {
 		mediaController?.addListener(object : Player.Listener {
 			override fun onIsPlayingChanged(playing: Boolean) {
-				// Use this code to keep the pause button icon displaying between skips ---
+				// Use this code to keep the pause button icon displaying between skips
 				val state = mediaController?.playbackState
 				if ((skipInProgress || state == Player.STATE_BUFFERING) && !playing) {
 					return
@@ -84,6 +84,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 			}
 
 			override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+				currentPos.longValue = 0L
 				currentTrack.value = mediaItem
 				updateSkipStates()
 			}
@@ -98,11 +99,20 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 					if (index != null) {
 						pendingPlayId = null
+						currentPos.longValue = 0L
 						mediaController?.seekToDefaultPosition(index)
 						mediaController?.play()
 						isPlaying.value = true
 					}
 				}
+			}
+
+			override fun onPositionDiscontinuity(
+				oldPosition: Player.PositionInfo,
+				newPosition: Player.PositionInfo,
+				reason: Int
+			) {
+				currentPos.longValue = newPosition.positionMs
 			}
 
 			override fun onShuffleModeEnabledChanged(isShuffleModeEnabled: Boolean) {
@@ -137,7 +147,6 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 					currentPos.longValue = it.currentPosition
 				}
 
-				Log.d("debug", "gg")
 				delay(100.milliseconds)
 			}
 		}
@@ -245,6 +254,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 
 			if (targetIndex != null) {
+				currentPos.longValue = 0L
 				controller.seekToDefaultPosition(targetIndex)
 				controller.play()
 				isPlaying.value = true
@@ -269,6 +279,11 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		}
 	}
 
+	private fun updateSkipStates() {
+		hasPrevious.value = mediaController?.hasPreviousMediaItem() ?: false
+		hasNext.value = mediaController?.hasNextMediaItem() ?: false
+	}
+
 	// seekToPrevious() is alternative
 	fun skipPrev() {
 		skipInProgress = true
@@ -281,9 +296,11 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		mediaController?.seekToNextMediaItem()
 	}
 
-	private fun updateSkipStates() {
-		hasPrevious.value = mediaController?.hasPreviousMediaItem() ?: false
-		hasNext.value = mediaController?.hasNextMediaItem() ?: false
+	fun seekTo(pos: Long) {
+		val controller = mediaController ?: return
+
+		currentPos.longValue = pos
+		controller.seekTo(pos)
 	}
 
 	fun cycleLoopMode() {

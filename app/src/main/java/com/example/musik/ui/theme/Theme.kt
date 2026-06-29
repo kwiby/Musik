@@ -20,7 +20,9 @@ private val NightColorScheme = darkColorScheme(
     onSurfaceVariant = Color(0xFF999999), // Artist text, drag handler, & app settings button
     surface = Color(0xFF353549), // Version text
     onSurface = Color(0xFF15151C), // Shadows
-    secondaryContainer = Color(0xFF212126) // Text field background
+    secondaryContainer = Color(0xFF212126), // Text field background
+    outline = Color(0xFF4d7581), // Slider track
+    outlineVariant = Color(0xFF476a75) // Slider thumb
 
     /* Other default colours to override
     background = Color(0xFFFFFBFE),
