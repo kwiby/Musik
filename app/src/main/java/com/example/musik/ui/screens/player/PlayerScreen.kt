@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -42,8 +43,13 @@ fun PlayerScreen(playbackViewModel: PlaybackViewModel) {
 	}
 	val metadata = musicInfo!!.mediaMetadata
 
+	val isPlayerScreenOpen = playbackViewModel.isPlayerScreenOpen.value
+	val isPlaying = playbackViewModel.isPlaying.value
+	LaunchedEffect(isPlayerScreenOpen, isPlaying) {
+		playbackViewModel.onPlayerScreenOpenChanged(isPlayerScreenOpen)
+	}
 	BackHandler(true) {
-		playbackViewModel.isPlayerScreenOpen.value = false
+		playbackViewModel.onPlayerScreenOpenChanged(false)
 	}
 
 	Surface(
@@ -66,7 +72,7 @@ fun PlayerScreen(playbackViewModel: PlaybackViewModel) {
 					iconImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
 					contentDescription = stringResource(R.string.back_button)
 				) {
-					playbackViewModel.isPlayerScreenOpen.value = false
+					playbackViewModel.onPlayerScreenOpenChanged(false)
 				}
 			}
 

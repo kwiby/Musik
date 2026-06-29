@@ -16,15 +16,19 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.example.musik.data.services.PlaybackService
 import com.google.common.util.concurrent.ListenableFuture
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class PlaybackViewModel(application: Application) : AndroidViewModel(application) {
+	// ================================================================================================
+	// --===--  Variables  --===--
 	private var controllerFuture: ListenableFuture<MediaController>? = null
 	private var mediaController: MediaController? = null
 	private var skipInProgress = false
 	private var pendingPlayId: Long? = null
+	private var posJob: Job? = null
 
 	val currentTrack = mutableStateOf<MediaItem?>(null)
 	val isPlaying = mutableStateOf(false)
@@ -36,6 +40,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 	val isPlayerScreenOpen = mutableStateOf(false)
 
 	val currentPos = mutableLongStateOf(0L)
+	// ================================================================================================
 
 
 	/*
@@ -61,6 +66,9 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 	}
 	 */
 
+
+	// ================================================================================================
+	// --===--  Player Observer  --===--
 	private fun observePlayer() {
 		mediaController?.addListener(object : Player.Listener {
 			override fun onIsPlayingChanged(playing: Boolean) {
@@ -113,7 +121,47 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		mediaController?.release()
 		super.onCleared()
 	}
+	// ================================================================================================
 
+
+	// ================================================================================================
+	// --===--  Position Updating  --===--
+	private fun startPosUpdates() {
+		if (posJob?.isActive == true) {
+			return
+		}
+
+		posJob = viewModelScope.launch {
+			while (true) {
+				mediaController?.let {
+					currentPos.longValue = it.currentPosition
+				}
+
+				Log.d("debug", "gg")
+				delay(100.milliseconds)
+			}
+		}
+	}
+
+	private fun stopPosUpdates() {
+		posJob?.cancel()
+		posJob = null
+	}
+
+	fun onPlayerScreenOpenChanged(isVisible: Boolean) {
+		isPlayerScreenOpen.value = isVisible
+
+		if (isVisible && isPlaying.value) {
+			startPosUpdates()
+		} else {
+			stopPosUpdates()
+		}
+	}
+	// ================================================================================================
+
+
+	// ================================================================================================
+	// --===--  Player Queue Controls  --===--
 	fun setQueue(items: List<MediaItem>) {
 		val controller = mediaController ?: return
 
@@ -165,6 +213,28 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		}*/
 	}
 
+	fun removeFromQueue(ids: Set<Long>) {
+		val controller = mediaController ?: return
+
+		val indicesToRemove = (0 until controller.mediaItemCount).filter {
+			controller.getMediaItemAt(it).mediaId.toLongOrNull() in ids
+		}.sortedDescending()
+		// Need descending index order to remove from end, preventing shifting issues
+
+		val currentlyPlayingRemoved = controller.currentMediaItem?.mediaId?.toLongOrNull() in ids
+
+		indicesToRemove.forEach { controller.removeMediaItem(it) }
+
+		if (currentlyPlayingRemoved) {
+			controller.pause()
+			//isPlaying.value = false
+		}
+	}
+	// ================================================================================================
+
+
+	// ================================================================================================
+	// --===--  Player Playback Controls  --===--
 	fun start(id: Long) {
 		val controller = mediaController
 
@@ -185,43 +255,6 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 			pendingPlayId = id
 			Log.e("PlaybackViewModel", "Cannot play music, mediaController is not ready.")
 		}
-	}
-
-	fun removeFromQueue(ids: Set<Long>) {
-		val controller = mediaController ?: return
-
-		val indicesToRemove = (0 until controller.mediaItemCount).filter {
-			controller.getMediaItemAt(it).mediaId.toLongOrNull() in ids
-		}.sortedDescending()
-		// Need descending index order to remove from end, preventing shifting issues
-
-		val currentlyPlayingRemoved = controller.currentMediaItem?.mediaId?.toLongOrNull() in ids
-
-		indicesToRemove.forEach { controller.removeMediaItem(it) }
-
-		if (currentlyPlayingRemoved) {
-			controller.pause()
-			//isPlaying.value = false
-		}
-	}
-
-	fun cycleLoopMode() {
-		val nextLoopMode = when (mediaController?.repeatMode) {
-			Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE // Loop current music
-			Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_ALL // Loop whole queue
-			Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_OFF // No loop
-			else -> Player.REPEAT_MODE_OFF // Default value just in case
-		}
-
-		mediaController?.repeatMode = nextLoopMode
-		loopMode.intValue = nextLoopMode
-	}
-
-	fun toggleShuffle() {
-		val nextShuffleMode = !isShuffling.value
-
-		mediaController?.shuffleModeEnabled = nextShuffleMode
-		isShuffling.value = nextShuffleMode
 	}
 
 	fun togglePlayPause() {
@@ -253,7 +286,29 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		hasNext.value = mediaController?.hasNextMediaItem() ?: false
 	}
 
+	fun cycleLoopMode() {
+		val nextLoopMode = when (mediaController?.repeatMode) {
+			Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE // Loop current music
+			Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_ALL // Loop whole queue
+			Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_OFF // No loop
+			else -> Player.REPEAT_MODE_OFF // Default value just in case
+		}
 
+		mediaController?.repeatMode = nextLoopMode
+		loopMode.intValue = nextLoopMode
+	}
+
+	fun toggleShuffle() {
+		val nextShuffleMode = !isShuffling.value
+
+		mediaController?.shuffleModeEnabled = nextShuffleMode
+		isShuffling.value = nextShuffleMode
+	}
+	// ================================================================================================
+
+
+	// ================================================================================================
+	// --===--  Init  --===--
 	init {
 		val application: Application = getApplication()
 		val sessionToken = SessionToken(
@@ -278,17 +333,6 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 				observePlayer()
 			}
 		}, ContextCompat.getMainExecutor(application))
-
-		viewModelScope.launch {
-			while (true) {
-				if (isPlaying.value) {
-					mediaController?.let {
-						currentPos.longValue = it.currentPosition
-					}
-				}
-
-				delay(300.milliseconds)
-			}
-		}
 	}
+	// ================================================================================================
 }
