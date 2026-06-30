@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.AddBox
@@ -28,6 +29,7 @@ import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.MusicListItem
 import com.example.musik.ui.components.info.NoAudioFilesMsg
+import com.example.musik.ui.components.verticalScrollbar
 import com.example.musik.ui.tabs.all_music.components.ListDivider
 import com.example.musik.ui.tabs.all_music.components.LoadingIndicator
 import com.example.musik.ui.tabs.all_music.tabs.add_music.components.AddMusicSearchbar
@@ -44,6 +46,7 @@ fun AddMusicScreen(
 	val audioFiles by addMusicViewModel.audioFiles.collectAsStateWithLifecycle()
 	val selectedIds by addMusicViewModel.selectedIds.collectAsStateWithLifecycle()
 
+	val lazyListState = rememberLazyListState()
 	val scope = rememberCoroutineScope()
 
 	DisposableEffect(Unit) {
@@ -113,10 +116,11 @@ fun AddMusicScreen(
 			} else -> {
 			// ---===---  Audio File List  ---===---
 				LazyColumn(
+					state = lazyListState,
 					contentPadding = PaddingValues(
 						bottom = dimensionResource(R.dimen.x_large_padding)
 					),
-					modifier = Modifier.fillMaxSize()
+					modifier = Modifier.fillMaxSize().verticalScrollbar(lazyListState)
 				) {
 					items(
 						count = audioFiles.size,

@@ -36,6 +36,7 @@ import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.MusicListItem
 import com.example.musik.ui.components.info.NoMusicMsg
+import com.example.musik.ui.components.verticalScrollbar
 import com.example.musik.ui.tabs.all_music.components.ListDivider
 import com.example.musik.ui.tabs.all_music.components.LoadingIndicator
 import com.example.musik.ui.view_models.MusicListViewModel
@@ -180,7 +181,7 @@ fun MusicListScreen(
 					contentPadding = PaddingValues(
 						bottom = dimensionResource(R.dimen.x_large_padding)
 					),
-					modifier = Modifier.fillMaxSize()
+					modifier = Modifier.fillMaxSize().verticalScrollbar(lazyListState)
 				) {
 					items(
 						count = state.musicList.size,
