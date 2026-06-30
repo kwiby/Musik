@@ -1,5 +1,11 @@
 package com.example.musik
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,20 +34,30 @@ fun MusikApp(
 		RequestPermissions(permissionStatus)
 	}
 
-	if (playbackViewModel.isPlayerScreenOpen.value) {
-		PlayerScreen(playbackViewModel = playbackViewModel)
-	} else {
-		Scaffold(
-			containerColor = MaterialTheme.colorScheme.background,
-			topBar = { MusikTopAppBar() }
-		) { innerPadding ->
-			MainContainer(
-				navViewModel = navViewModel,
-				playbackViewModel = playbackViewModel,
-				modifier = Modifier.padding(innerPadding)
-			)
+	SharedTransitionLayout {
+		Box(modifier = Modifier.fillMaxSize()) {
+			Scaffold(
+				containerColor = MaterialTheme.colorScheme.background,
+				topBar = { MusikTopAppBar() }
+			) { innerPadding ->
+				MainContainer(
+					sharedTransitionScope = this@SharedTransitionLayout,
+					navViewModel = navViewModel,
+					playbackViewModel = playbackViewModel,
+					modifier = Modifier.padding(innerPadding)
+				)
+			}
+
+			AnimatedVisibility(
+				visible = playbackViewModel.isPlayerScreenOpen.value,
+				enter = fadeIn(), //EnterTransition.None,
+				exit = fadeOut() //ExitTransition.None
+			) {
+				PlayerScreen(
+					sharedTransitionScope = this@SharedTransitionLayout,
+					playbackViewModel = playbackViewModel
+				)
+			}
 		}
 	}
-
-
 }

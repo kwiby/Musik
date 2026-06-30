@@ -96,23 +96,23 @@ fun MusicListScreen(
 				if (isInMoveMode) {
 					// ---===---  Confirm Move Button  ---===---
 					CustomIconButton(
-						Icons.Rounded.Check,
-						stringResource(R.string.confirm_move_button)
+						iconImageVector = Icons.Rounded.Check,
+						contentDescription = stringResource(R.string.confirm_move_button)
 					) {
 						musicListViewModel.confirmMoveButton(playbackViewModel)
 					}
 					// ---===---  Exit Move Mode Button  ---===---
 					CustomIconButton(
-						Icons.Rounded.Close,
-						stringResource(R.string.exit_move_mode_button)
+						iconImageVector = Icons.Rounded.Close,
+						contentDescription = stringResource(R.string.exit_move_mode_button)
 					) {
 						musicListViewModel.exitMoveModeButton()
 					}
 				} else {
 					// ---===---  Enter Move Mode Button  ---===---
 					CustomIconButton(
-						Icons.Rounded.UnfoldMore,
-						stringResource(R.string.enter_move_mode_button)
+						iconImageVector = Icons.Rounded.UnfoldMore,
+						contentDescription = stringResource(R.string.enter_move_mode_button)
 					) {
 						musicListViewModel.enterMoveModeButton()
 					}
@@ -121,8 +121,8 @@ fun MusicListScreen(
 				// ---===---  Remove Music Button  ---===---
 				if (isInSelectionMode) {
 					CustomIconButton(
-						Icons.Rounded.DeleteOutline,
-						stringResource(R.string.remove_music_button)
+						iconImageVector = Icons.Rounded.DeleteOutline,
+						contentDescription = stringResource(R.string.remove_music_button)
 					) {
 						scope.launch {
 							musicListViewModel.removeMusicButton(playbackViewModel)
@@ -136,8 +136,8 @@ fun MusicListScreen(
 				// ---===---  Add to Playlist Button  ---===---
 				if (isInSelectionMode) {
 					CustomIconButton(
-						Icons.AutoMirrored.Rounded.PlaylistAdd,
-						stringResource(R.string.add_to_playlist_button)
+						iconImageVector = Icons.AutoMirrored.Rounded.PlaylistAdd,
+						contentDescription = stringResource(R.string.add_to_playlist_button)
 					) {
 						musicListViewModel.addToPlaylistButton()
 					}
@@ -145,16 +145,16 @@ fun MusicListScreen(
 
 				// ---===---  Add YouTube Music Button  ---===---
 				CustomIconButton(
-					Icons.Rounded.SmartDisplay,
-					stringResource(R.string.add_yt_music_button)
+					iconImageVector = Icons.Rounded.SmartDisplay,
+					contentDescription = stringResource(R.string.add_yt_music_button)
 				) {
 					musicListViewModel.addYtMusicButton()
 				}
 
 				// ---===---  Add Music Button  ---===---
 				CustomIconButton(
-					Icons.Rounded.Add,
-					stringResource(R.string.add_music_button)
+					iconImageVector = Icons.Rounded.Add,
+					contentDescription = stringResource(R.string.add_music_button)
 				) {
 					musicListViewModel.addingButton { onAddMusic() }
 				}

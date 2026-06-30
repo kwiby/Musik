@@ -67,8 +67,8 @@ fun AddMusicScreen(
 			Row {
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 				CustomIconButton(
-					Icons.AutoMirrored.Rounded.ArrowBack,
-					stringResource(R.string.back_button)
+					iconImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+					contentDescription = stringResource(R.string.back_button)
 				) {
 					onBackToMusicList()
 				}
@@ -81,16 +81,16 @@ fun AddMusicScreen(
 			Row {
 				// ---===---  Refresh Button  ---===---
 				CustomIconButton(
-					Icons.Rounded.Refresh,
-					stringResource(R.string.refresh_button)
+					iconImageVector = Icons.Rounded.Refresh,
+					contentDescription = stringResource(R.string.refresh_button)
 				) {
 					addMusicViewModel.refreshButton()
 				}
 
 				// ---===---  Add Selected Music Button  ---===---
 				CustomIconButton(
-					Icons.Outlined.AddBox,
-					stringResource(R.string.add_selected_music_button)
+					iconImageVector = Icons.Outlined.AddBox,
+					contentDescription = stringResource(R.string.add_selected_music_button)
 				) {
 					scope.launch {
 						addMusicViewModel.addSelectedMusic()

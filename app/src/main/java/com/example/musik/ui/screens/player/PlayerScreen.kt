@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -56,7 +57,10 @@ import com.example.musik.ui.view_models.PlaybackViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayerScreen(playbackViewModel: PlaybackViewModel) {
+fun PlayerScreen(
+	sharedTransitionScope: SharedTransitionScope,
+	playbackViewModel: PlaybackViewModel
+) {
 	val musicInfo = playbackViewModel.currentTrack.value
 	if (musicInfo == null) {
 		Log.wtf("PlayerScreen", "How TF is 'musicInfo' null, WTF did you do?!?!")
@@ -75,236 +79,266 @@ fun PlayerScreen(playbackViewModel: PlaybackViewModel) {
 		playbackViewModel.onPlayerScreenOpenChanged(false)
 	}
 
-	Surface(
-		modifier = Modifier.fillMaxSize(),
-		color = MaterialTheme.colorScheme.background
-	) {
-		Column(
-			horizontalAlignment = Alignment.CenterHorizontally
+	with(sharedTransitionScope) {
+		Surface(
+			color = MaterialTheme.colorScheme.background,
+			modifier = Modifier.fillMaxSize()
 		) {
-			Spacer(Modifier.height(dimensionResource(R.dimen.player_screen_back_button_top_padding)))
-
-			// --===--  Back Button  --===--
-			Row(
-				horizontalArrangement = Arrangement.Start,
-				modifier = Modifier.fillMaxWidth()
+			Column(
+				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-				Spacer(Modifier.width(dimensionResource(R.dimen.medium_padding)))
+				Spacer(Modifier.height(dimensionResource(R.dimen.player_screen_back_button_top_padding)))
 
-				CustomIconButton(
-					iconImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-					contentDescription = stringResource(R.string.back_button)
+				// --===--  Back Button  --===--
+				Row(
+					horizontalArrangement = Arrangement.Start,
+					modifier = Modifier.fillMaxWidth()
 				) {
-					playbackViewModel.onPlayerScreenOpenChanged(false)
-				}
-			}
+					Spacer(Modifier.width(dimensionResource(R.dimen.medium_padding)))
 
-			Spacer(Modifier.height(dimensionResource(R.dimen.player_screen_image_top_padding)))
-
-			// --===--  Music Details  --===--
-			// --===--  Music Image  --===--
-			Crossfade(
-				targetState = metadata.artworkUri.toString()
-			) { artworkUri ->
-				AlbumArtImage(
-					artworkUri,
-					size = dimensionResource(R.dimen.player_screen_image_size),
-					shape = MaterialTheme.shapes.extraLarge
-				)
-			}
-
-			Spacer(Modifier.height(dimensionResource(R.dimen.player_screen_image_bottom_padding)))
-
-			// --===--  Music Info  --===--
-			Row {
-				Spacer(Modifier.width(dimensionResource(R.dimen.large_padding)))
-
-				Column(
-					horizontalAlignment = Alignment.CenterHorizontally,
-					modifier = Modifier.weight(1f)
-				) {
-					// --===--  Music Title  --===--
-					AnimatedContent(
-						targetState = metadata.title.toString(),
-						transitionSpec = { fadeIn() togetherWith fadeOut() }
-					) { title ->
-						Text(
-							text = title,
-							style = MaterialTheme.typography.bodyLarge.copy(
-								fontSize = 20.sp
-							),
-							color = MaterialTheme.colorScheme.onSecondary,
-							maxLines = 1,
-							softWrap = false,
-							overflow = TextOverflow.Ellipsis,
-							textAlign = TextAlign.Center
-						)
-					}
-
-					// --===--  Music Artist  --===--
-					AnimatedContent(
-						targetState = metadata.artist.toString(),
-						transitionSpec = { fadeIn() togetherWith fadeOut() }
-					) { artist ->
-						Text(
-							text = artist,
-							style = MaterialTheme.typography.bodyMedium.copy(
-								fontSize = 18.sp
-							),
-							color = MaterialTheme.colorScheme.onSurfaceVariant,
-							maxLines = 1,
-							softWrap = false,
-							overflow = TextOverflow.Ellipsis,
-							textAlign = TextAlign.Center
-						)
+					CustomIconButton(
+						iconImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+						contentDescription = stringResource(R.string.back_button)
+					) {
+						playbackViewModel.onPlayerScreenOpenChanged(false)
 					}
 				}
 
-				Spacer(Modifier.width(dimensionResource(R.dimen.large_padding)))
-			}
+				Spacer(Modifier.height(dimensionResource(R.dimen.player_screen_image_top_padding)))
 
-			Spacer(Modifier.height(dimensionResource(R.dimen.player_screen_timeline_top_padding)))
-
-			// --===--  Duration  --===--
-			Row(
-				horizontalArrangement = Arrangement.SpaceAround,
-				modifier = Modifier.fillMaxWidth()
-			) {
-				// --===--  Current Position  --===--
-				Text(
-					text = curPos.formatDuration(),
-					style = MaterialTheme.typography.bodyMedium.copy(
-						color = MaterialTheme.colorScheme.onSecondary,
-						fontSize = 15.sp
+				// --===--  Music Details  --===--
+				// --===--  Music Image  --===--
+				Crossfade(
+					targetState = metadata.artworkUri.toString(),
+					modifier = Modifier.sharedElementWithCallerManagedVisibility(
+						sharedContentState = rememberSharedContentState(key = "image"),
+						visible = playbackViewModel.isPlayerScreenOpen.value
 					)
-				)
-
-				// --===--  Total Duration  --===--
-				Text(
-					text = metadata.durationMs?.formatDuration()
-						?: stringResource(R.string.duration_null_value_default),
-					style = MaterialTheme.typography.bodyMedium.copy(
-						color = MaterialTheme.colorScheme.onSecondary,
-						fontSize = 15.sp
+				) { artworkUri ->
+					AlbumArtImage(
+						artworkUri,
+						size = dimensionResource(R.dimen.player_screen_image_size),
+						shape = MaterialTheme.shapes.extraLarge
 					)
-				)
-			}
+				}
 
-			// --===--  Seekbar  --===--
-			Row(
-				horizontalArrangement = Arrangement.Center
-			) {
-				Spacer(Modifier.width(dimensionResource(R.dimen.large_padding)))
+				Spacer(Modifier.height(dimensionResource(R.dimen.player_screen_image_bottom_padding)))
 
-				Slider(
-					value = curPos.toFloat(),
-					onValueChange = { playbackViewModel.seekTo(it.toLong()) },
-					valueRange = 0f..(metadata.durationMs?.toFloat() ?: 0f),
-					thumb = {
-						Box(
+				// --===--  Music Info  --===--
+				Row {
+					Spacer(Modifier.width(dimensionResource(R.dimen.large_padding)))
+
+					Column(
+						horizontalAlignment = Alignment.CenterHorizontally,
+						modifier = Modifier.weight(1f)
+					) {
+						// --===--  Music Title  --===--
+						AnimatedContent(
+							targetState = metadata.title.toString(),
+							transitionSpec = { fadeIn() togetherWith fadeOut() },
 							modifier = Modifier
-								.shadow(
-									elevation = dimensionResource(R.dimen.thumb_shadow_elevation),
-									shape = CircleShape
+								.sharedElementWithCallerManagedVisibility(
+									sharedContentState = rememberSharedContentState(key = "title"),
+									visible = playbackViewModel.isPlayerScreenOpen.value
 								)
-								.size(dimensionResource(R.dimen.thumb_size))
-								.clip(CircleShape)
-								.background(MaterialTheme.colorScheme.outlineVariant)
-						)
-					},
-					track = { sliderState ->
-						SliderDefaults.Track(
-							sliderState = sliderState,
-							drawStopIndicator = null,
-							thumbTrackGapSize = dimensionResource(R.dimen.zero),
-							colors = SliderDefaults.colors(
-								activeTrackColor = MaterialTheme.colorScheme.outline,
-								inactiveTrackColor = MaterialTheme.colorScheme.onSurface
+								.fillMaxWidth()
+						) { title ->
+							Text(
+								text = title,
+								style = MaterialTheme.typography.bodyLarge.copy(
+									fontSize = 20.sp
+								),
+								color = MaterialTheme.colorScheme.onSecondary,
+								maxLines = 1,
+								softWrap = false,
+								overflow = TextOverflow.Ellipsis,
+								textAlign = TextAlign.Center
 							)
+						}
+
+						// --===--  Music Artist  --===--
+						AnimatedContent(
+							targetState = metadata.artist.toString(),
+							transitionSpec = { fadeIn() togetherWith fadeOut() },
+							modifier = Modifier
+								.sharedElementWithCallerManagedVisibility(
+									sharedContentState = rememberSharedContentState(key = "artist"),
+									visible = playbackViewModel.isPlayerScreenOpen.value
+								)
+								.fillMaxWidth()
+						) { artist ->
+							Text(
+								text = artist,
+								style = MaterialTheme.typography.bodyMedium.copy(
+									fontSize = 18.sp
+								),
+								color = MaterialTheme.colorScheme.onSurfaceVariant,
+								maxLines = 1,
+								softWrap = false,
+								overflow = TextOverflow.Ellipsis,
+								textAlign = TextAlign.Center
+							)
+						}
+					}
+
+					Spacer(Modifier.width(dimensionResource(R.dimen.large_padding)))
+				}
+
+				Spacer(Modifier.height(dimensionResource(R.dimen.player_screen_timeline_top_padding)))
+
+				// --===--  Duration  --===--
+				Row(
+					horizontalArrangement = Arrangement.SpaceAround,
+					modifier = Modifier.fillMaxWidth()
+				) {
+					// --===--  Current Position  --===--
+					Text(
+						text = curPos.formatDuration(),
+						style = MaterialTheme.typography.bodyMedium.copy(
+							color = MaterialTheme.colorScheme.onSecondary,
+							fontSize = 15.sp
 						)
-					},
-					modifier = Modifier.weight(1f)
-				)
+					)
 
-				Spacer(Modifier.width(dimensionResource(R.dimen.large_padding)))
-			}
-
-			// --===--  Playback Control Buttons  --===--
-			Row {
-				// --===--  Shuffle Mode Button  --===--
-				CustomIconButton(
-					iconImageVector = if (playbackViewModel.isShuffling.value) {
-						Icons.Rounded.ShuffleOn
-					} else {
-						Icons.Rounded.Shuffle
-					},
-					contentDescription = stringResource(R.string.shuffle),
-					size = dimensionResource(R.dimen.player_screen_playback_mode_button_size)
-				) {
-					playbackViewModel.toggleShuffle()
+					// --===--  Total Duration  --===--
+					Text(
+						text = metadata.durationMs?.formatDuration()
+							?: stringResource(R.string.duration_null_value_default),
+						style = MaterialTheme.typography.bodyMedium.copy(
+							color = MaterialTheme.colorScheme.onSecondary,
+							fontSize = 15.sp
+						)
+					)
 				}
 
-				Spacer(Modifier.width(dimensionResource(R.dimen.player_screen_playback_mode_button_padding)))
+				// --===--  Seekbar  --===--
+				Row(
+					horizontalArrangement = Arrangement.Center
+				) {
+					Spacer(Modifier.width(dimensionResource(R.dimen.large_padding)))
 
-				// --===--  Skip to Previous Button  --===--
-				CustomIconButton(
-					iconImageVector = Icons.Rounded.SkipPrevious,
-					contentDescription = stringResource(R.string.skip_prev),
-					size = dimensionResource(R.dimen.player_screen_playback_control_button_size),
-					colour = if (playbackViewModel.hasPrevious.value) {
-						MaterialTheme.colorScheme.onSecondary
-					} else {
-						MaterialTheme.colorScheme.secondary
+					Slider(
+						value = curPos.toFloat(),
+						onValueChange = { playbackViewModel.seekTo(it.toLong()) },
+						valueRange = 0f..(metadata.durationMs?.toFloat() ?: 0f),
+						thumb = {
+							Box(
+								modifier = Modifier
+									.shadow(
+										elevation = dimensionResource(R.dimen.thumb_shadow_elevation),
+										shape = CircleShape
+									)
+									.size(dimensionResource(R.dimen.thumb_size))
+									.clip(CircleShape)
+									.background(MaterialTheme.colorScheme.outlineVariant)
+							)
+						},
+						track = { sliderState ->
+							SliderDefaults.Track(
+								sliderState = sliderState,
+								drawStopIndicator = null,
+								thumbTrackGapSize = dimensionResource(R.dimen.zero),
+								colors = SliderDefaults.colors(
+									activeTrackColor = MaterialTheme.colorScheme.outline,
+									inactiveTrackColor = MaterialTheme.colorScheme.onSurface
+								)
+							)
+						},
+						modifier = Modifier.weight(1f)
+					)
+
+					Spacer(Modifier.width(dimensionResource(R.dimen.large_padding)))
+				}
+
+				// --===--  Playback Control Buttons  --===--
+				Row {
+					// --===--  Shuffle Mode Button  --===--
+					CustomIconButton(
+						iconImageVector = if (playbackViewModel.isShuffling.value) {
+							Icons.Rounded.ShuffleOn
+						} else {
+							Icons.Rounded.Shuffle
+						},
+						contentDescription = stringResource(R.string.shuffle),
+						size = dimensionResource(R.dimen.player_screen_playback_mode_button_size)
+					) {
+						playbackViewModel.toggleShuffle()
 					}
-				) {
-					playbackViewModel.skipPrev()
-				}
 
-				Spacer(Modifier.width(dimensionResource(R.dimen.player_screen_playback_control_button_padding)))
+					Spacer(Modifier.width(dimensionResource(R.dimen.player_screen_playback_mode_button_padding)))
 
-				// --===--  Play/Pause Button  --===--
-				CustomIconButton(
-					iconImageVector = if (playbackViewModel.isPlaying.value) {
-						Icons.Rounded.Pause
-					} else {
-						Icons.Rounded.PlayArrow
-					},
-					contentDescription = stringResource(R.string.play_pause),
-					size = dimensionResource(R.dimen.player_screen_playback_control_button_size)
-				) {
-					playbackViewModel.togglePlayPause()
-				}
-
-				Spacer(Modifier.width(dimensionResource(R.dimen.player_screen_playback_control_button_padding)))
-
-				// --===--  Skip to Next Button  --===--
-				CustomIconButton(
-					iconImageVector = Icons.Rounded.SkipNext,
-					contentDescription = stringResource(R.string.skip_next),
-					size = dimensionResource(R.dimen.player_screen_playback_control_button_size),
-					colour = if (playbackViewModel.hasNext.value) {
-						MaterialTheme.colorScheme.onSecondary
-					} else {
-						MaterialTheme.colorScheme.secondary
+					// --===--  Skip to Previous Button  --===--
+					CustomIconButton(
+						modifier = Modifier.sharedElementWithCallerManagedVisibility(
+							sharedContentState = rememberSharedContentState(key = "skip_prev"),
+							visible = playbackViewModel.isPlayerScreenOpen.value
+						),
+						iconImageVector = Icons.Rounded.SkipPrevious,
+						contentDescription = stringResource(R.string.skip_prev),
+						size = dimensionResource(R.dimen.player_screen_playback_control_button_size),
+						colour = if (playbackViewModel.hasPrevious.value) {
+							MaterialTheme.colorScheme.onSecondary
+						} else {
+							MaterialTheme.colorScheme.secondary
+						}
+					) {
+						playbackViewModel.skipPrev()
 					}
-				) {
-					playbackViewModel.skipNext()
-				}
 
-				Spacer(Modifier.width(dimensionResource(R.dimen.player_screen_playback_mode_button_padding)))
+					Spacer(Modifier.width(dimensionResource(R.dimen.player_screen_playback_control_button_padding)))
 
-				// --===--  Loop Mode Button  --===--
-				CustomIconButton(
-					iconImageVector = when (loopMode) {
-						Player.REPEAT_MODE_OFF -> Icons.Rounded.SyncDisabled
-						Player.REPEAT_MODE_ALL -> Icons.Rounded.SyncAlt
-						Player.REPEAT_MODE_ONE -> Icons.Rounded.Loop
-						else -> Icons.Rounded.SyncDisabled
-					},
-					contentDescription = stringResource(R.string.loop_mode),
-					size = dimensionResource(R.dimen.player_screen_playback_mode_button_size)
-				) {
-					playbackViewModel.cycleLoopMode()
+					// --===--  Play/Pause Button  --===--
+					CustomIconButton(
+						modifier = Modifier.sharedElementWithCallerManagedVisibility(
+							sharedContentState = rememberSharedContentState(key = "play/pause"),
+							visible = playbackViewModel.isPlayerScreenOpen.value
+						),
+						iconImageVector = if (playbackViewModel.isPlaying.value) {
+							Icons.Rounded.Pause
+						} else {
+							Icons.Rounded.PlayArrow
+						},
+						contentDescription = stringResource(R.string.play_pause),
+						size = dimensionResource(R.dimen.player_screen_playback_control_button_size)
+					) {
+						playbackViewModel.togglePlayPause()
+					}
+
+					Spacer(Modifier.width(dimensionResource(R.dimen.player_screen_playback_control_button_padding)))
+
+					// --===--  Skip to Next Button  --===--
+					CustomIconButton(
+						modifier = Modifier.sharedElementWithCallerManagedVisibility(
+							sharedContentState = rememberSharedContentState(key = "skip_next"),
+							visible = playbackViewModel.isPlayerScreenOpen.value
+						),
+						iconImageVector = Icons.Rounded.SkipNext,
+						contentDescription = stringResource(R.string.skip_next),
+						size = dimensionResource(R.dimen.player_screen_playback_control_button_size),
+						colour = if (playbackViewModel.hasNext.value) {
+							MaterialTheme.colorScheme.onSecondary
+						} else {
+							MaterialTheme.colorScheme.secondary
+						}
+					) {
+						playbackViewModel.skipNext()
+					}
+
+					Spacer(Modifier.width(dimensionResource(R.dimen.player_screen_playback_mode_button_padding)))
+
+					// --===--  Loop Mode Button  --===--
+					CustomIconButton(
+						iconImageVector = when (loopMode) {
+							Player.REPEAT_MODE_OFF -> Icons.Rounded.SyncDisabled
+							Player.REPEAT_MODE_ALL -> Icons.Rounded.SyncAlt
+							Player.REPEAT_MODE_ONE -> Icons.Rounded.Loop
+							else -> Icons.Rounded.SyncDisabled
+						},
+						contentDescription = stringResource(R.string.loop_mode),
+						size = dimensionResource(R.dimen.player_screen_playback_mode_button_size)
+					) {
+						playbackViewModel.cycleLoopMode()
+					}
 				}
 			}
 		}

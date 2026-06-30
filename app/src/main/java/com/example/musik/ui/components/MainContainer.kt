@@ -1,5 +1,6 @@
 package com.example.musik.ui.components
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import com.google.accompanist.permissions.isGranted
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainContainer(
+	sharedTransitionScope: SharedTransitionScope,
 	navViewModel: NavViewModel,
 	playbackViewModel: PlaybackViewModel,
 	modifier: Modifier = Modifier
@@ -85,6 +87,9 @@ fun MainContainer(
 			}
 		}
 
-		PlayerBar(playbackViewModel)
+		PlayerBar(
+			sharedTransitionScope = sharedTransitionScope,
+			playbackViewModel = playbackViewModel
+		)
 	}
 }

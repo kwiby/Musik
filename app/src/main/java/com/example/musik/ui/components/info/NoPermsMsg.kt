@@ -32,8 +32,8 @@ fun NoPermsMsg() {
 
 		val context = LocalContext.current
 		CustomIconButton(
-			Icons.Rounded.Settings,
-			stringResource(R.string.settings_button)
+			iconImageVector = Icons.Rounded.Settings,
+			contentDescription = stringResource(R.string.settings_button)
 		) {
 			openPermissionsSettings(context)
 		}
