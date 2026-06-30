@@ -51,9 +51,9 @@ fun MusikTopAppBar() {
 				}
 
 				CustomIconButton(
-					Icons.Rounded.Settings,
-					stringResource(R.string.settings_button),
-					MaterialTheme.colorScheme.onSurfaceVariant
+					iconImageVector =  Icons.Rounded.Settings,
+					contentDescription =  stringResource(R.string.settings_button),
+					colour =  MaterialTheme.colorScheme.onSurfaceVariant
 				) {
 
 				}

@@ -138,7 +138,7 @@ fun PlayerBar(playbackViewModel: PlaybackViewModel) {
 								}
 							}
 
-							// --===--  Player Buttons  --===--
+							// --===--  Playback Control Buttons  --===--
 							Row(
 								horizontalArrangement = Arrangement.End,
 								verticalAlignment = Alignment.CenterVertically

@@ -28,6 +28,8 @@
     <string name="skip_prev" translatable="true">Skip to Previous</string>
     <string name="play_pause" translatable="true">Play/Pause</string>
     <string name="skip_next" translatable="true">Skip to Next</string>
+    <string name="shuffle" translatable="true">Toggle Shuffle</string>
+    <string name="loop_mode" translatable="true">Change Loop Mode</string>
 
     <string name="duration_null_value_default" translatable="true">0:00:00</string>
 </resources>

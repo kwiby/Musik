@@ -7,6 +7,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import com.example.musik.R
 import com.example.musik.data.models.MusicDetails
@@ -17,6 +18,7 @@ fun ListDivider(index: Int, list: List<MusicDetails>) {
 		Box(modifier = Modifier.fillMaxWidth()) {
 			HorizontalDivider(
 				thickness = dimensionResource(R.dimen.horizontal_divider_thickness),
+				color = Color.DarkGray,
 				modifier = Modifier
 					.fillMaxWidth(0.785f)
 					.align(Alignment.CenterEnd)

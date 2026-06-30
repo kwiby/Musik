@@ -3,6 +3,7 @@ package com.example.musik.ui.view_models
 import android.app.Application
 import android.content.ComponentName
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -12,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.example.musik.data.services.PlaybackService
@@ -33,7 +35,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 	val currentTrack = mutableStateOf<MediaItem?>(null)
 	val isPlaying = mutableStateOf(false)
 	val isShuffling = mutableStateOf(false)
-	val loopMode = mutableIntStateOf(Player.REPEAT_MODE_OFF)
+	val loopMode = mutableIntStateOf(Player.REPEAT_MODE_ALL)
 
 	val hasPrevious = mutableStateOf(false)
 	val hasNext = mutableStateOf(false)
@@ -122,6 +124,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 			override fun onRepeatModeChanged(newMode: Int) {
 				loopMode.intValue = newMode
+				updateSkipStates()
 			}
 		})
 	}
@@ -305,21 +308,23 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 	fun cycleLoopMode() {
 		val nextLoopMode = when (mediaController?.repeatMode) {
-			Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE // Loop current music
-			Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_ALL // Loop whole queue
-			Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_OFF // No loop
-			else -> Player.REPEAT_MODE_OFF // Default value just in case
+			Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE // Switch to loop current music
+			Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_OFF // Switch to loop whole queue
+			Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL // Switch to no loop
+			else -> Player.REPEAT_MODE_ALL // Default value just in case
 		}
 
 		mediaController?.repeatMode = nextLoopMode
 		loopMode.intValue = nextLoopMode
 	}
 
+	@OptIn(UnstableApi::class)
 	fun toggleShuffle() {
+		val controller = mediaController ?: return
 		val nextShuffleMode = !isShuffling.value
 
-		mediaController?.shuffleModeEnabled = nextShuffleMode
 		isShuffling.value = nextShuffleMode
+		mediaController?.shuffleModeEnabled = nextShuffleMode
 	}
 	// ================================================================================================
 
@@ -340,6 +345,11 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 				isPlaying.value = player.isPlaying
 				currentTrack.value = player.currentMediaItem
 				isShuffling.value = player.shuffleModeEnabled
+
+				// TODO: Allow users to set default loop mode, or save loop mode for after relaunch
+				if (player.repeatMode == Player.REPEAT_MODE_OFF) {
+					player.repeatMode = Player.REPEAT_MODE_ALL
+				}
 				loopMode.intValue = player.repeatMode
 
 				if (player.mediaItemCount == 0) {
