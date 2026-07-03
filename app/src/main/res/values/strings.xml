@@ -1,14 +1,18 @@
 <resources>
+    <!-- App Name -->
     <string name="app_name" translatable="false">Musik</string>
 
+    <!-- Tab Names -->
     <string name="all_music_tab" translatable="true">All Music</string>
     <string name="playlists_tab" translatable="true">Playlists</string>
     <string name="stats_tab" translatable="true">Statistics</string>
 
+    <!-- Info Messages -->
     <string name="no_permissions_msg" translatable="true">Allow audio permissions in settings</string>
     <string name="no_music_msg" translatable="true">No music added</string>
     <string name="no_audio_files_msg" translatable="true">No audio files</string>
 
+    <!-- Button Content Descriptions -->
     <string name="settings_button" translatable="true">Settings</string>
     <string name="add_music_button" translatable="true">Add Music</string>
     <string name="enter_move_mode_button" translatable="true">Move Music</string>
@@ -21,15 +25,22 @@
     <string name="refresh_button" translatable="true">Refresh</string>
     <string name="back_button" translatable="true">Back</string>
 
+    <!-- Other Music Stuff -->
     <string name="album_art" translatable="true">Album Art</string>
     <string name="add_music_search_bar" translatable="true">Search audio files</string>
     <string name="move_music" translatable="true">Move Music</string>
 
+    <!-- Playback Control Button Content Descriptions -->
     <string name="skip_prev" translatable="true">Skip to Previous</string>
     <string name="play_pause" translatable="true">Play/Pause</string>
     <string name="skip_next" translatable="true">Skip to Next</string>
     <string name="shuffle" translatable="true">Toggle Shuffle</string>
     <string name="loop_mode" translatable="true">Change Loop Mode</string>
 
+    <!-- Add YouTube Music Tab -->
+    <string name="no_location_selected" translatable="true">No download location selected</string>
+    <string name="set_location_content_description" translatable="true">Set a download location</string>
+
+    <!-- Null Value Defaults -->
     <string name="duration_null_value_default" translatable="true">0:00:00</string>
 </resources>

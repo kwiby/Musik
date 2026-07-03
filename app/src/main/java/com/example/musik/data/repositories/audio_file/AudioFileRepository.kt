@@ -1,6 +1,6 @@
-package com.example.musik.data.repository
+package com.example.musik.data.repositories.audio_file
 
-import com.example.musik.data.models.AudioFile
+import com.example.musik.data.data_classes.AudioFile
 import kotlinx.coroutines.flow.Flow
 
 interface AudioFileRepository {

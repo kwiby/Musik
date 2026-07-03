@@ -18,7 +18,15 @@ object ViewModelProvider {
 			AddMusicViewModel(
 				musikApplication(),
 				musikApplication().container.audioFileRepository
-				)
+			)
+		}
+
+		// --===--  AddYtMusicViewModel  --===--
+		initializer {
+			AddYtMusicViewModel(
+				musikApplication().container.dataStoreManager,
+				musikApplication().container.audioFileRepository
+			)
 		}
 
 		// --===--  PlayBackViewModel  --===--

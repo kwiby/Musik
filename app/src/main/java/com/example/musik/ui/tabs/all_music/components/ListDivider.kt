@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import com.example.musik.R
-import com.example.musik.data.models.MusicDetails
+import com.example.musik.data.data_classes.MusicDetails
 
 @Composable
 fun ListDivider(index: Int, list: List<MusicDetails>) {

@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.musik.data.models.AudioFile
+import com.example.musik.data.data_classes.AudioFile
 import kotlinx.coroutines.flow.Flow
 
 @Dao

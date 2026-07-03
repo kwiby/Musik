@@ -1,11 +1,11 @@
 package com.example.musik.ui.view_models
 
-import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musik.data.misc.fetchAudioFiles
-import com.example.musik.data.models.MusicDetails
-import com.example.musik.data.repository.AudioFileRepository
+import com.example.musik.data.data_classes.MusicDetails
+import com.example.musik.data.repositories.audio_file.AudioFileRepository
+import com.example.musik.ui.MusikApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,9 +19,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AddMusicViewModel(
-	application: Application,
+	application: MusikApplication,
 	private val audioFileRepo: AudioFileRepository
-): AndroidViewModel(application) {
+) : AndroidViewModel(application) {
 	val searchQuery = MutableStateFlow("")
 
 	private val _audioFiles = MutableStateFlow<List<MusicDetails>>(emptyList())

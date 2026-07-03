@@ -24,7 +24,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.musik.R
-import com.example.musik.data.models.MusicDetails
+import com.example.musik.data.data_classes.MusicDetails
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 
 @Composable

@@ -37,8 +37,10 @@ fun AddMusicSearchbar(
 		) },
 		leadingIcon =
 			{
-				Icon(Icons.Default.Search,
-				contentDescription = stringResource(R.string.add_music_search_bar))
+				Icon(
+					Icons.Default.Search,
+					contentDescription = stringResource(R.string.add_music_search_bar)
+				)
 			},
 		singleLine = true,
 		shape = MaterialTheme.shapes.extraLarge,
