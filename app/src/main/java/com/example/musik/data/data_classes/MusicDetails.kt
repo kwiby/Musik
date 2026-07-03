@@ -1,4 +1,4 @@
-package com.example.musik.data.models
+package com.example.musik.data.data_classes
 
 data class MusicDetails(
 	val id: Long = 0L,

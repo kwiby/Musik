@@ -1,4 +1,4 @@
-package com.example.musik.data.models
+package com.example.musik.data.data_classes
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

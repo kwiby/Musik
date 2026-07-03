@@ -17,13 +17,16 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.example.musik.data.services.PlaybackService
+import com.example.musik.ui.MusikApplication
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-class PlaybackViewModel(application: Application) : AndroidViewModel(application) {
+class PlaybackViewModel(
+	application: MusikApplication
+) : AndroidViewModel(application) {
 	// ================================================================================================
 	// --===--  Variables  --===--
 	private var controllerFuture: ListenableFuture<MediaController>? = null
@@ -324,7 +327,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		val nextShuffleMode = !isShuffling.value
 
 		isShuffling.value = nextShuffleMode
-		mediaController?.shuffleModeEnabled = nextShuffleMode
+		controller.shuffleModeEnabled = nextShuffleMode
 	}
 	// ================================================================================================
 

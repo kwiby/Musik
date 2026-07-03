@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import com.example.musik.data.models.AudioFile
-import com.example.musik.data.models.MusicDetails
-import com.example.musik.data.repository.AudioFileRepository
+import com.example.musik.data.data_classes.AudioFile
+import com.example.musik.data.data_classes.MusicDetails
+import com.example.musik.data.repositories.audio_file.AudioFileRepository
 import com.example.musik.ui.misc.formatDuration
 import com.example.musik.ui.misc.unformatDuration
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewModel() {
+class MusicListViewModel(
+	private val audioFileRepo: AudioFileRepository
+) : ViewModel() {
 	private val _queue = mutableListOf<MusicDetails>()
 	private var _previousQueueForSync: List<MusicDetails> = emptyList()
 	private var _queueBeforeMove: List<MusicDetails> = emptyList()
@@ -142,11 +144,6 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		_manualQueue.value = _queue.toList()
 	}
 
-	fun addingButton(onAddMusicButtonClick: () -> Unit) {
-		resetMusicList()
-		onAddMusicButtonClick()
-	}
-
 	fun handleTap(id: Long, onPlayMusic: () -> Unit) {
 		if (isInSelectionMode.value) {
 			updateSelection(id)
@@ -194,8 +191,14 @@ class MusicListViewModel(private val audioFileRepo: AudioFileRepository): ViewMo
 		resetMusicList()
 	}
 
-	fun addYtMusicButton() {
+	fun addMusicButton(onAddMusicButtonClick: () -> Unit) {
 		resetMusicList()
+		onAddMusicButtonClick()
+	}
+
+	fun addYtMusicButton(onAddYtMusicButtonClick: () -> Unit) {
+		resetMusicList()
+		onAddYtMusicButtonClick()
 	}
 
 	fun handleBack() {

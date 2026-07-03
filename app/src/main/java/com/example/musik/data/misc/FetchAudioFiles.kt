@@ -4,7 +4,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
 import androidx.core.net.toUri
-import com.example.musik.data.models.AudioFile
+import com.example.musik.data.data_classes.AudioFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

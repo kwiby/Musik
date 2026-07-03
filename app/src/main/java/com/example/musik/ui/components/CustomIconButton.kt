@@ -19,9 +19,9 @@ import com.example.musik.R
 
 @Composable
 fun CustomIconButton(
-	modifier: Modifier = Modifier,
 	iconImageVector: ImageVector,
 	contentDescription: String,
+	modifier: Modifier = Modifier,
 	size: Dp = 24.dp,
 	colour: Color = MaterialTheme.colorScheme.onSecondary,
 	onClick: () -> Unit

@@ -50,7 +50,8 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun MusicListScreen(
 	musicListViewModel: MusicListViewModel,
 	playbackViewModel: PlaybackViewModel,
-	onAddMusic: () -> Unit
+	onAddMusic: () -> Unit,
+	onAddYtMusic: () -> Unit
 ) {
 	val selectedIds by musicListViewModel.selectedIds.collectAsStateWithLifecycle()
 	val isInSelectionMode by musicListViewModel.isInSelectionMode.collectAsStateWithLifecycle()
@@ -149,7 +150,7 @@ fun MusicListScreen(
 					iconImageVector = Icons.Rounded.SmartDisplay,
 					contentDescription = stringResource(R.string.add_yt_music_button)
 				) {
-					musicListViewModel.addYtMusicButton()
+					musicListViewModel.addYtMusicButton { onAddYtMusic() }
 				}
 
 				// ---===---  Add Music Button  ---===---
@@ -157,7 +158,7 @@ fun MusicListScreen(
 					iconImageVector = Icons.Rounded.Add,
 					contentDescription = stringResource(R.string.add_music_button)
 				) {
-					musicListViewModel.addingButton { onAddMusic() }
+					musicListViewModel.addMusicButton { onAddMusic() }
 				}
 
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))

@@ -100,8 +100,9 @@ fun AddMusicScreen(
 						onBackToMusicList()
 					}
 				}
-				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
+
 			}
+			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 		}
 
 		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.buttons_vertical_padding)))

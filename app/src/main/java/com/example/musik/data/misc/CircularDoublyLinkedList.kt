@@ -1,7 +1,7 @@
 package com.example.musik.data.misc
 
 import android.util.Log
-import com.example.musik.data.models.MusicDetails
+import com.example.musik.data.data_classes.MusicDetails
 
 class CircularDoublyLinkedList {
 	class Node(val musicDetails: MusicDetails) {

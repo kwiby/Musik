@@ -1,16 +1,22 @@
 package com.example.musik.data.misc
 
 import android.content.Context
+import com.example.musik.data.datastore.DataStoreManager
 import com.example.musik.data.db.AudioFileDatabase
-import com.example.musik.data.repository.AudioFileRepository
-import com.example.musik.data.repository.OfflineAudioFileRepository
+import com.example.musik.data.repositories.audio_file.AudioFileRepository
+import com.example.musik.data.repositories.audio_file.OfflineAudioFileRepository
 
 interface AppContainer {
 	val audioFileRepository: AudioFileRepository
+	val dataStoreManager: DataStoreManager
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
 	override val audioFileRepository: AudioFileRepository by lazy {
 		OfflineAudioFileRepository(AudioFileDatabase.getDatabase(context).audioFileDao())
+	}
+
+	override val dataStoreManager: DataStoreManager by lazy {
+		DataStoreManager(context)
 	}
 }
