@@ -1,7 +1,6 @@
 package com.example.musik.ui.tabs.all_music.tabs.add_yt_music.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +16,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +30,7 @@ import com.example.musik.ui.view_models.AddYtMusicViewModel
 fun DownloadLocationContainer(
 	addYtMusicViewModel: AddYtMusicViewModel
 ) {
-	val interactionSource = remember { MutableInteractionSource() }
+	//val interactionSource = remember { MutableInteractionSource() }
 	val downloadLocation by addYtMusicViewModel.downloadLocation.collectAsStateWithLifecycle()
 
 	Surface(

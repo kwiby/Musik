@@ -17,8 +17,8 @@ android {
         minSdk = 24
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 43
-        versionName = "1.7.0"
+        versionCode = 44
+        versionName = "1.7.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,6 +41,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.documentfile)
+
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.reorderable)

@@ -133,6 +133,15 @@ class MusicListViewModel(
 		resetMusicList()
 	}
 
+	suspend fun deleteTracksByIds(ids: Set<Long>) {
+		withContext(Dispatchers.IO) {
+			audioFileRepo.deleteMultipleAudioFilesById(ids)
+		}
+
+		_queue.removeAll { it.id in ids }
+		_manualQueue.value = _queue.toList()
+	}
+
 	fun onMove(fromIndex: Int, toIndex: Int) {
 		val list = _queue.toList().toMutableList()
 		val moved = list.removeAt(fromIndex)

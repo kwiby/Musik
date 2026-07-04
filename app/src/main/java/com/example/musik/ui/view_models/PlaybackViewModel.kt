@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.util.UnstableApi
@@ -45,6 +46,8 @@ class PlaybackViewModel(
 	val isPlayerScreenOpen = mutableStateOf(false)
 
 	val currentPos = mutableLongStateOf(0L)
+
+	var onDeadTrackDetected: (suspend (Set<Long>) -> Unit)? = null
 	// ================================================================================================
 
 
@@ -128,6 +131,36 @@ class PlaybackViewModel(
 			override fun onRepeatModeChanged(newMode: Int) {
 				loopMode.intValue = newMode
 				updateSkipStates()
+			}
+
+			override fun onPlayerError(error: PlaybackException) {
+				Log.e("PlaybackViewModel", "Playback error: ${error.errorCodeName}", error)
+
+				val controller = mediaController ?: return
+				val failedIndex = controller.currentMediaItemIndex
+				val failedItem = controller.currentMediaItem
+				val failedId = failedItem?.mediaId?.toLongOrNull()
+
+				if (failedIndex in 0 until controller.mediaItemCount) {
+					controller.removeMediaItem(failedIndex)
+				}
+
+				// Remove the dead track from the db
+				failedId?.let { id ->
+					viewModelScope.launch {
+						onDeadTrackDetected?.invoke(setOf(id))
+					}
+				}
+
+				// Continue playback if there's any remaining items
+				if (controller.mediaItemCount > 0) {
+					controller.prepare()
+					controller.play()
+					isPlaying.value = true
+				} else {
+					isPlaying.value = false
+					currentTrack.value = null
+				}
 			}
 		})
 	}

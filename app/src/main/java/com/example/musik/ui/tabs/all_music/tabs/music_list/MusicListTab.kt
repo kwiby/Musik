@@ -72,6 +72,11 @@ fun MusicListScreen(
 			}
 		}
 	}
+	LaunchedEffect(musicListViewModel, playbackViewModel) {
+		playbackViewModel.onDeadTrackDetected = { ids ->
+			musicListViewModel.deleteTracksByIds(ids)
+		}
+	}
 	DisposableEffect(Unit) {
 		onDispose {
 			musicListViewModel.resetMusicList()
