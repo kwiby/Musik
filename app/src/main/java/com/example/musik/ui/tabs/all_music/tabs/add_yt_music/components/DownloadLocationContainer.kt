@@ -83,7 +83,7 @@ fun DownloadLocationContainer(
 						folderManager.getDisplayPath(downloadLocation!!.toUri())
 					},
 					modifier = Modifier.weight(1f),
-					color = Color.Gray,
+					color = Color.White,
 					style = MaterialTheme.typography.bodyLarge,
 					overflow = TextOverflow.Ellipsis,
 					maxLines = 1
