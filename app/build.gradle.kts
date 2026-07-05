@@ -17,8 +17,8 @@ android {
         minSdk = 24
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 44
-        versionName = "1.7.1"
+        versionCode = 45
+        versionName = "1.7.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -26,7 +26,7 @@ android {
     buildTypes {
         release {
             optimization {
-                enable = false // Update this to 'true' when building the production APK!
+                enable = false // TODO: Update this to 'true' when building the production APK!
             }
         }
     }

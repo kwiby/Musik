@@ -11,6 +11,9 @@
     <string name="no_permissions_msg" translatable="true">Allow audio permissions in settings</string>
     <string name="no_music_msg" translatable="true">No music added</string>
     <string name="no_audio_files_msg" translatable="true">No audio files</string>
+    <string name="no_download_location_msg" translatable="true">Select a download location to continue</string>
+    <string name="no_internet_msg" translatable="true">No internet connection</string>
+
 
     <!-- Button Content Descriptions -->
     <string name="settings_button" translatable="true">Settings</string>
@@ -40,6 +43,9 @@
     <!-- Add YouTube Music Tab -->
     <string name="no_location_selected" translatable="true">No download location selected</string>
     <string name="set_location_content_description" translatable="true">Set a download location</string>
+    <string name="link_download_content_description" translatable="true">Download music by YouTube Link</string>
+    <string name="yt_link_field" translatable="true">Enter a YouTube video link</string>
+    <string name="yt_link_field_submit_button" translatable="true">Submit YouTube link</string>
 
     <!-- Null Value Defaults -->
     <string name="duration_null_value_default" translatable="true">0:00:00</string>

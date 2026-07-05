@@ -38,7 +38,9 @@ fun MainContainer(
 	playbackViewModel: PlaybackViewModel,
 	modifier: Modifier = Modifier
 ) {
-	Box(modifier = modifier.fillMaxSize()) {
+	Box(
+		modifier = modifier.fillMaxSize()
+	) {
 		Column {
 			Spacer(modifier = Modifier.height(dimensionResource(R.dimen.main_container_top_spacing)))
 

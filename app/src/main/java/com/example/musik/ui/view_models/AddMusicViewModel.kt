@@ -2,8 +2,8 @@ package com.example.musik.ui.view_models
 
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.musik.data.misc.fetchAudioFiles
 import com.example.musik.data.data_classes.MusicDetails
+import com.example.musik.data.misc.fetchAudioFiles
 import com.example.musik.data.repositories.audio_file.AudioFileRepository
 import com.example.musik.ui.MusikApplication
 import kotlinx.coroutines.Dispatchers
