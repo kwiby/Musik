@@ -38,7 +38,7 @@ import com.example.musik.ui.components.MusicListItem
 import com.example.musik.ui.components.info.NoMusicMsg
 import com.example.musik.ui.components.verticalScrollbar
 import com.example.musik.ui.tabs.all_music.components.ListDivider
-import com.example.musik.ui.tabs.all_music.components.LoadingIndicator
+import com.example.musik.ui.components.LoadingIndicator
 import com.example.musik.ui.view_models.MusicListViewModel
 import com.example.musik.ui.view_models.PlaybackViewModel
 import com.example.musik.ui.view_models.toMediaItem

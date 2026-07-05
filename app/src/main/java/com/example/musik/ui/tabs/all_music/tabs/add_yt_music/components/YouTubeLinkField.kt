@@ -1,9 +1,9 @@
-package com.example.musik.ui.tabs.all_music.tabs.add_music.components
+package com.example.musik.ui.tabs.all_music.tabs.add_yt_music.components
 
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,32 +18,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
-import com.example.musik.ui.view_models.AddMusicViewModel
+import com.example.musik.ui.view_models.AddYtMusicViewModel
 
 @Composable
-fun AddMusicSearchbar(
-	addMusicViewModel: AddMusicViewModel,
+fun YouTubeLinkField(
+	addYtMusicViewModel: AddYtMusicViewModel,
 	modifier: Modifier = Modifier
 ) {
-	val searchQuery by addMusicViewModel.searchQuery.collectAsStateWithLifecycle()
+	val searchQuery by addYtMusicViewModel.youtubeLink.collectAsStateWithLifecycle()
 	val focusManager = LocalFocusManager.current
 
 	TextField(
 		value = searchQuery,
-		onValueChange = { addMusicViewModel.onSearchQueryChange(it) },
+		onValueChange = { addYtMusicViewModel.onYouTubeLinkChange(it) },
 		placeholder = { Text(
-			text = stringResource(R.string.add_music_search_bar),
+			text = stringResource(R.string.yt_link_field),
 			style = MaterialTheme.typography.bodyLarge
 		) },
 		leadingIcon =
 			{
 				Icon(
-					Icons.Default.Search,
-					contentDescription = stringResource(R.string.add_music_search_bar)
+					Icons.Default.Link,
+					contentDescription = stringResource(R.string.yt_link_field)
 				)
 			},
 		singleLine = true,
-		shape = MaterialTheme.shapes.extraLarge,
+		shape = MaterialTheme.shapes.medium,
 		colors = TextFieldDefaults.colors(
 			focusedLeadingIconColor = MaterialTheme.colorScheme.onSecondary,
 			cursorColor = MaterialTheme.colorScheme.onSecondary,

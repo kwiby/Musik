@@ -27,11 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
+import com.example.musik.ui.components.LoadingIndicator
 import com.example.musik.ui.components.MusicListItem
 import com.example.musik.ui.components.info.NoAudioFilesMsg
 import com.example.musik.ui.components.verticalScrollbar
 import com.example.musik.ui.tabs.all_music.components.ListDivider
-import com.example.musik.ui.tabs.all_music.components.LoadingIndicator
 import com.example.musik.ui.tabs.all_music.tabs.add_music.components.AddMusicSearchbar
 import com.example.musik.ui.view_models.AddMusicViewModel
 import kotlinx.coroutines.launch

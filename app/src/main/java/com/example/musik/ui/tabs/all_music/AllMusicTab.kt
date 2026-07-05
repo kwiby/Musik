@@ -40,14 +40,12 @@ fun AllMusicTab(
 		if (isAddingMusic) {
 			addMusicViewModel.resetMusicAdding()
 			AddMusicScreen(
-				addMusicViewModel,
-				{ isAddingMusic = false }
-			)
+				addMusicViewModel
+			) { isAddingMusic = false }
 		} else if (isAddingYtMusic) {
 			AddYtMusicTab(
-				addYtMusicViewModel,
-				{ isAddingYtMusic = false }
-			)
+				addYtMusicViewModel
+			) { isAddingYtMusic = false }
 		} else {
 			musicListViewModel.resetMusicList()
 			MusicListScreen(

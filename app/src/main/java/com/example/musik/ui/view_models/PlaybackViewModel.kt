@@ -298,7 +298,7 @@ class PlaybackViewModel(
 				controller.play()
 				isPlaying.value = true
 			} else {
-				Log.e("PlaybackViewModel", "Track $id not found in queue.")
+				Log.e("PlaybackViewModel", "Track $id not foun`d in queue.")
 			}
 		} else {
 			pendingPlayId = id

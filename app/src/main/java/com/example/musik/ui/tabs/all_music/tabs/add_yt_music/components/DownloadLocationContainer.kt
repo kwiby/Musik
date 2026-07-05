@@ -22,31 +22,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
+import com.example.musik.ui.misc.LocalFolderManager
 import com.example.musik.ui.view_models.AddYtMusicViewModel
 
 @Composable
 fun DownloadLocationContainer(
 	addYtMusicViewModel: AddYtMusicViewModel
 ) {
-	//val interactionSource = remember { MutableInteractionSource() }
 	val downloadLocation by addYtMusicViewModel.downloadLocation.collectAsStateWithLifecycle()
+	val folderManager = LocalFolderManager.current
 
 	Surface(
 		modifier = Modifier
 			.height(dimensionResource(R.dimen.download_location_container_height))
 			.fillMaxSize()
-			.padding(horizontal = dimensionResource(R.dimen.download_location_container_horizontal_padding)),
+			.padding(
+				start = dimensionResource(R.dimen.download_location_container_left_padding),
+				end = dimensionResource(R.dimen.download_location_container_right_padding)
+			),
 		shape = MaterialTheme.shapes.medium,
 		color = MaterialTheme.colorScheme.secondaryContainer,
 		border = BorderStroke(
-			dimensionResource(R.dimen.download_location_container_border_stroke),
+			dimensionResource(R.dimen.container_border_stroke),
 			MaterialTheme.colorScheme.secondaryFixed
 		),
-		shadowElevation = dimensionResource(R.dimen.download_location_container_shadow_elevation),
+		shadowElevation = dimensionResource(R.dimen.container_shadow_elevation),
 		onClick = {
-			// TODO: Add onClick action
+			folderManager.openFolderSelector()
 		}
 	) {
 		Row(
@@ -70,8 +75,12 @@ fun DownloadLocationContainer(
 
 				// --===--  Download Location Text  --===--
 				Text(
-					text = downloadLocation.ifEmpty {
+					text = if (downloadLocation == null) {
+						""
+					} else if (downloadLocation!!.isEmpty()) {
 						stringResource(R.string.no_location_selected)
+					} else {
+						folderManager.getDisplayPath(downloadLocation!!.toUri())
 					},
 					modifier = Modifier.weight(1f),
 					color = Color.Gray,
