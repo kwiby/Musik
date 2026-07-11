@@ -29,10 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.LoadingIndicator
@@ -44,13 +45,14 @@ import com.example.musik.ui.tabs.all_music.tabs.add_yt_music.components.YouTubeL
 import com.example.musik.ui.view_models.AddYtMusicViewModel
 import com.example.musik.ui.view_models.isConnected
 import com.example.musik.ui.view_models.observeConnectivity
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddYtMusicTab(
 	addYtMusicViewModel: AddYtMusicViewModel,
 	onBackToMusicList: () -> Unit
 ) {
-	val downloadLocation = addYtMusicViewModel.downloadLocation.collectAsState().value
+	val downloadLocation by addYtMusicViewModel.downloadLocation.collectAsStateWithLifecycle()
 
 	val context = LocalContext.current
 	val folderManager = LocalFolderManager.current
@@ -58,9 +60,15 @@ fun AddYtMusicTab(
 	val connectivityManager = remember {
 		context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 	}
-	val isConnected by produceState(initialValue = connectivityManager.isConnected(), connectivityManager) {
-		connectivityManager.observeConnectivity().collect { value = it }
-	}
+	val isConnected by produceState(
+		initialValue = connectivityManager.isConnected(),
+		key1 = connectivityManager,
+		producer = {
+			connectivityManager.observeConnectivity().collect {
+				value = it
+			}
+		}
+	)
 
 	val hasValidFolderPerms = addYtMusicViewModel.hasValidFolderPerms.collectAsState().value
 	val lifecycleOwner = LocalLifecycleOwner.current
@@ -70,8 +78,8 @@ fun AddYtMusicTab(
 				addYtMusicViewModel.checkFolderPerms(folderManager)
 			}
 		}
-
 		lifecycleOwner.lifecycle.addObserver(observer)
+
 		onDispose {
 			lifecycleOwner.lifecycle.removeObserver(observer)
 		}
@@ -118,7 +126,7 @@ fun AddYtMusicTab(
 		if (downloadLocation == null || hasValidFolderPerms == null) {
 			// --===--  Loading Circle  --===--
 			LoadingIndicator()
-		} else if (downloadLocation.isEmpty()) {
+		} else if (downloadLocation!!.isEmpty()) {
 			// --===--  No Download Location Message  --===--
 			NoDownloadLocationMsg()
 		} else if (!isConnected) {
@@ -130,12 +138,12 @@ fun AddYtMusicTab(
 			) {
 				Spacer(Modifier.height(dimensionResource(R.dimen.yt_link_field_top_padding)))
 
-				// --===--  YouTube Link Field  --===--
 				Row(
 					verticalAlignment = Alignment.CenterVertically
 				) {
 					Spacer(Modifier.width(dimensionResource(R.dimen.yt_link_field_left_padding)))
 
+					// --===--  YouTube Link Field  --===--
 					YouTubeLinkField(
 						addYtMusicViewModel = addYtMusicViewModel,
 						modifier = Modifier.weight(1f)
@@ -143,16 +151,15 @@ fun AddYtMusicTab(
 
 					Spacer(Modifier.width(dimensionResource(R.dimen.yt_link_field_right_padding)))
 
+					// --===--  Download Button  --===--
 					CustomIconButton(
 						iconImageVector = Icons.Rounded.Download,
 						contentDescription = stringResource(R.string.yt_link_field_submit_button),
-						colour = if (true) {
-							MaterialTheme.colorScheme.onSecondary
-						} else {
-							MaterialTheme.colorScheme.onSurface
-						}
+						colour = MaterialTheme.colorScheme.onSecondary
 					) {
-
+						addYtMusicViewModel.viewModelScope.launch {
+							addYtMusicViewModel.checkValidLink()
+						}
 					}
 
 					Spacer(Modifier.width(dimensionResource(R.dimen.yt_link_field_submit_button_right_padding)))
@@ -160,13 +167,14 @@ fun AddYtMusicTab(
 
 				Spacer(Modifier.height(dimensionResource(R.dimen.yt_link_field_bottom_padding)))
 
+				// --===--  Info Box  --===--
 				Surface(
 					modifier = Modifier
 						.fillMaxSize()
 						.padding(
-							start = 20.dp,
-							end = 20.dp,
-							bottom = 80.dp
+							start = dimensionResource(R.dimen.info_box_horizontal_padding),
+							end = dimensionResource(R.dimen.info_box_horizontal_padding),
+							bottom = dimensionResource(R.dimen.info_box_bottom_padding)
 						),
 					shape = MaterialTheme.shapes.medium,
 					color = MaterialTheme.colorScheme.secondaryContainer

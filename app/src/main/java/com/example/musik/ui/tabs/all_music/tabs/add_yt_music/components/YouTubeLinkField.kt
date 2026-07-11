@@ -25,7 +25,7 @@ fun YouTubeLinkField(
 	addYtMusicViewModel: AddYtMusicViewModel,
 	modifier: Modifier = Modifier
 ) {
-	val searchQuery by addYtMusicViewModel.youtubeLink.collectAsStateWithLifecycle()
+	val searchQuery by addYtMusicViewModel.ytLink.collectAsStateWithLifecycle()
 	val focusManager = LocalFocusManager.current
 
 	TextField(

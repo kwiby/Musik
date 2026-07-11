@@ -19,8 +19,7 @@ class MainActivity : ComponentActivity() {
 		val dataStoreManager = (application as MusikApplication).container.dataStoreManager
 		val folderManager = FolderManager(
 			activity = this,
-			dataStoreManager = dataStoreManager,
-			onFolderSelected = {}
+			dataStoreManager = dataStoreManager
 		)
 
 		setContent {

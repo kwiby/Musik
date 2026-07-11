@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.musik.data.datastore.DataStoreManager
 import com.example.musik.data.repositories.audio_file.AudioFileRepository
 import com.example.musik.ui.misc.FolderManager
+import com.example.musik.ui.misc.YtDlp
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,18 +22,37 @@ import kotlinx.coroutines.launch
 
 class AddYtMusicViewModel(
 	private val dataStoreManager: DataStoreManager,
-	private val audioFileRepo: AudioFileRepository
+	private val audioFileRepo: AudioFileRepository,
+	private val ytDlp: YtDlp
 ) : ViewModel() {
 	private val _hasValidFolderPerms = MutableStateFlow<Boolean?>(null)
 	val hasValidFolderPerms = _hasValidFolderPerms.asStateFlow()
+
+	private val _isLinkValid = MutableStateFlow(false)
+	val isLinkValid = _isLinkValid.asStateFlow()
+
+	private val _ytLink = MutableStateFlow("")
+	val ytLink = _ytLink.asStateFlow()
 
 	val downloadLocation = dataStoreManager.downloadLocation.stateIn(
 		scope = viewModelScope,
 		started = SharingStarted.WhileSubscribed(5_000),
 		initialValue = null
 	)
-	val youtubeLink = MutableStateFlow("")
 
+
+	suspend fun checkValidLink(): Boolean {
+		if (_ytLink.value.isBlank()) {
+			_isLinkValid.value = false
+
+			return false
+		} else {
+			val result = ytDlp.checkValidLink(_ytLink.value)
+			_isLinkValid.value = result
+
+			return result
+		}
+	}
 
 	fun checkFolderPerms(folderManager: FolderManager) {
 		viewModelScope.launch {
@@ -47,7 +67,7 @@ class AddYtMusicViewModel(
 	}
 
 	fun onYouTubeLinkChange(newLink: String) {
-		youtubeLink.value = newLink
+		_ytLink.value = newLink
 	}
 
 	fun getDataStoreManager(): DataStoreManager {
@@ -55,7 +75,8 @@ class AddYtMusicViewModel(
 	}
 
 	fun resetAddYtMusic() {
-		youtubeLink.value = ""
+		_isLinkValid.value = false
+		_ytLink.value = ""
 	}
 }
 
@@ -64,6 +85,7 @@ class AddYtMusicViewModel(
 fun ConnectivityManager.isConnected(): Boolean {
 	val network = this.activeNetwork ?: return false
 	val capabilities = this.getNetworkCapabilities(network) ?: return false
+
 	val hasInternetCapability =
 		capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 				&& capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
@@ -80,7 +102,7 @@ fun ConnectivityManager.isConnected(): Boolean {
 fun ConnectivityManager.observeConnectivity(): Flow<Boolean> = callbackFlow {
 	trySend(isConnected())
 
-	val callback = object : ConnectivityManager.NetworkCallback() {
+	val networkCallback = object : ConnectivityManager.NetworkCallback() {
 		override fun onAvailable(network: Network) {
 			trySend(isConnected())
 		}
@@ -102,10 +124,18 @@ fun ConnectivityManager.observeConnectivity(): Flow<Boolean> = callbackFlow {
 	}
 
 	val request = NetworkRequest.Builder()
-		.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+		.addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
 		.build()
+	registerNetworkCallback(request, networkCallback)
 
-	registerNetworkCallback(request, callback)
+	/*
+	 * If the above doesn't work all the time for live updating the state of the internet connection,
+	 * then use the below line of code, which should (hopefully) work:
+	 *
+	 * registerDefaultNetworkCallback(networkCallback)
+	 */
 
-	awaitClose { unregisterNetworkCallback(callback) }
+	awaitClose {
+		unregisterNetworkCallback(networkCallback)
+	}
 }.distinctUntilChanged()

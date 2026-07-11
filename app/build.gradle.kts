@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.chaquopy)
 }
 
 android {
@@ -17,10 +18,21 @@ android {
         minSdk = 24
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 45
-        versionName = "1.7.2"
+        versionCode = 46
+        versionName = "1.7.3"
+
+        ndk {
+            //noinspection ChromeOsAbiSupport
+            abiFilters += "arm64-v8a"
+        }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 
     buildTypes {
@@ -37,6 +49,16 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+}
+
+chaquopy {
+    defaultConfig {
+        version = "3.11"
+        buildPython("C:/Users/moxin/scoop/apps/python311/current/python.exe")
+        pip {
+            install("yt-dlp")
+        }
     }
 }
 

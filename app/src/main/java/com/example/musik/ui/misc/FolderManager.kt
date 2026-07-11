@@ -16,8 +16,7 @@ import kotlinx.coroutines.withContext
 
 class FolderManager(
 	private val activity: ComponentActivity,
-	private val dataStoreManager: DataStoreManager,
-	private val onFolderSelected: (Uri) -> Unit = {}
+	private val dataStoreManager: DataStoreManager
 ) {
 	private val launcher: ActivityResultLauncher<Uri?> =
 		activity.registerForActivityResult(
@@ -41,7 +40,6 @@ class FolderManager(
 					activity.lifecycleScope.launch {
 						dataStoreManager.setDownloadLocation(directoryUri.toString())
 					}
-					onFolderSelected(directoryUri)
 				}
 			}
 		}

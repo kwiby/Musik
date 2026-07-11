@@ -25,7 +25,8 @@ object ViewModelProvider {
 		initializer {
 			AddYtMusicViewModel(
 				musikApplication().container.dataStoreManager,
-				musikApplication().container.audioFileRepository
+				musikApplication().container.audioFileRepository,
+				musikApplication().container.ytDlp
 			)
 		}
 
