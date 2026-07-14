@@ -18,8 +18,8 @@ android {
         minSdk = 24
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 46
-        versionName = "1.7.3"
+        versionCode = 47
+        versionName = "1.7.4"
 
         ndk {
             //noinspection ChromeOsAbiSupport

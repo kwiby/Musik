@@ -13,8 +13,12 @@ import androidx.compose.ui.res.dimensionResource
 import com.example.musik.R
 
 @Composable
-fun LoadingIndicator() {
-	Spacer(modifier = Modifier.height(dimensionResource(R.dimen.x_large_padding)))
+fun LoadingIndicator(
+	includeDefaultHeight: Boolean = true
+) {
+	if (includeDefaultHeight) {
+		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.x_large_padding)))
+	}
 
 	Box(
 		contentAlignment = Alignment.TopCenter,

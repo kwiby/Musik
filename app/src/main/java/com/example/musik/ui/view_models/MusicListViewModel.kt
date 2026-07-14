@@ -41,7 +41,7 @@ class MusicListViewModel(
 	) { musicList, manualQueue ->
 		if (musicList.isEmpty()) {
 			_queue.clear()
-			MusicUiState.Empty
+			return@combine MusicUiState.Empty
 		} else {
 			val newMusicDetails = musicList.map { it.toMusicDetails() }
 			val newIds = newMusicDetails.map { it.id }
@@ -54,7 +54,7 @@ class MusicListViewModel(
 				_manualQueue.value = null
 			}
 
-			MusicUiState.Success(manualQueue ?: _queue.toList())
+			return@combine MusicUiState.Success(manualQueue ?: _queue.toList())
 		}
 	}.stateIn(
 		scope = viewModelScope,

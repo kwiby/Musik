@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.musik.data.misc.RequestPermissions
 import com.example.musik.data.misc.rememberPermissionHandler
-import com.example.musik.ui.components.MainContainer
+import com.example.musik.ui.main_container.MainContainer
 import com.example.musik.ui.components.MusikTopAppBar
 import com.example.musik.ui.screens.player.PlayerScreen
 import com.example.musik.ui.view_models.NavViewModel

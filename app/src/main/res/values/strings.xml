@@ -47,6 +47,13 @@
     <string name="yt_link_field" translatable="true">Enter a YouTube video link</string>
     <string name="yt_link_field_submit_button" translatable="true">Submit YouTube link</string>
 
+    <string name="downloader_info_msg_empty" translatable="true">Enter a YouTube link to continue</string>
+    <string name="downloader_info_msg_downloading" translatable="true">Download in progress</string>
+    <string name="downloader_info_msg_invalid_link" translatable="true">YouTube link is invalid</string>
+    <string name="downloader_info_msg_success" translatable="true">Download has completed</string>
+    <string name="downloader_info_msg_error" translatable="true">An error occurred</string>
+
+
     <!-- Null Value Defaults -->
     <string name="duration_null_value_default" translatable="true">0:00:00</string>
 </resources>
