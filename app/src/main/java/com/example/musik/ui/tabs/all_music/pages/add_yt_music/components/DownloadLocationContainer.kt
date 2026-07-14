@@ -1,4 +1,4 @@
-package com.example.musik.ui.tabs.all_music.tabs.add_yt_music.components
+package com.example.musik.ui.tabs.all_music.pages.add_yt_music.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement

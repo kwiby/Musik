@@ -1,4 +1,4 @@
-package com.example.musik.ui.tabs.all_music.tabs.add_music
+package com.example.musik.ui.tabs.all_music.pages.add_music
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -29,16 +29,16 @@ import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.LoadingIndicator
 import com.example.musik.ui.components.MusicListItem
-import com.example.musik.ui.components.info.NoAudioFilesMsg
 import com.example.musik.ui.components.verticalScrollbar
 import com.example.musik.ui.tabs.all_music.components.ListDivider
-import com.example.musik.ui.tabs.all_music.tabs.add_music.components.AddMusicSearchbar
+import com.example.musik.ui.tabs.all_music.pages.add_music.components.AddMusicSearchbar
+import com.example.musik.ui.tabs.all_music.pages.add_music.components.info.NoAudioFilesMsg
 import com.example.musik.ui.view_models.AddMusicViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddMusicScreen(
+fun AddMusicPage(
 	addMusicViewModel: AddMusicViewModel,
 	onBackToMusicList: () -> Unit
 ) {
@@ -54,7 +54,7 @@ fun AddMusicScreen(
 			addMusicViewModel.resetMusicAdding()
 		}
 	}
-	BackHandler(true) { // Always enabled in this screen
+	BackHandler(true) { // Always enabled in this page
 		onBackToMusicList()
 	}
 

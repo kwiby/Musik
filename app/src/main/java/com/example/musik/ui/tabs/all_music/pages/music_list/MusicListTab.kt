@@ -1,4 +1,4 @@
-package com.example.musik.ui.tabs.all_music.tabs.music_list
+package com.example.musik.ui.tabs.all_music.pages.music_list
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
@@ -35,7 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.MusicListItem
-import com.example.musik.ui.components.info.NoMusicMsg
+import com.example.musik.ui.tabs.all_music.components.info.NoMusicMsg
 import com.example.musik.ui.components.verticalScrollbar
 import com.example.musik.ui.tabs.all_music.components.ListDivider
 import com.example.musik.ui.components.LoadingIndicator

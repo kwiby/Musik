@@ -1,4 +1,4 @@
-package com.example.musik.ui.components
+package com.example.musik.ui.main_container.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

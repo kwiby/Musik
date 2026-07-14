@@ -82,11 +82,11 @@ def download_audio(url, output_dir, ffmpeg_path=None, quickjs_path=None):
     except Exception as e:
         return {
             "isSuccess": False,
-            "error": f"Unexpected Error: {e}",
+            "error": f"Error: {e}",
         }
     
 
-def check_valid_link(url, ffmpeg_path=None, quickjs_path=None):
+def check_valid_link(url):
     """
     Checks whether a YouTube URL points to a real, accessible video.
     Makes a real network call via yt-dlp (no download).
@@ -94,16 +94,33 @@ def check_valid_link(url, ffmpeg_path=None, quickjs_path=None):
     if not url or not url.strip():
         return {
             "isValid": False, 
-            "error": None
-            }
+            "error": "Not a valid video URL"
+        }
     
     ydl_opts = get_minimal_opts()
+    ydl_opts["extract_flat"] = False
     
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.add_default_info_extractors()
-            ydl.extract_info(url, download=False, process=False)
-            
+            info = ydl.extract_info(url, download=False)
+
+            if "entries" in info:
+                return {
+                    "isValid": False, 
+                    "error": "URL points to a playlist or collection"
+                }
+            if info.get("_type") != "video" and info.get("_type") is not None:
+                return {
+                    "isValid": False, 
+                    "error": f"Invalid type: { info.get('_type') }"
+                }
+            if not info.get("id"):
+                return {
+                    "isValid": False, 
+                    "error": "No video ID found"
+                }
+                
             return {
                 "isValid": True
             }

@@ -1,4 +1,4 @@
-package com.example.musik.ui.components.info
+package com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.info
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,14 +13,14 @@ import androidx.compose.ui.res.stringResource
 import com.example.musik.R
 
 @Composable
-fun NoInternetMsg() {
+fun NoDownloadLocationMsg() {
 	Column(
 		verticalArrangement = Arrangement.Top,
 		horizontalAlignment = Alignment.CenterHorizontally,
-		modifier = Modifier.offset(y = dimensionResource(R.dimen.no_internet_offset))
+		modifier = Modifier.offset(y = dimensionResource(R.dimen.no_download_location_offset))
 	) {
 		Text(
-			text = stringResource(R.string.no_internet_msg),
+			text = stringResource(R.string.no_download_location_msg),
 			style = MaterialTheme.typography.titleSmall,
 			color = MaterialTheme.colorScheme.onSecondary
 		)

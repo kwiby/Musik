@@ -1,4 +1,4 @@
-package com.example.musik.ui.components.info
+package com.example.musik.ui.tabs.all_music.pages.add_music.components.info
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,14 +13,14 @@ import androidx.compose.ui.res.stringResource
 import com.example.musik.R
 
 @Composable
-fun NoDownloadLocationMsg() {
+fun NoAudioFilesMsg() {
 	Column(
 		verticalArrangement = Arrangement.Top,
 		horizontalAlignment = Alignment.CenterHorizontally,
-		modifier = Modifier.offset(y = dimensionResource(R.dimen.no_download_location_offset))
+		modifier = Modifier.offset(y = dimensionResource(R.dimen.no_music_added_offset))
 	) {
 		Text(
-			text = stringResource(R.string.no_download_location_msg),
+			text = stringResource(R.string.no_audio_files_msg),
 			style = MaterialTheme.typography.titleSmall,
 			color = MaterialTheme.colorScheme.onSecondary
 		)

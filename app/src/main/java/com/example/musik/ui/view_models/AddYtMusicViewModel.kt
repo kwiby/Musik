@@ -3,7 +3,6 @@ package com.example.musik.ui.view_models
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.NetworkRequest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musik.data.datastore.DataStoreManager
@@ -14,6 +13,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -21,10 +21,22 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class AddYtMusicViewModel(
-	private val dataStoreManager: DataStoreManager,
+	dataStoreManager: DataStoreManager,
 	private val audioFileRepo: AudioFileRepository,
 	private val ytDlp: YtDlp
 ) : ViewModel() {
+	sealed interface DownloaderUiState {
+		data object Empty: DownloaderUiState // No actions executed yet
+		data object Loading: DownloaderUiState // Loading in progress
+		data object Downloading: DownloaderUiState // Download in progress
+		data object InvalidLink: DownloaderUiState // Inputted yt video link is invalid
+		data object Success: DownloaderUiState // Downloading completed successfully
+		data object Error: DownloaderUiState // Unexpected errors
+	}
+
+	private val _uiState = MutableStateFlow<DownloaderUiState>(DownloaderUiState.Empty)
+	val uiState: StateFlow<DownloaderUiState> = _uiState.asStateFlow()
+
 	private val _hasValidFolderPerms = MutableStateFlow<Boolean?>(null)
 	val hasValidFolderPerms = _hasValidFolderPerms.asStateFlow()
 
@@ -42,15 +54,28 @@ class AddYtMusicViewModel(
 
 
 	suspend fun checkValidLink(): Boolean {
-		if (_ytLink.value.isBlank()) {
-			_isLinkValid.value = false
+		val result = ytDlp.checkValidLink(_ytLink.value)
+		_isLinkValid.value = result
 
-			return false
-		} else {
-			val result = ytDlp.checkValidLink(_ytLink.value)
-			_isLinkValid.value = result
+		return result
+	}
 
-			return result
+	fun isProcessing(): Boolean {
+		return _uiState.value == DownloaderUiState.Loading
+				|| _uiState.value == DownloaderUiState.Downloading
+	}
+
+	fun downloadButton() {
+		if (!_ytLink.value.isBlank()) {
+			_uiState.value = DownloaderUiState.Loading
+
+			viewModelScope.launch {
+				val result = checkValidLink()
+				when (result) {
+					true -> _uiState.value = DownloaderUiState.Downloading
+					false -> _uiState.value = DownloaderUiState.InvalidLink
+				}
+			}
 		}
 	}
 
@@ -68,20 +93,19 @@ class AddYtMusicViewModel(
 
 	fun onYouTubeLinkChange(newLink: String) {
 		_ytLink.value = newLink
-	}
-
-	fun getDataStoreManager(): DataStoreManager {
-		return dataStoreManager
+		//_isLinkValid.value = false
 	}
 
 	fun resetAddYtMusic() {
-		_isLinkValid.value = false
 		_ytLink.value = ""
+		if (!isProcessing()) _uiState.value = DownloaderUiState.Empty
+		_isLinkValid.value = false
 	}
 }
 
 
 // --===--  ConnectivityManager Stuff  --===--
+/*
 fun ConnectivityManager.isConnected(): Boolean {
 	val network = this.activeNetwork ?: return false
 	val capabilities = this.getNetworkCapabilities(network) ?: return false
@@ -98,35 +122,41 @@ fun ConnectivityManager.isConnected(): Boolean {
 
 	return hasInternetCapability && hasTransportCapability
 }
+ */
 
 fun ConnectivityManager.observeConnectivity(): Flow<Boolean> = callbackFlow {
-	trySend(isConnected())
-
 	val networkCallback = object : ConnectivityManager.NetworkCallback() {
+		private fun isConnected(capabilities: NetworkCapabilities?): Boolean {
+			return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+					&& capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+		}
+
 		override fun onAvailable(network: Network) {
-			trySend(isConnected())
+			trySend(true)
 		}
 
 		override fun onLost(network: Network) {
-			trySend(isConnected())
+			trySend(false)
 		}
 
 		override fun onCapabilitiesChanged(
 			network: Network,
 			networkCapabilities: NetworkCapabilities
 		) {
-			trySend(isConnected())
+			trySend(isConnected(networkCapabilities))
 		}
 
 		override fun onUnavailable() {
-			trySend(isConnected())
+			trySend(false)
 		}
 	}
 
+	/*
 	val request = NetworkRequest.Builder()
-		.addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+		.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 		.build()
 	registerNetworkCallback(request, networkCallback)
+	 */
 
 	/*
 	 * If the above doesn't work all the time for live updating the state of the internet connection,
@@ -134,6 +164,7 @@ fun ConnectivityManager.observeConnectivity(): Flow<Boolean> = callbackFlow {
 	 *
 	 * registerDefaultNetworkCallback(networkCallback)
 	 */
+	registerDefaultNetworkCallback(networkCallback)
 
 	awaitClose {
 		unregisterNetworkCallback(networkCallback)

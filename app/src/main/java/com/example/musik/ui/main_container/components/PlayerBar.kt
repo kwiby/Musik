@@ -1,4 +1,4 @@
-package com.example.musik.ui.components
+package com.example.musik.ui.main_container.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -40,6 +40,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.musik.R
+import com.example.musik.ui.components.AlbumArtImage
+import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.view_models.PlaybackViewModel
 
 @Composable

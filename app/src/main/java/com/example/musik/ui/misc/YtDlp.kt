@@ -43,15 +43,33 @@ class YtDlp(context: Context) {
 		return Python.getInstance().getModule("ytdlp")
 	}
 
+	private fun copyToContentUri(
+		sourceFile: File,
+		treeUri: Uri,
+		mimeType: String
+	) {
+		val treeDoc = DocumentFile.fromTreeUri(appContext, treeUri)
+			?: throw IllegalStateException("Invalid tree URI")
+		val newFile = treeDoc.createFile(mimeType, sourceFile.nameWithoutExtension)
+			?: throw IllegalStateException("Could not create file in target directory")
+
+		appContext.contentResolver.openOutputStream(newFile.uri)?.use { output ->
+			sourceFile.inputStream().use { input ->
+				input.copyTo(output)
+			}
+		} ?: throw IllegalStateException("Could not open output stream for destination file")
+	}
+
 	/**
 	 * Downloads audio to a temporary app-private file. Caller is responsible for
 	 * moving/copying the result wherever it's ultimately needed (e.g. a content URI)
 	 * and deleting the temp file afterward — see [downloadAudioToContentUri] for
 	 * a version that does this automatically.
 	 */
-	private suspend fun downloadAudio(url: String): DownloadResult = withContext(Dispatchers.IO) {
+	private suspend fun downloadAudio(
+		url: String
+	): DownloadResult = withContext(Dispatchers.IO) {
 		val module = getPythonModule()
-
 		val result: PyObject = module.callAttr(
 			"download_audio",
 			url,
@@ -65,31 +83,20 @@ class YtDlp(context: Context) {
 		if (successCheck) {
 			val path = map[PyObject.fromJava("path")]?.toString()
 
-			DownloadResult(
+			return@withContext DownloadResult(
 				isSuccess = true,
-				file = path?.let { File(it) },
 				title = map[PyObject.fromJava("title")]?.toString(),
+				file = path?.let { File(it) },
+				error = null
 			)
 		} else {
-			DownloadResult(
+			return@withContext DownloadResult(
 				isSuccess = false,
+				title = null,
+				file = null,
 				error = map[PyObject.fromJava("error")]?.toString(),
 			)
 		}
-	}
-
-	private fun copyToContentUri(sourceFile: File, treeUri: Uri, mimeType: String) {
-		val treeDoc = DocumentFile.fromTreeUri(appContext, treeUri)
-			?: throw IllegalStateException("Invalid tree URI")
-
-		val newFile = treeDoc.createFile(mimeType, sourceFile.nameWithoutExtension)
-			?: throw IllegalStateException("Could not create file in target directory")
-
-		appContext.contentResolver.openOutputStream(newFile.uri)?.use { output ->
-			sourceFile.inputStream().use { input ->
-				input.copyTo(output)
-			}
-		} ?: throw IllegalStateException("Could not open output stream for destination file")
 	}
 
 	/**
@@ -108,26 +115,34 @@ class YtDlp(context: Context) {
 
 		try {
 			copyToContentUri(result.file, treeUri, mimeType)
-			DownloadResult(isSuccess = true, title = result.title)
+
+			return@withContext DownloadResult(
+				isSuccess = true,
+				title = result.title,
+				file = null,
+				error = null
+			)
 		} catch (e: Exception) {
-			DownloadResult(isSuccess = false, error = "Failed to copy to destination: ${e.message}")
+			return@withContext DownloadResult(
+				isSuccess = false,
+				title = null,
+				file = null,
+				error = "Failed to copy to destination: ${e.message}"
+			)
 		} finally {
 			result.file.delete()
 		}
 	}
 
 	// Checks whether a YouTube URL is valid/accessible (makes a network call)
-	suspend fun checkValidLink(url: String): Boolean = withContext(Dispatchers.IO) {
-		val t0 = System.currentTimeMillis()
-		val t1 = System.currentTimeMillis()
+	suspend fun checkValidLink(
+		url: String
+	): Boolean = withContext(Dispatchers.IO) {
 		val module = getPythonModule()
-		val t2 = System.currentTimeMillis()
 		val result: PyObject = module.callAttr(
 			"check_valid_link",
 			url
 		)
-		val t3 = System.currentTimeMillis()
-		Log.d("debug", "getInstance=${t1-t0}ms getModule=${t2-t1}ms callAttr=${t3-t2}ms")
 
 		val map = result.asMap()
 
@@ -135,31 +150,9 @@ class YtDlp(context: Context) {
 
 		val isValid = map[PyObject.fromJava("isValid")]?.toBoolean() ?: false
 		if (!isValid) {
-			Log.e("YtDlp", "checkValidLink failed: ${map[PyObject.fromJava("error")]}")
+			Log.d("YtDlp", "checkValidLink failed: ${map[PyObject.fromJava("error")]}")
 		}
 
-		isValid
+		return@withContext isValid
 	}
-	/*
-	suspend fun checkValidLink(url: String): VideoInfo = withContext(Dispatchers.IO) {
-		val py = Python.getInstance()
-		val module = py.getModule("ytdlp")
-		val result: PyObject = module.callAttr("check_video_valid", url)
-		val map = result.asMap()
-
-		val valid = map[PyObject.fromJava("isValid")]?.toBoolean() ?: false
-		if (valid) {
-			VideoInfo(
-				isValid = true,
-				title = map[PyObject.fromJava("title")]?.toString(),
-				id = map[PyObject.fromJava("id")]?.toString(),
-			)
-		} else {
-			VideoInfo(
-				isValid = false,
-				error = map[PyObject.fromJava("error")]?.toString(),
-			)
-		}
-	}
-	 */
 }

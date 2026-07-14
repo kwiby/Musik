@@ -1,4 +1,4 @@
-package com.example.musik.ui.tabs.all_music.tabs.add_yt_music
+package com.example.musik.ui.tabs.all_music.pages.add_yt_music
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -7,20 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Download
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -33,22 +26,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.LoadingIndicator
-import com.example.musik.ui.components.info.NoDownloadLocationMsg
-import com.example.musik.ui.components.info.NoInternetMsg
 import com.example.musik.ui.misc.LocalFolderManager
-import com.example.musik.ui.tabs.all_music.tabs.add_yt_music.components.DownloadLocationContainer
-import com.example.musik.ui.tabs.all_music.tabs.add_yt_music.components.YouTubeLinkField
+import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.DownloadLocationContainer
+import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.download_container.DownloadContainer
+import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.info.NoDownloadLocationMsg
+import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.info.NoInternetMsg
 import com.example.musik.ui.view_models.AddYtMusicViewModel
-import com.example.musik.ui.view_models.isConnected
 import com.example.musik.ui.view_models.observeConnectivity
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun AddYtMusicTab(
+fun AddYtMusicPage(
 	addYtMusicViewModel: AddYtMusicViewModel,
 	onBackToMusicList: () -> Unit
 ) {
@@ -61,16 +52,16 @@ fun AddYtMusicTab(
 		context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 	}
 	val isConnected by produceState(
-		initialValue = connectivityManager.isConnected(),
+		initialValue = connectivityManager.activeNetwork != null,
 		key1 = connectivityManager,
 		producer = {
-			connectivityManager.observeConnectivity().collect {
+			connectivityManager.observeConnectivity().collectLatest {
 				value = it
 			}
 		}
 	)
 
-	val hasValidFolderPerms = addYtMusicViewModel.hasValidFolderPerms.collectAsState().value
+	val hasValidFolderPerms by addYtMusicViewModel.hasValidFolderPerms.collectAsStateWithLifecycle()
 	val lifecycleOwner = LocalLifecycleOwner.current
 	DisposableEffect(lifecycleOwner) {
 		val observer = LifecycleEventObserver { _, event ->
@@ -133,55 +124,7 @@ fun AddYtMusicTab(
 			// --===--  No Internet Connection Message  --===--
 			NoInternetMsg()
 		} else {
-			Column(
-				modifier = Modifier.fillMaxHeight()
-			) {
-				Spacer(Modifier.height(dimensionResource(R.dimen.yt_link_field_top_padding)))
-
-				Row(
-					verticalAlignment = Alignment.CenterVertically
-				) {
-					Spacer(Modifier.width(dimensionResource(R.dimen.yt_link_field_left_padding)))
-
-					// --===--  YouTube Link Field  --===--
-					YouTubeLinkField(
-						addYtMusicViewModel = addYtMusicViewModel,
-						modifier = Modifier.weight(1f)
-					)
-
-					Spacer(Modifier.width(dimensionResource(R.dimen.yt_link_field_right_padding)))
-
-					// --===--  Download Button  --===--
-					CustomIconButton(
-						iconImageVector = Icons.Rounded.Download,
-						contentDescription = stringResource(R.string.yt_link_field_submit_button),
-						colour = MaterialTheme.colorScheme.onSecondary
-					) {
-						addYtMusicViewModel.viewModelScope.launch {
-							addYtMusicViewModel.checkValidLink()
-						}
-					}
-
-					Spacer(Modifier.width(dimensionResource(R.dimen.yt_link_field_submit_button_right_padding)))
-				}
-
-				Spacer(Modifier.height(dimensionResource(R.dimen.yt_link_field_bottom_padding)))
-
-				// --===--  Info Box  --===--
-				Surface(
-					modifier = Modifier
-						.fillMaxSize()
-						.padding(
-							start = dimensionResource(R.dimen.info_box_horizontal_padding),
-							end = dimensionResource(R.dimen.info_box_horizontal_padding),
-							bottom = dimensionResource(R.dimen.info_box_bottom_padding)
-						),
-					shape = MaterialTheme.shapes.medium,
-					color = MaterialTheme.colorScheme.secondaryContainer
-				) {
-
-				}
-			}
+			DownloadContainer(addYtMusicViewModel)
 		}
 	}
 }
