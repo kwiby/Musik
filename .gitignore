@@ -44,5 +44,4 @@ replay_pid*
 .kotlin/
 
 
-.apk
-.dm
+app/release/
