@@ -8,6 +8,13 @@ import com.example.musik.ui.MusikApplication
 
 object ViewModelProvider {
 	val Factory = viewModelFactory {
+		// --===--  NavViewModel  --===--
+		initializer {
+			NavViewModel(
+				musikApplication().container.dataStoreManager
+			)
+		}
+
 		// --===--  MusicListViewModel  --===--
 		initializer {
 			MusicListViewModel(

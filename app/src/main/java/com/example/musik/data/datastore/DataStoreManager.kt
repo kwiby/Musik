@@ -16,6 +16,7 @@ class DataStoreManager(
 
 	companion object {
 		val DOWNLOAD_LOCATION_KEY = stringPreferencesKey("download_location")
+		val ENTRY_TAB = stringPreferencesKey("entry_tab")
 	}
 
 	// --===--  Download Location  --===--
@@ -25,6 +26,16 @@ class DataStoreManager(
 	suspend fun setDownloadLocation(path: String) {
 		appContext.dataStore.edit { prefs ->
 			prefs[DOWNLOAD_LOCATION_KEY] = path
+		}
+	}
+
+	// --===--  Entry Tab  --===--
+	val entryTab: Flow<String> = appContext.dataStore.data.map { prefs ->
+		prefs[ENTRY_TAB] ?: "all_music"
+	}
+	suspend fun setEntryTab(newTab: String) {
+		appContext.dataStore.edit { prefs ->
+			prefs[ENTRY_TAB] = newTab
 		}
 	}
 }

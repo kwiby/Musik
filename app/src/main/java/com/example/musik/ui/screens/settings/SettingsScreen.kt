@@ -21,6 +21,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
+import com.example.musik.ui.screens.settings.components.options.SettingsOptions
 import com.example.musik.ui.view_models.NavViewModel
 import com.example.musik.ui.view_models.Screen
 
@@ -39,7 +40,7 @@ fun SettingsScreen(
 		Column(
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {
-			Spacer(Modifier.height(dimensionResource(R.dimen.settings_screen_back_button_top_padding)))
+			Spacer(Modifier.height(dimensionResource(R.dimen.settings_back_button_top_padding)))
 
 			Row(
 				horizontalArrangement = Arrangement.Start,
@@ -65,6 +66,11 @@ fun SettingsScreen(
 					style = MaterialTheme.typography.headlineLarge
 				)
 			}
+
+			Spacer(Modifier.height(dimensionResource(R.dimen.settings_top_section_bottom_padding)))
+
+			// --===--  Settings Options  --===--
+			SettingsOptions(navViewModel)
 		}
 	}
 }

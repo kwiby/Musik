@@ -24,7 +24,7 @@
         android:supportsRtl="true"
         android:extractNativeLibs="true"
         android:theme="@style/Theme.Musik"
-        android:requestLegacyExternalStorage="true">
+        android:requestLegacyExternalStorage="true"> <!-- May or may not be needed -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

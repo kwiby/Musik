@@ -55,42 +55,37 @@ fun DownloadLocationContainer(
 		}
 	) {
 		Row(
-			horizontalArrangement = Arrangement.SpaceBetween,
+			horizontalArrangement = Arrangement.Start,
 			verticalAlignment = Alignment.CenterVertically
 		) {
-			Row(
-				horizontalArrangement = Arrangement.Start,
-				verticalAlignment = Alignment.CenterVertically
-			) {
-				Spacer(Modifier.width(dimensionResource(R.dimen.download_location_inner_padding)))
+			Spacer(Modifier.width(dimensionResource(R.dimen.download_location_inner_padding)))
 
-				// --===--  Download Location Icon  --===--
-				Icon(
-					imageVector = Icons.Rounded.Folder,
-					contentDescription = stringResource(R.string.set_location_content_description),
-					tint = Color.Gray
-				)
+			// --===--  Download Location Icon  --===--
+			Icon(
+				imageVector = Icons.Rounded.Folder,
+				contentDescription = stringResource(R.string.set_location_content_description),
+				tint = Color.Gray
+			)
 
-				Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
+			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
 
-				// --===--  Download Location Text  --===--
-				Text(
-					text = if (downloadLocation == null) {
-						""
-					} else if (downloadLocation!!.isEmpty()) {
-						stringResource(R.string.no_location_selected)
-					} else {
-						folderManager.getDisplayPath(downloadLocation!!.toUri())
-					},
-					modifier = Modifier.weight(1f),
-					color = Color.White,
-					style = MaterialTheme.typography.bodyLarge,
-					overflow = TextOverflow.Ellipsis,
-					maxLines = 1
-				)
+			// --===--  Download Location Text  --===--
+			Text(
+				text = if (downloadLocation == null) {
+					""
+				} else if (downloadLocation!!.isEmpty()) {
+					stringResource(R.string.no_location_selected)
+				} else {
+					folderManager.getDisplayPath(downloadLocation!!.toUri())
+				},
+				modifier = Modifier.weight(1f),
+				color = Color.White,
+				style = MaterialTheme.typography.bodyLarge,
+				overflow = TextOverflow.Ellipsis,
+				maxLines = 1
+			)
 
-				Spacer(Modifier.width(dimensionResource(R.dimen.download_location_inner_padding)))
-			}
+			Spacer(Modifier.width(dimensionResource(R.dimen.download_location_inner_padding)))
 		}
 	}
 }

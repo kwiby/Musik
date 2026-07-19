@@ -79,20 +79,20 @@ fun MainContainer(
 				.padding(dimensionResource(R.dimen.small_padding))
 		) {
 			TabButton(
-				stringResource(R.string.all_music_tab),
+				stringResource(R.string.all_music),
 				navViewModel.curTab == Tab.ALL_MUSIC
 			) {
 				navViewModel.navToTab(Tab.ALL_MUSIC)
 			}
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
 			TabButton(
-				stringResource(R.string.playlists_tab),
+				stringResource(R.string.playlists),
 				navViewModel.curTab == Tab.PLAYLISTS
 			) {
 				navViewModel.navToTab(Tab.PLAYLISTS)
 			}
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
-			TabButton(stringResource(R.string.stats_tab), navViewModel.curTab == Tab.STATS) {
+			TabButton(stringResource(R.string.stats), navViewModel.curTab == Tab.STATS) {
 				navViewModel.navToTab(Tab.STATS)
 			}
 		}

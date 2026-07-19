@@ -21,8 +21,8 @@ private val NightColorScheme = darkColorScheme(
     onSurface = Color(0xFF15151C), // Shadows
     secondaryContainer = Color(0xFF212126), // Field background
     secondaryFixed = Color(0xFF292930), // Field border
-    outline = Color(0xFF4d7581), // Slider track
-    outlineVariant = Color(0xFF476a75) // Slider thumb
+    outline = Color(0xFF4d7581), // Main Accent
+    outlineVariant = Color(0xFF476a75) // Alt Accent
 
     /* Other default colours to override
     background = Color(0xFFFFFBFE),

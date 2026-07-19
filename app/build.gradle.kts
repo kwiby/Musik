@@ -17,8 +17,8 @@ android {
         minSdk = 24
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 49
-        versionName = "1.8.0"
+        versionCode = 50
+        versionName = "1.8.1"
 
         ndk {
             abiFilters.add("x86")
@@ -62,6 +62,8 @@ android {
 dependencies {
     implementation(libs.library)
     implementation(libs.ffmpeg)
+
+    implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.androidx.documentfile)
 

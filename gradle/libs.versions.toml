@@ -4,6 +4,7 @@ agp = "9.2.1"
 coilCompose = "3.5.0"
 coilNetworkOkhttp = "3.5.0"
 coreKtx = "1.19.0"
+coreSplashscreen = "1.2.0"
 datastorePreferences = "1.2.1"
 documentfile = "1.1.0"
 ffmpeg = "e08bf18b7e"
@@ -29,6 +30,7 @@ roomRuntime = "2.8.4"
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-documentfile = { module = "androidx.documentfile:documentfile", version.ref = "documentfile" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }

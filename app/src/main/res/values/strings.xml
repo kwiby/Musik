@@ -3,9 +3,9 @@
     <string name="app_name" translatable="false">Musik</string>
 
     <!-- Tab Names -->
-    <string name="all_music_tab" translatable="true">All Music</string>
-    <string name="playlists_tab" translatable="true">Playlists</string>
-    <string name="stats_tab" translatable="true">Statistics</string>
+    <string name="all_music" translatable="true">All Music</string>
+    <string name="playlists" translatable="true">Playlists</string>
+    <string name="stats" translatable="true">Statistics</string>
 
     <!-- Info Messages -->
     <string name="no_permissions_msg" translatable="true">Allow audio permissions in settings</string>
@@ -54,6 +54,11 @@
 
     <!-- Settings Page -->
     <string name="settings_title" translatable="true">Settings</string>
+    <string name="settings_header_entry_tab" translatable="true">Entry Tab</string>
+    <string name="settings_header_theme" translatable="true">Theme</string>
+    <string name="settings_header_app_icon" translatable="true">App Icon</string>
+    <string name="settings_header_update_ytdlp" translatable="true">Update YtDlp</string>
+
 
 
     <!-- Null Value Defaults -->

@@ -31,7 +31,7 @@ import com.google.accompanist.permissions.isGranted
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MusikApp(
-	navViewModel: NavViewModel = viewModel(),
+	navViewModel: NavViewModel = viewModel(factory = ViewModelProvider.Factory),
 	playbackViewModel: PlaybackViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
 	val permissionStatus = rememberPermissionHandler()
