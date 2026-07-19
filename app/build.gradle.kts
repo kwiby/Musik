@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.chaquopy)
 }
 
 android {
@@ -18,17 +17,25 @@ android {
         minSdk = 24
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 47
-        versionName = "1.7.4"
+        versionCode = 49
+        versionName = "1.8.0"
 
         ndk {
-            //noinspection ChromeOsAbiSupport
-            abiFilters += "arm64-v8a"
+            abiFilters.add("x86")
+            abiFilters.add("x86_64")
+            abiFilters.add("armeabi-v7a")
+            abiFilters.add("arm64-v8a")
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    splits.abi {
+        isEnable = true
+        reset()
+        include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+        isUniversalApk = true
+    }
     packaging {
         jniLibs {
             useLegacyPackaging = true
@@ -38,7 +45,7 @@ android {
     buildTypes {
         release {
             optimization {
-                enable = false // TODO: Update this to 'true' when building the production APK!
+                enable = true // TODO: Update this to 'true' when building the production APK!
             }
         }
     }
@@ -52,17 +59,10 @@ android {
     }
 }
 
-chaquopy {
-    defaultConfig {
-        version = "3.11"
-        buildPython("C:/Users/moxin/scoop/apps/python311/current/python.exe")
-        pip {
-            install("yt-dlp")
-        }
-    }
-}
-
 dependencies {
+    implementation(libs.library)
+    implementation(libs.ffmpeg)
+
     implementation(libs.androidx.documentfile)
 
     implementation(libs.androidx.datastore.preferences)

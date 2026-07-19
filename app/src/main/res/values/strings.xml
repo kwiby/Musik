@@ -14,7 +14,6 @@
     <string name="no_download_location_msg" translatable="true">Select a download location to continue</string>
     <string name="no_internet_msg" translatable="true">No internet connection</string>
 
-
     <!-- Button Content Descriptions -->
     <string name="settings_button" translatable="true">Settings</string>
     <string name="add_music_button" translatable="true">Add Music</string>
@@ -47,11 +46,14 @@
     <string name="yt_link_field" translatable="true">Enter a YouTube video link</string>
     <string name="yt_link_field_submit_button" translatable="true">Submit YouTube link</string>
 
-    <string name="downloader_info_msg_empty" translatable="true">Enter a YouTube link to continue</string>
+    <string name="downloader_info_msg_empty" translatable="true">Enter a link to continue</string>
     <string name="downloader_info_msg_downloading" translatable="true">Download in progress</string>
-    <string name="downloader_info_msg_invalid_link" translatable="true">YouTube link is invalid</string>
-    <string name="downloader_info_msg_success" translatable="true">Download has completed</string>
+    <string name="downloader_info_msg_invalid_link" translatable="true">Link is invalid</string>
+    <string name="downloader_info_msg_success" translatable="true">Download completed</string>
     <string name="downloader_info_msg_error" translatable="true">An error occurred</string>
+
+    <!-- Settings Page -->
+    <string name="settings_title" translatable="true">Settings</string>
 
 
     <!-- Null Value Defaults -->

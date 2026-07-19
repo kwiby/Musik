@@ -53,13 +53,16 @@ import com.example.musik.R
 import com.example.musik.ui.components.AlbumArtImage
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.misc.formatDuration
+import com.example.musik.ui.view_models.NavViewModel
 import com.example.musik.ui.view_models.PlaybackViewModel
+import com.example.musik.ui.view_models.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerScreen(
 	sharedTransitionScope: SharedTransitionScope,
-	playbackViewModel: PlaybackViewModel
+	playbackViewModel: PlaybackViewModel,
+	navViewModel: NavViewModel
 ) {
 	val musicInfo = playbackViewModel.currentTrack.value
 	if (musicInfo == null) {
@@ -68,15 +71,15 @@ fun PlayerScreen(
 	val metadata = musicInfo!!.mediaMetadata
 	val curPos = playbackViewModel.currentPos.longValue
 
-	val isPlayerScreenOpen = playbackViewModel.isPlayerScreenOpen.value
+	val isPlayerScreenOpen = navViewModel.curScreen == Screen.PLAYER
 	val isPlaying = playbackViewModel.isPlaying.value
 	val loopMode = playbackViewModel.loopMode.intValue
 
 	LaunchedEffect(isPlayerScreenOpen, isPlaying) {
-		playbackViewModel.onPlayerScreenOpenChanged(isPlayerScreenOpen)
+		playbackViewModel.onPlayerScreenOpenChanged(isPlayerScreenOpen, navViewModel)
 	}
 	BackHandler(true) {
-		playbackViewModel.onPlayerScreenOpenChanged(false)
+		playbackViewModel.onPlayerScreenOpenChanged(false, navViewModel)
 	}
 
 	with(sharedTransitionScope) {
@@ -100,7 +103,7 @@ fun PlayerScreen(
 						iconImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
 						contentDescription = stringResource(R.string.back_button)
 					) {
-						playbackViewModel.onPlayerScreenOpenChanged(false)
+						playbackViewModel.onPlayerScreenOpenChanged(false, navViewModel)
 					}
 				}
 
@@ -112,11 +115,11 @@ fun PlayerScreen(
 					targetState = metadata.artworkUri.toString(),
 					modifier = Modifier.sharedElementWithCallerManagedVisibility(
 						sharedContentState = rememberSharedContentState(key = "image"),
-						visible = playbackViewModel.isPlayerScreenOpen.value
+						visible = isPlayerScreenOpen
 					)
 				) { artworkUri ->
 					AlbumArtImage(
-						artworkUri,
+						contentUri = artworkUri,
 						size = dimensionResource(R.dimen.player_screen_image_size),
 						shape = MaterialTheme.shapes.extraLarge
 					)
@@ -139,7 +142,7 @@ fun PlayerScreen(
 							modifier = Modifier
 								.sharedElementWithCallerManagedVisibility(
 									sharedContentState = rememberSharedContentState(key = "title"),
-									visible = playbackViewModel.isPlayerScreenOpen.value
+									visible = isPlayerScreenOpen
 								)
 								.fillMaxWidth()
 						) { title ->
@@ -163,7 +166,7 @@ fun PlayerScreen(
 							modifier = Modifier
 								.sharedElementWithCallerManagedVisibility(
 									sharedContentState = rememberSharedContentState(key = "artist"),
-									visible = playbackViewModel.isPlayerScreenOpen.value
+									visible = isPlayerScreenOpen
 								)
 								.fillMaxWidth()
 						) { artist ->
@@ -271,7 +274,7 @@ fun PlayerScreen(
 					CustomIconButton(
 						modifier = Modifier.sharedElementWithCallerManagedVisibility(
 							sharedContentState = rememberSharedContentState(key = "skip_prev"),
-							visible = playbackViewModel.isPlayerScreenOpen.value
+							visible = isPlayerScreenOpen
 						),
 						iconImageVector = Icons.Rounded.SkipPrevious,
 						contentDescription = stringResource(R.string.skip_prev),
@@ -291,7 +294,7 @@ fun PlayerScreen(
 					CustomIconButton(
 						modifier = Modifier.sharedElementWithCallerManagedVisibility(
 							sharedContentState = rememberSharedContentState(key = "play/pause"),
-							visible = playbackViewModel.isPlayerScreenOpen.value
+							visible = isPlayerScreenOpen
 						),
 						iconImageVector = if (playbackViewModel.isPlaying.value) {
 							Icons.Rounded.Pause
@@ -310,7 +313,7 @@ fun PlayerScreen(
 					CustomIconButton(
 						modifier = Modifier.sharedElementWithCallerManagedVisibility(
 							sharedContentState = rememberSharedContentState(key = "skip_next"),
-							visible = playbackViewModel.isPlayerScreenOpen.value
+							visible = isPlayerScreenOpen
 						),
 						iconImageVector = Icons.Rounded.SkipNext,
 						contentDescription = stringResource(R.string.skip_next),

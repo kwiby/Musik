@@ -42,15 +42,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.example.musik.R
 import com.example.musik.ui.components.AlbumArtImage
 import com.example.musik.ui.components.CustomIconButton
+import com.example.musik.ui.view_models.NavViewModel
 import com.example.musik.ui.view_models.PlaybackViewModel
+import com.example.musik.ui.view_models.Screen
 
 @Composable
 fun PlayerBar(
 	sharedTransitionScope: SharedTransitionScope,
-	playbackViewModel: PlaybackViewModel
+	playbackViewModel: PlaybackViewModel,
+	navViewModel: NavViewModel
 ) {
 	val interactionSource = remember { MutableInteractionSource() }
 	val curMusic = playbackViewModel.currentTrack.value
+	val isPlayerScreenClosed = navViewModel.curScreen == Screen.MAIN
 
 	with(sharedTransitionScope) {
 		AnimatedVisibility(
@@ -85,7 +89,7 @@ fun PlayerBar(
 								.clickable(
 									interactionSource = interactionSource,
 									indication = null
-								) { playbackViewModel.onPlayerScreenOpenChanged(true) }
+								) { playbackViewModel.onPlayerScreenOpenChanged(true, navViewModel) }
 						) {
 							Row(
 								horizontalArrangement = Arrangement.SpaceBetween,
@@ -99,18 +103,18 @@ fun PlayerBar(
 								) {
 									Spacer(modifier = Modifier.width(dimensionResource(R.dimen.player_bar_image_left_padding)))
 
-									// --===--  Music Art  --===--
+									// --===--  Music Image  --===--
 									Crossfade(
 										targetState = metadata.artworkUri.toString(),
 										modifier = Modifier.sharedElementWithCallerManagedVisibility(
 											sharedContentState = rememberSharedContentState(key = "image"),
-											visible = !playbackViewModel.isPlayerScreenOpen.value
+											visible = isPlayerScreenClosed
 										)
 									) { artworkUri ->
 										AlbumArtImage(
-											artworkUri,
-											dimensionResource(R.dimen.player_bar_image_size),
-											MaterialTheme.shapes.extraLarge
+											contentUri = artworkUri,
+											size = dimensionResource(R.dimen.player_bar_image_size),
+											shape = MaterialTheme.shapes.extraLarge
 										)
 									}
 
@@ -129,7 +133,7 @@ fun PlayerBar(
 													sharedContentState = rememberSharedContentState(
 														key = "title"
 													),
-													visible = !playbackViewModel.isPlayerScreenOpen.value
+													visible = isPlayerScreenClosed
 												)
 												.fillMaxWidth()
 										) { title ->
@@ -154,7 +158,7 @@ fun PlayerBar(
 													sharedContentState = rememberSharedContentState(
 														key = "artist"
 													),
-													visible = !playbackViewModel.isPlayerScreenOpen.value
+													visible = isPlayerScreenClosed
 												)
 												.fillMaxWidth()
 										) { artist ->
@@ -179,7 +183,7 @@ fun PlayerBar(
 									CustomIconButton(
 										modifier = Modifier.sharedElementWithCallerManagedVisibility(
 											sharedContentState = rememberSharedContentState(key = "skip_prev"),
-											visible = !playbackViewModel.isPlayerScreenOpen.value
+											visible = isPlayerScreenClosed
 										),
 										iconImageVector = Icons.Rounded.SkipPrevious,
 										contentDescription = stringResource(R.string.skip_prev),
@@ -196,7 +200,7 @@ fun PlayerBar(
 									CustomIconButton(
 										modifier = Modifier.sharedElementWithCallerManagedVisibility(
 											sharedContentState = rememberSharedContentState(key = "play/pause"),
-											visible = !playbackViewModel.isPlayerScreenOpen.value
+											visible = isPlayerScreenClosed
 										),
 										iconImageVector = if (playbackViewModel.isPlaying.value) {
 											Icons.Rounded.Pause
@@ -212,7 +216,7 @@ fun PlayerBar(
 									CustomIconButton(
 										modifier = Modifier.sharedElementWithCallerManagedVisibility(
 											sharedContentState = rememberSharedContentState(key = "skip_next"),
-											visible = !playbackViewModel.isPlayerScreenOpen.value
+											visible = isPlayerScreenClosed
 										),
 										iconImageVector = Icons.Rounded.SkipNext,
 										contentDescription = stringResource(R.string.skip_next),

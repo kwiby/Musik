@@ -28,7 +28,7 @@ import com.example.musik.ui.tabs.playlists.PlaylistsTab
 import com.example.musik.ui.tabs.stats.StatsTab
 import com.example.musik.ui.view_models.NavViewModel
 import com.example.musik.ui.view_models.PlaybackViewModel
-import com.example.musik.ui.view_models.Tabs
+import com.example.musik.ui.view_models.Tab
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 
@@ -59,9 +59,9 @@ fun MainContainer(
 				if (permissionStatus.status.isGranted) {
 					// --===--  Main Screens  --===--
 					when (navViewModel.curTab) {
-						Tabs.ALL_MUSIC -> AllMusicTab(playbackViewModel = playbackViewModel)
-						Tabs.PLAYLISTS -> PlaylistsTab()
-						Tabs.STATS -> StatsTab()
+						Tab.ALL_MUSIC -> AllMusicTab(playbackViewModel = playbackViewModel)
+						Tab.PLAYLISTS -> PlaylistsTab()
+						Tab.STATS -> StatsTab()
 					}
 				} else {
 					// --===--  No Permissions Msg  --===--
@@ -80,26 +80,27 @@ fun MainContainer(
 		) {
 			TabButton(
 				stringResource(R.string.all_music_tab),
-				navViewModel.curTab == Tabs.ALL_MUSIC
+				navViewModel.curTab == Tab.ALL_MUSIC
 			) {
-				navViewModel.navTo(Tabs.ALL_MUSIC)
+				navViewModel.navToTab(Tab.ALL_MUSIC)
 			}
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
 			TabButton(
 				stringResource(R.string.playlists_tab),
-				navViewModel.curTab == Tabs.PLAYLISTS
+				navViewModel.curTab == Tab.PLAYLISTS
 			) {
-				navViewModel.navTo(Tabs.PLAYLISTS)
+				navViewModel.navToTab(Tab.PLAYLISTS)
 			}
 			Spacer(modifier = Modifier.width(dimensionResource(R.dimen.tabs_spacing)))
-			TabButton(stringResource(R.string.stats_tab), navViewModel.curTab == Tabs.STATS) {
-				navViewModel.navTo(Tabs.STATS)
+			TabButton(stringResource(R.string.stats_tab), navViewModel.curTab == Tab.STATS) {
+				navViewModel.navToTab(Tab.STATS)
 			}
 		}
 
 		PlayerBar(
 			sharedTransitionScope = sharedTransitionScope,
-			playbackViewModel = playbackViewModel
+			playbackViewModel = playbackViewModel,
+			navViewModel = navViewModel
 		)
 	}
 }

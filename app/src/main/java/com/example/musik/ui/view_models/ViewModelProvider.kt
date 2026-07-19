@@ -10,7 +10,16 @@ object ViewModelProvider {
 	val Factory = viewModelFactory {
 		// --===--  MusicListViewModel  --===--
 		initializer {
-			MusicListViewModel(musikApplication().container.audioFileRepository)
+			MusicListViewModel(
+				musikApplication().container.audioFileRepository
+			)
+		}
+
+		// --===--  PlayBackViewModel  --===--
+		initializer {
+			PlaybackViewModel(
+				musikApplication()
+			)
 		}
 
 		// --===--  AddMusicViewModel  --===--
@@ -24,15 +33,11 @@ object ViewModelProvider {
 		// --===--  AddYtMusicViewModel  --===--
 		initializer {
 			AddYtMusicViewModel(
+				musikApplication(),
 				musikApplication().container.dataStoreManager,
 				musikApplication().container.audioFileRepository,
 				musikApplication().container.ytDlp
 			)
-		}
-
-		// --===--  PlayBackViewModel  --===--
-		initializer {
-			PlaybackViewModel(musikApplication())
 		}
 	}
 }

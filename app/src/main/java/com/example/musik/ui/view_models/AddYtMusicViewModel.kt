@@ -1,9 +1,11 @@
 package com.example.musik.ui.view_models
 
+//import com.example.musik.ui.misc.YtDlp
+import android.app.Application
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musik.data.datastore.DataStoreManager
 import com.example.musik.data.repositories.audio_file.AudioFileRepository
@@ -21,10 +23,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class AddYtMusicViewModel(
+	application: Application,
 	dataStoreManager: DataStoreManager,
 	private val audioFileRepo: AudioFileRepository,
 	private val ytDlp: YtDlp
-) : ViewModel() {
+) : AndroidViewModel(application) {
 	sealed interface DownloaderUiState {
 		data object Empty: DownloaderUiState // No actions executed yet
 		data object Loading: DownloaderUiState // Loading in progress
@@ -60,6 +63,26 @@ class AddYtMusicViewModel(
 		return result
 	}
 
+	suspend fun downloadAudio() {
+		/*
+		 * This function should only be called when the download location is already selected,
+		 * hence the non-null value
+		 */
+		check(downloadLocation.value != null)
+
+		val downloadResult = ytDlp.startDownload(
+			getApplication(),
+			downloadLocation.value!!,
+			_ytLink.value
+		)
+
+		if (downloadResult) {
+			_uiState.value = DownloaderUiState.Success
+		} else {
+			_uiState.value = DownloaderUiState.Error
+		}
+	}
+
 	fun isProcessing(): Boolean {
 		return _uiState.value == DownloaderUiState.Loading
 				|| _uiState.value == DownloaderUiState.Downloading
@@ -71,9 +94,12 @@ class AddYtMusicViewModel(
 
 			viewModelScope.launch {
 				val result = checkValidLink()
-				when (result) {
-					true -> _uiState.value = DownloaderUiState.Downloading
-					false -> _uiState.value = DownloaderUiState.InvalidLink
+				if (result) {
+					_uiState.value = DownloaderUiState.Downloading
+
+					downloadAudio()
+				} else {
+					_uiState.value = DownloaderUiState.InvalidLink
 				}
 			}
 		}
@@ -151,19 +177,6 @@ fun ConnectivityManager.observeConnectivity(): Flow<Boolean> = callbackFlow {
 		}
 	}
 
-	/*
-	val request = NetworkRequest.Builder()
-		.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-		.build()
-	registerNetworkCallback(request, networkCallback)
-	 */
-
-	/*
-	 * If the above doesn't work all the time for live updating the state of the internet connection,
-	 * then use the below line of code, which should (hopefully) work:
-	 *
-	 * registerDefaultNetworkCallback(networkCallback)
-	 */
 	registerDefaultNetworkCallback(networkCallback)
 
 	awaitClose {

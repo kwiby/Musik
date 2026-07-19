@@ -43,7 +43,6 @@ class PlaybackViewModel(
 
 	val hasPrevious = mutableStateOf(false)
 	val hasNext = mutableStateOf(false)
-	val isPlayerScreenOpen = mutableStateOf(false)
 
 	val currentPos = mutableLongStateOf(0L)
 
@@ -168,7 +167,6 @@ class PlaybackViewModel(
 	override fun onCleared() {
 		controllerFuture?.let { MediaController.releaseFuture(it) }
 		mediaController?.release()
-		super.onCleared()
 	}
 	// ================================================================================================
 
@@ -196,11 +194,21 @@ class PlaybackViewModel(
 		posJob = null
 	}
 
-	fun onPlayerScreenOpenChanged(isVisible: Boolean) {
-		isPlayerScreenOpen.value = isVisible
+	fun onPlayerScreenOpenChanged(isVisible: Boolean, navViewModel: NavViewModel) {
+		if (isVisible) {
+			navViewModel.navToScreen(Screen.PLAYER)
+		} else {
+			navViewModel.navToScreen(Screen.MAIN)
+		}
 
-		if (isVisible && isPlaying.value) {
-			startPosUpdates()
+		if (isVisible) {
+			mediaController?.let {
+				currentPos.longValue = it.currentPosition
+			}
+
+			if (isPlaying.value) {
+				startPosUpdates()
+			}
 		} else {
 			stopPosUpdates()
 		}
@@ -298,7 +306,7 @@ class PlaybackViewModel(
 				controller.play()
 				isPlaying.value = true
 			} else {
-				Log.e("PlaybackViewModel", "Track $id not foun`d in queue.")
+				Log.e("PlaybackViewModel", "Track $id not found in queue.")
 			}
 		} else {
 			pendingPlayId = id

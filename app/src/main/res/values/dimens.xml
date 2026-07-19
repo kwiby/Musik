@@ -56,6 +56,11 @@
     <dimen name="player_screen_playback_control_button_padding">5dp</dimen>
     <dimen name="player_screen_playback_mode_button_padding">25dp</dimen>
 
+    <!-- Settings Screen -->
+    <dimen name="settings_screen_back_button_top_padding">55dp</dimen>
+    <dimen name="settings_back_button_right_padding">11dp</dimen>
+    <dimen name="settings_title_font_size">30dp</dimen>
+
     <!-- Add YouTube Music Tab -->
     <dimen name="no_download_location_offset">75dp</dimen>
     <dimen name="no_internet_offset">75dp</dimen>

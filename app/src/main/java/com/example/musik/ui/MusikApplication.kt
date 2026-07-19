@@ -1,13 +1,10 @@
 package com.example.musik.ui
 
 import android.app.Application
-import com.chaquo.python.Python
-import com.chaquo.python.android.AndroidPlatform
-import com.example.musik.data.misc.AppContainer
-import com.example.musik.data.misc.AppDataContainer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import android.util.Log
+import com.yausername.ffmpeg.FFmpeg
+import com.yausername.youtubedl_android.YoutubeDL
+import com.yausername.youtubedl_android.YoutubeDLException
 
 class MusikApplication : Application() {
 	lateinit var container: AppContainer
@@ -16,14 +13,11 @@ class MusikApplication : Application() {
 		super.onCreate()
 		container = AppDataContainer(this)
 
-		if (!Python.isStarted()) {
-			Python.start(AndroidPlatform(this))
-		}
-
-		CoroutineScope(Dispatchers.IO).launch {
-			runCatching {
-				Python.getInstance().getModule("ytdlp").callAttr("warm_up")
-			}
+		try {
+			YoutubeDL.getInstance().init(this)
+			FFmpeg.getInstance().init(this)
+		} catch (e: YoutubeDLException) {
+			Log.e("MusikApplication", "Failed to initialize youtubedl-android", e)
 		}
 	}
 }

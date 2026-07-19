@@ -3,26 +3,164 @@ package com.example.musik.ui.misc
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
-import com.chaquo.python.PyObject
-import com.chaquo.python.Python
+import com.yausername.youtubedl_android.YoutubeDL
+import com.yausername.youtubedl_android.YoutubeDLRequest
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class YtDlp(context: Context) {
+class YtDlp(
+	context: Context
+) {
+	private val idCheckRegex = "v=([a-zA-Z0-9_-]{11})".toRegex()
+
+	private val _downloadStatus = MutableStateFlow("")
+	val downloadStatus: StateFlow<String> = _downloadStatus.asStateFlow()
+
+	private val _progressValue = MutableStateFlow(0)
+	val progressValue: StateFlow<Int> = _progressValue.asStateFlow()
+
+	private val processId: String = "MusikProcess"
+	private val callback = { progress: Float, _: Long, line: String ->
+		CoroutineScope(Dispatchers.Main).launch {
+			_progressValue.value = progress.toInt()
+			_downloadStatus.value = line
+		}
+		Unit
+	}
+
+	suspend fun startDownload(context: Context, downloadLocationStr: String, link: String): Boolean {
+		val tempDir = File(context.cacheDir, "musik_temp_dir")
+		if (!tempDir.exists()) {
+			tempDir.mkdirs()
+		}
+
+		val downloadLocation = File(downloadLocationStr)
+
+		val request = YoutubeDLRequest(link)
+		/*
+		 * Prevents the file's "last modified" time to be set to the date the YouTube video was
+		 * originally uploaded
+		 */
+		request.addOption("--no-mtime")
+		/*
+		 * Embeds metadata as ID3 tags
+		 */
+		request.addOption("--add-metadata")
+		/*
+		 * Embeds the video thumbnail as the audio file thumbnail
+		 */
+		request.addOption("--embed-thumbnail")
+		/*
+		 * Prioritize the highest quality audio stream available.
+		 */
+		request.addOption("-f", "bestaudio/best")
+		/*
+		 * Ignore the video stream, and only maintain the audio track.
+		 */
+		request.addOption("--extract-audio", "")
+		/*
+		 * Convert the audio file to .mp3 (with ffmpeg)
+		 */
+		request.addOption("--audio-format", "mp3")
+		/*
+		 * Sets the audio file output name to be "audio_file_title_example.mp3"
+		 */
+		request.addOption("-o", "${tempDir.absolutePath}/%(title)s.%(ext)s")
+
+		try {
+			val response = withContext(Dispatchers.IO) {
+				YoutubeDL.getInstance().execute(request, processId, callback)
+			}
+			if (response.exitCode == 0) {
+				val downloadedFile = File(response.out)
+				val isSuccess = withContext(Dispatchers.IO) {
+					moveFileToDownloadLocation(context, downloadedFile, downloadLocationStr.toUri())
+				}
+				_progressValue.value = 100
+
+				return isSuccess
+			} else {
+				Log.e("YtDlp", "UNEXPECTED ERROR")
+
+				return false
+			}
+		} catch (e: Exception) {
+			Log.e("YtDlp", "DOWNLOAD FAILED: ${e.message}")
+
+			return false
+		} finally {
+			_downloadStatus.value = ""
+		}
+	}
+
+	suspend fun checkValidLink(link: String): Boolean {
+		if (link.isBlank() || !idCheckRegex.containsMatchIn(link)) {
+			return false
+		} else {
+			val request = YoutubeDLRequest(link)
+			/*
+			 * Fetches the ID
+			 */
+			request.addOption("--get-id")
+
+			try {
+				val response = withContext(Dispatchers.IO) {
+					YoutubeDL.getInstance().execute(request, null, null)
+				}
+
+				return response.exitCode == 0
+			} catch (_: Exception) {
+				return false
+			}
+		}
+	}
+
+	fun moveFileToDownloadLocation(context: Context, sourceFile: File, treeUri: Uri): Boolean {
+		try {
+			val downloadLocation = DocumentFile.fromTreeUri(context, treeUri)
+			val newFile = downloadLocation?.createFile("audio/mpeg", sourceFile.name)
+				?: throw Exception("Download location is null")
+
+			newFile.uri.let { destUri ->
+				context.contentResolver.openOutputStream(destUri)?.use { outputStream ->
+					sourceFile.inputStream().use { inputStream ->
+						inputStream.copyTo(outputStream)
+					}
+				}
+			}
+			sourceFile.delete()
+
+			return true
+		} catch (e: Exception) {
+			Log.e("YtDlp", "Failed to move file", e)
+
+			return false
+		}
+	}
+
+	/*
+	/*
 	data class VideoInfo(
 		val isValid: Boolean,
 		val title: String? = null,
 		val id: String? = null,
-		val error: String? = null,
+		val error: String? = null
 	)
+	 */
 
 	data class DownloadResult(
 		val isSuccess: Boolean,
 		val title: String? = null,
 		val file: File? = null,
-		val error: String? = null,
+		val error: String? = null
 	)
 
 
@@ -45,12 +183,11 @@ class YtDlp(context: Context) {
 
 	private fun copyToContentUri(
 		sourceFile: File,
-		treeUri: Uri,
-		mimeType: String
+		downloadLocationUri: Uri
 	) {
-		val treeDoc = DocumentFile.fromTreeUri(appContext, treeUri)
+		val treeDoc = DocumentFile.fromTreeUri(appContext, downloadLocationUri)
 			?: throw IllegalStateException("Invalid tree URI")
-		val newFile = treeDoc.createFile(mimeType, sourceFile.nameWithoutExtension)
+		val newFile = treeDoc.createFile("audio/mp4", sourceFile.nameWithoutExtension)
 			?: throw IllegalStateException("Could not create file in target directory")
 
 		appContext.contentResolver.openOutputStream(newFile.uri)?.use { output ->
@@ -60,19 +197,19 @@ class YtDlp(context: Context) {
 		} ?: throw IllegalStateException("Could not open output stream for destination file")
 	}
 
-	/**
+	/*
 	 * Downloads audio to a temporary app-private file. Caller is responsible for
 	 * moving/copying the result wherever it's ultimately needed (e.g. a content URI)
 	 * and deleting the temp file afterward — see [downloadAudioToContentUri] for
 	 * a version that does this automatically.
 	 */
 	private suspend fun downloadAudio(
-		url: String
+		link: String
 	): DownloadResult = withContext(Dispatchers.IO) {
 		val module = getPythonModule()
 		val result: PyObject = module.callAttr(
 			"download_audio",
-			url,
+			link,
 			tempDir.absolutePath,
 			ffmpegPath,
 			qjsPath,
@@ -104,17 +241,16 @@ class YtDlp(context: Context) {
 	 * user picked via ACTION_OPEN_DOCUMENT_TREE). Cleans up the temp file afterward.
 	 */
 	suspend fun downloadAudioToContentUri(
-		url: String,
-		treeUri: Uri,
-		mimeType: String = "audio/mpeg",
+		link: String,
+		downloadLocationUri: Uri
 	): DownloadResult = withContext(Dispatchers.IO) {
-		val result = downloadAudio(url)
+		val result = downloadAudio(link)
 		if (!result.isSuccess || result.file == null) {
 			return@withContext result
 		}
 
 		try {
-			copyToContentUri(result.file, treeUri, mimeType)
+			copyToContentUri(result.file, downloadLocationUri)
 
 			return@withContext DownloadResult(
 				isSuccess = true,
@@ -134,14 +270,14 @@ class YtDlp(context: Context) {
 		}
 	}
 
-	// Checks whether a YouTube URL is valid/accessible (makes a network call)
+	// Checks whether a YouTube link is valid/accessible (makes a network call)
 	suspend fun checkValidLink(
-		url: String
+		link: String
 	): Boolean = withContext(Dispatchers.IO) {
 		val module = getPythonModule()
 		val result: PyObject = module.callAttr(
 			"check_valid_link",
-			url
+			link
 		)
 
 		val map = result.asMap()
@@ -155,4 +291,5 @@ class YtDlp(context: Context) {
 
 		return@withContext isValid
 	}
+	*/
 }
