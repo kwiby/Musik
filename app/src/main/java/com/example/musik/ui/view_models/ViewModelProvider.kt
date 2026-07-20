@@ -15,6 +15,13 @@ object ViewModelProvider {
 			)
 		}
 
+		// --===--  SettingsViewModel  --===--
+		initializer {
+			SettingsViewModel(
+				musikApplication().container.ytDlp
+			)
+		}
+
 		// --===--  MusicListViewModel  --===--
 		initializer {
 			MusicListViewModel(

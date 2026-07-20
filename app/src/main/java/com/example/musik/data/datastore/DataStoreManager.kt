@@ -10,10 +10,8 @@ import kotlinx.coroutines.flow.map
 val Context.dataStore by preferencesDataStore(name = "user_prefs")
 
 class DataStoreManager(
-	context: Context
+	private val appContext: Context
 ) {
-	private val appContext = context.applicationContext
-
 	companion object {
 		val DOWNLOAD_LOCATION_KEY = stringPreferencesKey("download_location")
 		val ENTRY_TAB = stringPreferencesKey("entry_tab")

@@ -1,4 +1,4 @@
-package com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.download_container.components.info
+package com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.downloader_container.components.info
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

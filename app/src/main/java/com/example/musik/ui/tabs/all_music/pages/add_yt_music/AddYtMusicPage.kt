@@ -31,7 +31,7 @@ import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.LoadingIndicator
 import com.example.musik.ui.misc.LocalFolderManager
 import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.DownloadLocationContainer
-import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.download_container.DownloadContainer
+import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.downloader_container.DownloadContainer
 import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.info.NoDownloadLocationMsg
 import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.info.NoInternetMsg
 import com.example.musik.ui.view_models.AddYtMusicViewModel

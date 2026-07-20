@@ -24,6 +24,7 @@ import com.example.musik.ui.screens.settings.SettingsScreen
 import com.example.musik.ui.view_models.NavViewModel
 import com.example.musik.ui.view_models.PlaybackViewModel
 import com.example.musik.ui.view_models.Screen
+import com.example.musik.ui.view_models.SettingsViewModel
 import com.example.musik.ui.view_models.ViewModelProvider
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -32,6 +33,7 @@ import com.google.accompanist.permissions.isGranted
 @Composable
 fun MusikApp(
 	navViewModel: NavViewModel = viewModel(factory = ViewModelProvider.Factory),
+	settingsViewModel: SettingsViewModel = viewModel(factory = ViewModelProvider.Factory),
 	playbackViewModel: PlaybackViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
 	val permissionStatus = rememberPermissionHandler()
@@ -72,6 +74,7 @@ fun MusikApp(
 						Box(Modifier.fillMaxSize())
 					}
 					Screen.SETTINGS -> SettingsScreen(
+						settingsViewModel = settingsViewModel,
 						navViewModel = navViewModel
 					)
 					Screen.PLAYER -> PlayerScreen(

@@ -1,4 +1,4 @@
-package com.example.musik.ui.screens.settings.components.options.entry_tab.components
+package com.example.musik.ui.screens.settings.components.options
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,8 +23,9 @@ import com.example.musik.R
 @Composable
 fun OptionButton(
 	text: String,
-	isSelected: Boolean,
 	modifier: Modifier = Modifier,
+	isSelected: Boolean = false,
+	enableRippleAnimation: Boolean = false,
 	onClick: () -> Unit = {}
 ) {
 	val interactionSource = remember { MutableInteractionSource() }
@@ -31,9 +34,10 @@ fun OptionButton(
 		modifier = modifier
 			.height(dimensionResource(R.dimen.option_button_height))
 			.padding(horizontal = dimensionResource(R.dimen.option_button_horizontal_padding))
+			.clip(MaterialTheme.shapes.medium)
 			.clickable(
 				interactionSource = interactionSource,
-				indication = null
+				indication = if (enableRippleAnimation) ripple() else null
 			) {
 				onClick()
 			},

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -21,12 +22,17 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
-import com.example.musik.ui.screens.settings.components.options.SettingsOptions
+import com.example.musik.ui.screens.settings.components.options.app_icon.AppIconOption
+import com.example.musik.ui.screens.settings.components.options.entry_tab.EntryTabOption
+import com.example.musik.ui.screens.settings.components.options.theme.ThemeOption
+import com.example.musik.ui.screens.settings.components.options.update_ytdlp.UpdateYtDlpOption
 import com.example.musik.ui.view_models.NavViewModel
 import com.example.musik.ui.view_models.Screen
+import com.example.musik.ui.view_models.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
+	settingsViewModel: SettingsViewModel,
 	navViewModel: NavViewModel
 ) {
 	BackHandler(true) {
@@ -70,7 +76,28 @@ fun SettingsScreen(
 			Spacer(Modifier.height(dimensionResource(R.dimen.settings_top_section_bottom_padding)))
 
 			// --===--  Settings Options  --===--
-			SettingsOptions(navViewModel)
+			Column(
+				modifier = Modifier
+					.fillMaxSize()
+					.padding(horizontal = dimensionResource(R.dimen.settings_options_horizontal_padding)),
+				horizontalAlignment = Alignment.Start
+			) {
+				// --===--  Change Entry Tab  --===--
+				EntryTabOption(navViewModel)
+				Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
+
+				// --===--  Change Theme  --===--
+				ThemeOption()
+				Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
+
+				// --===--  Change App Icon  --===--
+				AppIconOption()
+				Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
+
+				// --===--  Update Yt-Dlp  --===--
+				UpdateYtDlpOption(settingsViewModel)
+				Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
+			}
 		}
 	}
 }

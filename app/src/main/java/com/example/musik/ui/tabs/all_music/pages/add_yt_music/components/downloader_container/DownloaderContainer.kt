@@ -1,4 +1,4 @@
-package com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.download_container
+package com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.downloader_container
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +23,7 @@ import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.LoadingIndicator
 import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.YouTubeLinkField
-import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.download_container.components.info.InfoMsg
+import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.downloader_container.components.info.InfoMsg
 import com.example.musik.ui.view_models.AddYtMusicViewModel
 
 @Composable
@@ -87,27 +87,29 @@ fun DownloadContainer(
 			) {
 				Spacer(Modifier.height(dimensionResource(R.dimen.downloader_info_msg_offset)))
 
-				if (uiState == AddYtMusicViewModel.DownloaderUiState.Loading) {
-					LoadingIndicator(includeDefaultHeight = false)
-				} else {
-					InfoMsg(
-						text = when (uiState) {
-							is AddYtMusicViewModel.DownloaderUiState.Empty
-								-> stringResource(R.string.downloader_info_msg_empty)
-							is AddYtMusicViewModel.DownloaderUiState.Downloading
-								-> stringResource(R.string.downloader_info_msg_downloading)
-							is AddYtMusicViewModel.DownloaderUiState.InvalidLink
-								-> stringResource(R.string.downloader_info_msg_invalid_link)
-							is AddYtMusicViewModel.DownloaderUiState.Success
-								-> stringResource(R.string.downloader_info_msg_success)
-							else -> stringResource(R.string.downloader_info_msg_error)
-						}
-					)
-
-					if (uiState == AddYtMusicViewModel.DownloaderUiState.Downloading) {
-						Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
-						LoadingIndicator(includeDefaultHeight = false)
+				InfoMsg(
+					text = when (uiState) {
+						AddYtMusicViewModel.DownloaderUiState.Empty
+							-> stringResource(R.string.downloader_info_msg_empty)
+						AddYtMusicViewModel.DownloaderUiState.Loading
+							-> stringResource(R.string.downloader_info_msg_loading)
+						AddYtMusicViewModel.DownloaderUiState.Downloading
+							-> stringResource(R.string.downloader_info_msg_downloading)
+						AddYtMusicViewModel.DownloaderUiState.InvalidLink
+							-> stringResource(R.string.downloader_info_msg_invalid_link)
+						AddYtMusicViewModel.DownloaderUiState.OutdatedYtDlp
+							-> stringResource(R.string.downloader_info_msg_outdated_ytdlp)
+						AddYtMusicViewModel.DownloaderUiState.Success
+							-> stringResource(R.string.downloader_info_msg_success)
+						AddYtMusicViewModel.DownloaderUiState.Error
+							-> stringResource(R.string.downloader_info_msg_error)
 					}
+				)
+
+				if (uiState == AddYtMusicViewModel.DownloaderUiState.Loading
+					|| uiState == AddYtMusicViewModel.DownloaderUiState.Downloading) {
+					Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
+					LoadingIndicator(includeDefaultHeight = false)
 				}
 			}
 		}

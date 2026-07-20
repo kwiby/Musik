@@ -47,8 +47,10 @@
     <string name="yt_link_field_submit_button" translatable="true">Submit YouTube link</string>
 
     <string name="downloader_info_msg_empty" translatable="true">Enter a link to continue</string>
+    <string name="downloader_info_msg_loading" translatable="true">Loading</string>
     <string name="downloader_info_msg_downloading" translatable="true">Download in progress</string>
     <string name="downloader_info_msg_invalid_link" translatable="true">Link is invalid</string>
+    <string name="downloader_info_msg_outdated_ytdlp" translatable="true">Please update YtDlp in settings</string>
     <string name="downloader_info_msg_success" translatable="true">Download completed</string>
     <string name="downloader_info_msg_error" translatable="true">An error occurred</string>
 
@@ -59,6 +61,20 @@
     <string name="settings_header_app_icon" translatable="true">App Icon</string>
     <string name="settings_header_update_ytdlp" translatable="true">Update YtDlp</string>
 
+    <string name="settings_update_ytdlp_option_cur_version">Current Version:</string>
+    <string name="settings_update_ytdlp_option_stable">Stable</string>
+    <string name="settings_update_ytdlp_option_nightly">Nightly</string>
+    <string name="settings_update_ytdlp_option_master">Master</string>
+    <string name="settings_update_ytdlp_option_description">
+        \"Stable\" releases are published on a monthly schedule. While it is named \"stable\"
+        due to being extensively tested, it is often \"stale\" and prone to external breakage (i.e.
+        YouTube changing their logic).
+        \n\n
+        \"Nightly\" releases are published before midnight on any day that sees changes to the
+        codebase of YtDlp. This is the RECOMMENDED channel.
+        \n\n
+        \"Master\" provides the latest fixes and features, but may be prone to bugs or regressions.
+    </string>
 
 
     <!-- Null Value Defaults -->

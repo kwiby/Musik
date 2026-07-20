@@ -1,6 +1,6 @@
 package com.example.musik.ui.view_models
 
-//import com.example.musik.ui.misc.YtDlp
+//import com.example.musik.ui.misc.YtDlp.YtDlp
 import android.app.Application
 import android.net.ConnectivityManager
 import android.net.Network
@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.musik.data.datastore.DataStoreManager
 import com.example.musik.data.repositories.audio_file.AudioFileRepository
 import com.example.musik.ui.misc.FolderManager
-import com.example.musik.ui.misc.YtDlp
+import com.example.musik.ui.misc.ytdlp.YtDlp
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +33,7 @@ class AddYtMusicViewModel(
 		data object Loading: DownloaderUiState // Loading in progress
 		data object Downloading: DownloaderUiState // Download in progress
 		data object InvalidLink: DownloaderUiState // Inputted yt video link is invalid
+		data object OutdatedYtDlp: DownloaderUiState // Outdated YtDlp binary version
 		data object Success: DownloaderUiState // Downloading completed successfully
 		data object Error: DownloaderUiState // Unexpected errors
 	}
@@ -43,8 +44,8 @@ class AddYtMusicViewModel(
 	private val _hasValidFolderPerms = MutableStateFlow<Boolean?>(null)
 	val hasValidFolderPerms = _hasValidFolderPerms.asStateFlow()
 
-	private val _isLinkValid = MutableStateFlow(false)
-	val isLinkValid = _isLinkValid.asStateFlow()
+	//private val _isLinkValid = MutableStateFlow(false)
+	//val isLinkValid = _isLinkValid.asStateFlow()
 
 	private val _ytLink = MutableStateFlow("")
 	val ytLink = _ytLink.asStateFlow()
@@ -56,30 +57,30 @@ class AddYtMusicViewModel(
 	)
 
 
-	suspend fun checkValidLink(): Boolean {
+	fun checkValidLink(): Boolean {
 		val result = ytDlp.checkValidLink(_ytLink.value)
-		_isLinkValid.value = result
+		//_isLinkValid.value = result
 
 		return result
 	}
 
-	suspend fun downloadAudio() {
+	suspend fun downloadAudio(link: String) {
 		/*
 		 * This function should only be called when the download location is already selected,
 		 * hence the non-null value
 		 */
 		check(downloadLocation.value != null)
 
-		val downloadResult = ytDlp.startDownload(
-			getApplication(),
+		val downloadResult: YtDlp.DownloadResult = ytDlp.startDownload(
 			downloadLocation.value!!,
-			_ytLink.value
+			link
 		)
 
-		if (downloadResult) {
-			_uiState.value = DownloaderUiState.Success
-		} else {
-			_uiState.value = DownloaderUiState.Error
+		when (downloadResult) {
+			YtDlp.DownloadResult.Success -> _uiState.value = DownloaderUiState.Success
+			YtDlp.DownloadResult.OutdatedYtDlp -> _uiState.value = DownloaderUiState.OutdatedYtDlp
+			YtDlp.DownloadResult.VideoUnavailable -> _uiState.value = DownloaderUiState.InvalidLink
+			YtDlp.DownloadResult.Error -> _uiState.value = DownloaderUiState.Error
 		}
 	}
 
@@ -90,14 +91,14 @@ class AddYtMusicViewModel(
 
 	fun downloadButton() {
 		if (!_ytLink.value.isBlank()) {
+			val link = _ytLink.value
 			_uiState.value = DownloaderUiState.Loading
 
 			viewModelScope.launch {
 				val result = checkValidLink()
 				if (result) {
 					_uiState.value = DownloaderUiState.Downloading
-
-					downloadAudio()
+					downloadAudio(link)
 				} else {
 					_uiState.value = DownloaderUiState.InvalidLink
 				}
@@ -124,8 +125,10 @@ class AddYtMusicViewModel(
 
 	fun resetAddYtMusic() {
 		_ytLink.value = ""
-		if (!isProcessing()) _uiState.value = DownloaderUiState.Empty
-		_isLinkValid.value = false
+		if (!isProcessing()) {
+			_uiState.value = DownloaderUiState.Empty
+		}
+		//_isLinkValid.value = false
 	}
 }
 

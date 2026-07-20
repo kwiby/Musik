@@ -62,12 +62,19 @@
     <dimen name="settings_title_font_size">30dp</dimen>
     <dimen name="settings_top_section_bottom_padding">30dp</dimen>
     <dimen name="settings_options_horizontal_padding">25dp</dimen>
-    <dimen name="option_header_bottom_padding">15dp</dimen>
+    <dimen name="settings_option_section_vertical_padding">25dp</dimen>
+
+    <dimen name="option_header_bottom_padding">13dp</dimen>
+    <dimen name="option_header_divider_horizontal_padding">7dp</dimen>
+    <dimen name="option_divider_thickness">1.5dp</dimen>
 
     <dimen name="option_button_height">40dp</dimen>
     <dimen name="option_button_horizontal_padding">5dp</dimen>
     <dimen name="option_button_border_thickness">1dp</dimen>
     <dimen name="option_button_shadow_elevation">3dp</dimen>
+
+    <dimen name="settings_update_ytdlp_option_description_bottom_padding">15dp</dimen>
+    <dimen name="settings_update_ytdlp_option_buttons_top_padding">10dp</dimen>
 
     <!-- Add YouTube Music Tab -->
     <dimen name="no_download_location_offset">75dp</dimen>

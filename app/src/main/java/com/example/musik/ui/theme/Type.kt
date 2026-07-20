@@ -51,15 +51,25 @@ val Typography = Typography(
         fontWeight = FontWeight.W400,
         fontSize = 17.sp
     ),
-    headlineLarge = TextStyle( // Screen Title
+    headlineLarge = TextStyle( // Screen title
         fontFamily = SourGummy,
         fontWeight = FontWeight.W400,
         fontSize = 25.sp
     ),
-    headlineMedium = TextStyle( // Settings Option Header
+    headlineMedium = TextStyle( // Settings option header
         fontFamily = SourGummy,
         fontWeight = FontWeight.W300,
         fontSize = 18.sp
+    ),
+    labelLarge = TextStyle( // Settings option main text
+        fontFamily = SourGummy,
+        fontWeight = FontWeight.W300,
+        fontSize = 15.sp
+    ),
+    labelMedium = TextStyle( // Settings option alt text
+        fontFamily = SourGummy,
+        fontWeight = FontWeight.W300,
+        fontSize = 13.sp
     ),
     bodyLarge = TextStyle( // Song title
         fontFamily = SourGummy,
