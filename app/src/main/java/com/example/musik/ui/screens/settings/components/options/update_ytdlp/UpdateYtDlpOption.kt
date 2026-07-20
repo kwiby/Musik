@@ -24,6 +24,7 @@ import com.yausername.youtubedl_android.YoutubeDL
 fun UpdateYtDlpOption(
 	settingsViewModel: SettingsViewModel
 ) {
+	val dataStoreYtDlpVersion by settingsViewModel.getDataStoreManagerYtDlpVersion().collectAsStateWithLifecycle(initialValue = "")
 	val ytDlpVersion by settingsViewModel.getYtDlpVersionStateFlow().collectAsStateWithLifecycle()
 
 	OptionHeader(stringResource(R.string.settings_header_update_ytdlp))
@@ -43,7 +44,11 @@ fun UpdateYtDlpOption(
 			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
 
 			Text(
-				text = ytDlpVersion.removePrefix("yt-dlp "),
+				text = if (ytDlpVersion == "UNKNOWN") {
+					dataStoreYtDlpVersion
+				} else {
+					ytDlpVersion
+				},
 				style = MaterialTheme.typography.labelLarge.copy(
 					color = MaterialTheme.colorScheme.onSecondary
 				)

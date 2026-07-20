@@ -15,6 +15,7 @@ class DataStoreManager(
 	companion object {
 		val DOWNLOAD_LOCATION_KEY = stringPreferencesKey("download_location")
 		val ENTRY_TAB = stringPreferencesKey("entry_tab")
+		val YTDLP_VERSION = stringPreferencesKey("ytdlp_version")
 	}
 
 	// --===--  Download Location  --===--
@@ -34,6 +35,16 @@ class DataStoreManager(
 	suspend fun setEntryTab(newTab: String) {
 		appContext.dataStore.edit { prefs ->
 			prefs[ENTRY_TAB] = newTab
+		}
+	}
+
+	// --===--  YtDlp Version  --===--
+	val ytdlpVersion: Flow<String> = appContext.dataStore.data.map { prefs ->
+		prefs[YTDLP_VERSION] ?: "UNKNOWN"
+	}
+	suspend fun setYtDlpVersion(newVersion: String) {
+		appContext.dataStore.edit { prefs ->
+			prefs[YTDLP_VERSION] = newVersion
 		}
 	}
 }

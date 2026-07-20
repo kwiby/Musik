@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
+import com.example.musik.data.datastore.DataStoreManager
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLRequest
 import kotlinx.coroutines.CoroutineScope
@@ -189,7 +190,10 @@ class YtDlp(
 		Toast.makeText(appContext, text, Toast.LENGTH_SHORT).show()
 	}
 
-	suspend fun updateYtDlp(channel: YoutubeDL.UpdateChannel) {
+	suspend fun updateYtDlp(
+		channel: YoutubeDL.UpdateChannel,
+		dataStoreManager: DataStoreManager
+	) {
 		if (isUpdating) {
 			emitToast("Update already in progress")
 			return
@@ -212,6 +216,11 @@ class YtDlp(
 			val newVersionName = getFormattedVersionName(
 				YoutubeDL.getInstance().versionName(appContext)
 			)
+
+			if (status == YoutubeDL.UpdateStatus.DONE) {
+				Log.d("debug", newVersionName)
+				dataStoreManager.setYtDlpVersion(newVersionName)
+			}
 
 			val msg = when (status) {
 				YoutubeDL.UpdateStatus.DONE ->

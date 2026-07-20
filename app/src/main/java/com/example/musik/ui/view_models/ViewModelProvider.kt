@@ -18,6 +18,7 @@ object ViewModelProvider {
 		// --===--  SettingsViewModel  --===--
 		initializer {
 			SettingsViewModel(
+				musikApplication().container.dataStoreManager,
 				musikApplication().container.ytDlp
 			)
 		}
