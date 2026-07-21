@@ -24,8 +24,8 @@ import com.yausername.youtubedl_android.YoutubeDL
 fun UpdateYtDlpOption(
 	settingsViewModel: SettingsViewModel
 ) {
-	val dataStoreYtDlpVersion by settingsViewModel.getDataStoreManagerYtDlpVersion().collectAsStateWithLifecycle(initialValue = "")
-	val ytDlpVersion by settingsViewModel.getYtDlpVersionStateFlow().collectAsStateWithLifecycle()
+	val dataStoreYtDlpVersion by settingsViewModel.dataStoreYtDlpVersion.collectAsStateWithLifecycle(initialValue = "")
+	val ytDlpVersion by settingsViewModel.ytDlpVersion.collectAsStateWithLifecycle()
 
 	OptionHeader(stringResource(R.string.settings_header_update_ytdlp))
 	Spacer(Modifier.height(dimensionResource(R.dimen.option_header_bottom_padding)))
@@ -41,7 +41,7 @@ fun UpdateYtDlpOption(
 				)
 			)
 
-			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
+			Spacer(Modifier.width(dimensionResource(R.dimen.x_small_padding)))
 
 			Text(
 				text = if (ytDlpVersion == "UNKNOWN") {
@@ -55,7 +55,7 @@ fun UpdateYtDlpOption(
 			)
 		}
 
-		Spacer(Modifier.height(dimensionResource(R.dimen.settings_update_ytdlp_option_buttons_top_padding)))
+		Spacer(Modifier.height(dimensionResource(R.dimen.settings_update_ytdlp_description_top_padding)))
 
 		// --===--  Channels Description  --===--
 		Text(
@@ -65,7 +65,7 @@ fun UpdateYtDlpOption(
 			)
 		)
 
-		Spacer(Modifier.height(dimensionResource(R.dimen.settings_update_ytdlp_option_description_bottom_padding)))
+		Spacer(Modifier.height(dimensionResource(R.dimen.settings_update_ytdlp_description_bottom_padding)))
 
 		// --===--  Buttons  --===--
 		Row {
@@ -97,4 +97,6 @@ fun UpdateYtDlpOption(
 			}
 		}
 	}
+
+	Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
 }

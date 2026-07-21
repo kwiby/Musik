@@ -52,4 +52,6 @@ fun EntryTabOption(
 			navViewModel.setEntryTab(Tab.STATS)
 		}
 	}
+
+	Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
 }

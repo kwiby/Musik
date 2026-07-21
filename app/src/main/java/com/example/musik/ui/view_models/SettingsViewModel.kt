@@ -13,6 +13,9 @@ class SettingsViewModel(
 	private val dataStoreManager: DataStoreManager,
 	private val ytDlp: YtDlp
 ) : ViewModel() {
+	val dataStoreYtDlpVersion: Flow<String> = dataStoreManager.ytDlpVersion
+	val ytDlpVersion: StateFlow<String> = ytDlp.ytDlpVersion
+
 	fun updateYtDlp(channel: YoutubeDL.UpdateChannel) {
 		viewModelScope.launch {
 			ytDlp.updateYtDlp(
@@ -20,13 +23,5 @@ class SettingsViewModel(
 				dataStoreManager
 			)
 		}
-	}
-
-	fun getDataStoreManagerYtDlpVersion(): Flow<String> {
-		return dataStoreManager.ytdlpVersion
-	}
-
-	fun getYtDlpVersionStateFlow(): StateFlow<String> {
-		return ytDlp.ytDlpVersion
 	}
 }

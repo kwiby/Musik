@@ -56,6 +56,10 @@ class AddYtMusicViewModel(
 		initialValue = null
 	)
 
+	val downloadPercent: StateFlow<Int> = ytDlp.downloadPercent
+	val downloadSpeed: StateFlow<String> = ytDlp.downloadSpeed
+	val eta: StateFlow<String> = ytDlp.eta
+
 
 	fun checkValidLink(): Boolean {
 		val result = ytDlp.checkValidLink(_ytLink.value)

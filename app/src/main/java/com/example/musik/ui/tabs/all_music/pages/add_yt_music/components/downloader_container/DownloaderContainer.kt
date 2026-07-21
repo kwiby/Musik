@@ -31,6 +31,10 @@ fun DownloadContainer(
 	addYtMusicViewModel: AddYtMusicViewModel
 ) {
 	val uiState by addYtMusicViewModel.uiState.collectAsStateWithLifecycle()
+	val downloadPercent by addYtMusicViewModel.downloadPercent.collectAsStateWithLifecycle()
+	val downloadSpeed by addYtMusicViewModel.downloadSpeed.collectAsStateWithLifecycle()
+	val eta by addYtMusicViewModel.eta.collectAsStateWithLifecycle()
+
 
 	Column(
 		modifier = Modifier.fillMaxHeight()
@@ -94,7 +98,12 @@ fun DownloadContainer(
 						AddYtMusicViewModel.DownloaderUiState.Loading
 							-> stringResource(R.string.downloader_info_msg_loading)
 						AddYtMusicViewModel.DownloaderUiState.Downloading
-							-> stringResource(R.string.downloader_info_msg_downloading)
+							-> when (downloadPercent) {
+								100 -> stringResource(R.string.downloader_info_msg_finishing)
+								0, -1 -> stringResource(R.string.downloader_info_msg_processing)
+								else -> stringResource(R.string.downloader_info_msg_downloading) +
+										" (${downloadPercent}% - $downloadSpeed - $eta)"
+							}
 						AddYtMusicViewModel.DownloaderUiState.InvalidLink
 							-> stringResource(R.string.downloader_info_msg_invalid_link)
 						AddYtMusicViewModel.DownloaderUiState.OutdatedYtDlp

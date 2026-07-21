@@ -66,9 +66,14 @@ fun PlayerScreen(
 ) {
 	val musicInfo = playbackViewModel.currentTrack.value
 	if (musicInfo == null) {
-		Log.wtf("PlayerScreen", "How TF is 'musicInfo' null, WTF did you do?!?!")
+		// This is for whenever the user deletes/moves the audio file from within the devices storage
+		Log.e("PlayerScreen", "The current track is missing. The audio file could have been deleted or moved")
+		navViewModel.navToScreen(Screen.MAIN)
+
+		return
 	}
-	val metadata = musicInfo!!.mediaMetadata
+
+	val metadata = musicInfo.mediaMetadata
 	val curPos = playbackViewModel.currentPos.longValue
 
 	val isPlayerScreenOpen = navViewModel.curScreen == Screen.PLAYER

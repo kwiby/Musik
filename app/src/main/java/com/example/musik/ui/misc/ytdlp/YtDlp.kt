@@ -29,26 +29,46 @@ class YtDlp(
 	}
 
 	private val linkCheckRegex = Regex(
-		"^(https?://)?(www\\.|m\\.)?(youtube\\.com/watch\\?v=|youtu\\.be/)[a-zA-Z0-9_-]{11}(&\\S*)?(\\?\\S*)?$"
+		"""^(https?://)?(www\.|m\.)?(youtube\.com/watch\?v=|youtu\.be/)[a-zA-Z0-9_-]{11}(&\S*)?(\?\S*)?$"""
+	)
+	private val downloadSpeedRegex = Regex(
+		"""at\s+([\d.]+\s*\w+/s)"""
+	)
+	private val etaRegex = Regex(
+		"""ETA\s+(\d+:\d+)"""
 	)
 
-	private val _downloadStatus = MutableStateFlow("")
-	val downloadStatus: StateFlow<String> = _downloadStatus.asStateFlow()
+	private val _downloadPercent = MutableStateFlow(0)
+	val downloadPercent: StateFlow<Int> = _downloadPercent.asStateFlow()
 
-	private val _progressValue = MutableStateFlow(0)
-	val progressValue: StateFlow<Int> = _progressValue.asStateFlow()
+	private val _downloadSpeed = MutableStateFlow("0.0KiB/s")
+	val downloadSpeed = _downloadSpeed.asStateFlow()
+
+	private val _eta = MutableStateFlow("00:00")
+	val eta = _eta.asStateFlow()
+
+	private val _ytDlpVersion = MutableStateFlow("UNKNOWN")
+	val ytDlpVersion: StateFlow<String> = _ytDlpVersion.asStateFlow()
 
 	private val processId: String = "MusikProcess"
-	private val callback = { progress: Float, _: Long, line: String ->
+	private val callback = { percent: Float, _: Long, line: String ->
 		CoroutineScope(Dispatchers.Main).launch {
-			_progressValue.value = progress.toInt()
-			_downloadStatus.value = line
+			_downloadPercent.value = percent.toInt()
+
+			extractDownloadSpeed(line)?.let { _downloadSpeed.value = it }
+			extractEta(line)?.let { _eta.value = it }
+			Log.d("debug", line)
 		}
 		Unit
 	}
 
-	private val _ytDlpVersion = MutableStateFlow("UNKNOWN")
-	val ytDlpVersion: StateFlow<String> = _ytDlpVersion.asStateFlow()
+
+	private fun extractDownloadSpeed(line: String): String? {
+		return downloadSpeedRegex.find(line)?.groupValues?.get(1)
+	}
+	private fun extractEta(line: String): String? {
+		return etaRegex.find(line)?.groupValues?.get(1)
+	}
 
 
 	private fun isOutdatedYtDlpWarning(responseOutput: String): Boolean {
@@ -95,12 +115,14 @@ class YtDlp(
 		 * "--no-mtime" prevents the file's "last modified" time to be set to the date the YouTube
 		 * video was originally uploaded
 		 */
-		request.addOption("--no-mtime")
-		request.addOption("--add-metadata")
-		request.addOption("--embed-thumbnail")
 		request.addOption("-f", "bestaudio/best")
 		request.addOption("--extract-audio", "")
-		request.addOption("--audio-format", "mp3")
+		if (true) {
+			request.addOption("--audio-format", "mp3")
+		}
+		request.addOption("--add-metadata")
+		request.addOption("--no-mtime")
+		request.addOption("--embed-thumbnail")
 		request.addOption("-o", "${tempDir.absolutePath}/%(title)s.%(ext)s")
 
 		try {
@@ -123,16 +145,19 @@ class YtDlp(
 						downloadLocationStr.toUri()
 					)
 				}
-				_progressValue.value = 100
+				_downloadPercent.value = 0
 
-				return if (isMoveSuccess) {
-					DownloadResult.Success
+				if (isMoveSuccess) {
+					emitToast("Download completed")
+					return DownloadResult.Success
 				} else {
-					DownloadResult.Error
+					emitToast("Download failed")
+					return DownloadResult.Error
 				}
 			} else {
 				Log.e("YtDlp", "UNEXPECTED ERROR")
 
+				emitToast("Download failed")
 				return DownloadResult.Error
 			}
 		} catch (e: Exception) {
@@ -152,35 +177,11 @@ class YtDlp(
 			} else {
 				DownloadResult.Error
 			}
-		} finally {
-			_downloadStatus.value = ""
 		}
 	}
 
-	//private val idCheckRegex = Regex("v=([a-zA-Z0-9_-]{11})")
 	fun checkValidLink(link: String): Boolean {
 		return link.isNotBlank() && linkCheckRegex.containsMatchIn(link)
-		/*
-		if (link.isBlank()) {
-			return false
-		} else {
-			val request = YoutubeDLRequest(link)
-			/*
-			 * Fetches the ID
-			 */
-			request.addOption("--get-id")
-
-			try {
-				val response = withContext(Dispatchers.IO) {
-					YoutubeDL.getInstance().execute(request, null, null)
-				}
-
-				return response.exitCode == 0
-			} catch (_: Exception) {
-				return false
-			}
-		}
-		 */
 	}
 
 	// --===--  Update YtDlp  --===--
@@ -217,8 +218,7 @@ class YtDlp(
 				YoutubeDL.getInstance().versionName(appContext)
 			)
 
-			if (status == YoutubeDL.UpdateStatus.DONE) {
-				Log.d("debug", newVersionName)
+			if (status == YoutubeDL.UpdateStatus.DONE || status == YoutubeDL.UpdateStatus.ALREADY_UP_TO_DATE) {
 				dataStoreManager.setYtDlpVersion(newVersionName)
 			}
 

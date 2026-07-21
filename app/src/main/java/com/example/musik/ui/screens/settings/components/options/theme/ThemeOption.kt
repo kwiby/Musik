@@ -13,4 +13,6 @@ import com.example.musik.ui.screens.settings.components.options.OptionHeader
 fun ThemeOption() {
 	OptionHeader(stringResource(R.string.settings_header_theme))
 	Spacer(Modifier.height(dimensionResource(R.dimen.option_header_bottom_padding)))
+
+	Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
 }

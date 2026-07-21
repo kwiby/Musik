@@ -48,7 +48,9 @@
 
     <string name="downloader_info_msg_empty" translatable="true">Enter a link to continue</string>
     <string name="downloader_info_msg_loading" translatable="true">Loading</string>
-    <string name="downloader_info_msg_downloading" translatable="true">Download in progress</string>
+    <string name="downloader_info_msg_processing" translatable="true">Processing</string>
+    <string name="downloader_info_msg_downloading" translatable="true">Downloading</string>
+    <string name="downloader_info_msg_finishing" translatable="true">Installing and finalizing</string>
     <string name="downloader_info_msg_invalid_link" translatable="true">Link is invalid</string>
     <string name="downloader_info_msg_outdated_ytdlp" translatable="true">Please update YtDlp in settings</string>
     <string name="downloader_info_msg_success" translatable="true">Download completed</string>
@@ -59,16 +61,20 @@
     <string name="settings_header_entry_tab" translatable="true">Entry Tab</string>
     <string name="settings_header_theme" translatable="true">Theme</string>
     <string name="settings_header_app_icon" translatable="true">App Icon</string>
+    <string name="settings_header_downloading" translatable="true">Downloading</string>
     <string name="settings_header_update_ytdlp" translatable="true">Update YtDlp</string>
+    <string name="settings_header_update_musik" translatable="true">Update Musik</string>
 
     <string name="settings_update_ytdlp_option_cur_version">Current Version:</string>
     <string name="settings_update_ytdlp_option_stable">Stable</string>
     <string name="settings_update_ytdlp_option_nightly">Nightly</string>
     <string name="settings_update_ytdlp_option_master">Master</string>
     <string name="settings_update_ytdlp_option_description">
+        YtDlp should be updated every ~90 days to prevent external breakage (i.e. YouTube changing
+        their logic).
+        \n\n
         \"Stable\" releases are published on a monthly schedule. While it is named \"stable\"
-        due to being extensively tested, it is often \"stale\" and prone to external breakage (i.e.
-        YouTube changing their logic).
+        due to being extensively tested, it is often \"stale\" and prone to external breakage.
         \n\n
         \"Nightly\" releases are published before midnight on any day that sees changes to the
         codebase of YtDlp. This is the RECOMMENDED channel.

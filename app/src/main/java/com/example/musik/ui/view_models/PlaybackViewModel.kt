@@ -133,7 +133,7 @@ class PlaybackViewModel(
 			}
 
 			override fun onPlayerError(error: PlaybackException) {
-				Log.e("PlaybackViewModel", "Playback error: ${error.errorCodeName}", error)
+				Log.e("PlaybackViewModel", "PLAYBACK ERROR: ${error.errorCodeName}", error)
 
 				val controller = mediaController ?: return
 				val failedIndex = controller.currentMediaItemIndex
@@ -151,13 +151,9 @@ class PlaybackViewModel(
 					}
 				}
 
-				// Continue playback if there's any remaining items
-				if (controller.mediaItemCount > 0) {
-					controller.prepare()
-					controller.play()
-					isPlaying.value = true
-				} else {
-					isPlaying.value = false
+				controller.pause()
+				isPlaying.value = false
+				if (controller.mediaItemCount == 0) {
 					currentTrack.value = null
 				}
 			}

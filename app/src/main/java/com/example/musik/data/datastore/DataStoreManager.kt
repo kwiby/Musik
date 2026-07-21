@@ -39,7 +39,7 @@ class DataStoreManager(
 	}
 
 	// --===--  YtDlp Version  --===--
-	val ytdlpVersion: Flow<String> = appContext.dataStore.data.map { prefs ->
+	val ytDlpVersion: Flow<String> = appContext.dataStore.data.map { prefs ->
 		prefs[YTDLP_VERSION] ?: "UNKNOWN"
 	}
 	suspend fun setYtDlpVersion(newVersion: String) {
