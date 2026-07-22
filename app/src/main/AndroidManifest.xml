@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <attribution android:tag="@string/empty" android:label="@string/attribution_description" />
+    <attribution android:tag="audioPlayback" android:label="@string/attribution_description" />
+
     <!-- PERMISSION -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
         tools:ignore="ForegroundServicesPolicy" />
@@ -48,5 +51,4 @@
             </intent-filter>
         </service>
     </application>
-
 </manifest>

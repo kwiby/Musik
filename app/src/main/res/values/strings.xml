@@ -48,9 +48,17 @@
 
     <string name="downloader_info_msg_empty" translatable="true">Enter a link to continue</string>
     <string name="downloader_info_msg_loading" translatable="true">Loading</string>
-    <string name="downloader_info_msg_processing" translatable="true">Processing</string>
+    <string name="downloader_info_msg_processing" translatable="true">
+        Processing
+        \n
+        This may take some time
+    </string>
     <string name="downloader_info_msg_downloading" translatable="true">Downloading</string>
-    <string name="downloader_info_msg_finishing" translatable="true">Installing and finalizing</string>
+    <string name="downloader_info_msg_finishing" translatable="true">
+        Installing and finalizing
+        \n
+        This may take some time
+    </string>
     <string name="downloader_info_msg_invalid_link" translatable="true">Link is invalid</string>
     <string name="downloader_info_msg_outdated_ytdlp" translatable="true">Please update YtDlp in settings</string>
     <string name="downloader_info_msg_success" translatable="true">Download completed</string>
@@ -82,7 +90,17 @@
         \"Master\" provides the latest fixes and features, but may be prone to bugs or regressions.
     </string>
 
+    <!-- Crash Screen -->
+    <string name="crash_title">A CRASH HAS OCCURRED</string>
+    <string name="copy_crash_log">Copy Crash Log</string>
+    <string name="save_crash_log">Save Crash Log</string>
+    <string name="restart_app">Restart App</string>
+
 
     <!-- Null Value Defaults -->
     <string name="duration_null_value_default" translatable="true">0:00:00</string>
+
+    <!-- "attributionTag  not declared in manifest of com.example.musiky" -->
+    <string name="empty" />
+    <string name="attribution_description">Audio Playback</string>
 </resources>

@@ -44,9 +44,6 @@ class AddYtMusicViewModel(
 	private val _hasValidFolderPerms = MutableStateFlow<Boolean?>(null)
 	val hasValidFolderPerms = _hasValidFolderPerms.asStateFlow()
 
-	//private val _isLinkValid = MutableStateFlow(false)
-	//val isLinkValid = _isLinkValid.asStateFlow()
-
 	private val _ytLink = MutableStateFlow("")
 	val ytLink = _ytLink.asStateFlow()
 
@@ -63,7 +60,6 @@ class AddYtMusicViewModel(
 
 	fun checkValidLink(): Boolean {
 		val result = ytDlp.checkValidLink(_ytLink.value)
-		//_isLinkValid.value = result
 
 		return result
 	}
@@ -124,7 +120,6 @@ class AddYtMusicViewModel(
 
 	fun onYouTubeLinkChange(newLink: String) {
 		_ytLink.value = newLink
-		//_isLinkValid.value = false
 	}
 
 	fun resetAddYtMusic() {
@@ -132,7 +127,6 @@ class AddYtMusicViewModel(
 		if (!isProcessing()) {
 			_uiState.value = DownloaderUiState.Empty
 		}
-		//_isLinkValid.value = false
 	}
 }
 

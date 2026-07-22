@@ -102,7 +102,7 @@ fun DownloadContainer(
 								100 -> stringResource(R.string.downloader_info_msg_finishing)
 								0, -1 -> stringResource(R.string.downloader_info_msg_processing)
 								else -> stringResource(R.string.downloader_info_msg_downloading) +
-										" (${downloadPercent}% - $downloadSpeed - $eta)"
+										"\n(${downloadPercent}% - $downloadSpeed - $eta)"
 							}
 						AddYtMusicViewModel.DownloaderUiState.InvalidLink
 							-> stringResource(R.string.downloader_info_msg_invalid_link)

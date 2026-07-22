@@ -14,11 +14,11 @@ android {
 
     defaultConfig {
         applicationId = "com.example.musiky"
-        minSdk = 24
+        minSdk = 29
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 53
-        versionName = "1.8.4"
+        versionCode = 54
+        versionName = "1.8.5"
 
         ndk {
             abiFilters.add("x86")

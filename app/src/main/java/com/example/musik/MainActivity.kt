@@ -1,5 +1,6 @@
 package com.example.musik
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -8,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.musik.crash_handling.CrashScreen
 import com.example.musik.ui.MusikApplication
 import com.example.musik.ui.misc.FolderManager
 import com.example.musik.ui.misc.LocalFolderManager
@@ -30,6 +32,8 @@ class MainActivity : ComponentActivity() {
 			dataStoreManager = dataStoreManager
 		)
 
+		val crashLog = intent.getStringExtra("crash_log")
+
 		splashScreen.setKeepOnScreenCondition {
 			!navViewModel.isReady.value
 		}
@@ -38,8 +42,21 @@ class MainActivity : ComponentActivity() {
 			MusikTheme(
 				appTheme = AppTheme.NIGHT
 			) {
-				CompositionLocalProvider(LocalFolderManager provides folderManager) {
-					MusikApp(navViewModel = navViewModel)
+				if (crashLog != null) {
+					CrashScreen(
+						crashLog = crashLog,
+						onRestart = {
+							val restartIntent = Intent(this, MainActivity::class.java).apply {
+								flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+							}
+							startActivity(restartIntent)
+							finish()
+						}
+					)
+				} else {
+					CompositionLocalProvider(LocalFolderManager provides folderManager) {
+						MusikApp(navViewModel = navViewModel)
+					}
 				}
 			}
 		}

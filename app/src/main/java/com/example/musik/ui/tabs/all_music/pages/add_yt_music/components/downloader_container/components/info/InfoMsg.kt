@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun InfoMsg(
@@ -18,7 +19,8 @@ fun InfoMsg(
 		Text(
 			text = text,
 			style = MaterialTheme.typography.titleSmall,
-			color = MaterialTheme.colorScheme.onSecondary
+			color = MaterialTheme.colorScheme.onSecondary,
+			textAlign = TextAlign.Center
 		)
 	}
 }

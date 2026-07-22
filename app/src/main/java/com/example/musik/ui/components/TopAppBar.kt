@@ -26,7 +26,7 @@ import com.example.musik.ui.view_models.Screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MusikTopAppBar(
-	navViewModel: NavViewModel
+	navViewModel: NavViewModel?
 ) {
 	TopAppBar(
 		title = {
@@ -54,12 +54,14 @@ fun MusikTopAppBar(
 					)
 				}
 
-				CustomIconButton(
-					iconImageVector =  Icons.Rounded.Settings,
-					contentDescription =  stringResource(R.string.settings_button),
-					colour =  MaterialTheme.colorScheme.onSurfaceVariant
-				) {
-					navViewModel.navToScreen(Screen.SETTINGS)
+				if (navViewModel != null) {
+					CustomIconButton(
+						iconImageVector =  Icons.Rounded.Settings,
+						contentDescription =  stringResource(R.string.settings_button),
+						colour =  MaterialTheme.colorScheme.onSurfaceVariant
+					) {
+						navViewModel.navToScreen(Screen.SETTINGS)
+					}
 				}
 			}
 		},
