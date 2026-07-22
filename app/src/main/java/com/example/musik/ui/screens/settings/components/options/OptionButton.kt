@@ -43,9 +43,9 @@ fun OptionButton(
 			},
 		shape = MaterialTheme.shapes.medium,
 		color = if (isSelected) {
-			MaterialTheme.colorScheme.outlineVariant
+			MaterialTheme.colorScheme.outline
 		} else {
-			MaterialTheme.colorScheme.secondaryContainer
+			MaterialTheme.colorScheme.onSurface
 		},
 		border = BorderStroke(
 			dimensionResource(R.dimen.option_button_border_thickness),

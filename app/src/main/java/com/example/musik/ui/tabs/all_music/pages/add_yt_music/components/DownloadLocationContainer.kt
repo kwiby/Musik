@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
-import com.example.musik.ui.misc.LocalFolderManager
+import com.example.musik.ui.misc.folder_manager.LocalFolderManager
 import com.example.musik.ui.view_models.AddYtMusicViewModel
 
 @Composable

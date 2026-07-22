@@ -50,8 +50,8 @@ object ViewModelProvider {
 			AddYtMusicViewModel(
 				musikApplication(),
 				musikApplication().container.dataStoreManager,
-				musikApplication().container.audioFileRepository,
-				musikApplication().container.ytDlp
+				musikApplication().container.ytDlp,
+				musikApplication().container.audioFileRepository
 			)
 		}
 	}

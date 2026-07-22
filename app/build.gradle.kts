@@ -17,7 +17,7 @@ android {
         minSdk = 29
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 54
+        versionCode = 55
         versionName = "1.8.5"
 
         ndk {

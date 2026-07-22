@@ -24,7 +24,7 @@ import com.yausername.youtubedl_android.YoutubeDL
 fun UpdateYtDlpOption(
 	settingsViewModel: SettingsViewModel
 ) {
-	val dataStoreYtDlpVersion by settingsViewModel.dataStoreYtDlpVersion.collectAsStateWithLifecycle(initialValue = "")
+	val dataStoreYtDlpVersion by settingsViewModel.dataStoreYtDlpVersion.collectAsStateWithLifecycle()
 	val ytDlpVersion by settingsViewModel.ytDlpVersion.collectAsStateWithLifecycle()
 
 	OptionHeader(stringResource(R.string.settings_header_update_ytdlp))
@@ -35,8 +35,8 @@ fun UpdateYtDlpOption(
 		Row {
 			Text(
 				text = stringResource(R.string.settings_update_ytdlp_option_cur_version),
+				color = MaterialTheme.colorScheme.onSecondary,
 				style = MaterialTheme.typography.labelLarge.copy(
-					color = MaterialTheme.colorScheme.onSecondary,
 					fontWeight = FontWeight.W400
 				)
 			)
@@ -45,13 +45,12 @@ fun UpdateYtDlpOption(
 
 			Text(
 				text = if (ytDlpVersion == "UNKNOWN") {
-					dataStoreYtDlpVersion
+					dataStoreYtDlpVersion ?: "UNKNOWN"
 				} else {
 					ytDlpVersion
 				},
-				style = MaterialTheme.typography.labelLarge.copy(
-					color = MaterialTheme.colorScheme.onSecondary
-				)
+				color = MaterialTheme.colorScheme.onSecondary,
+				style = MaterialTheme.typography.labelLarge
 			)
 		}
 
@@ -60,9 +59,8 @@ fun UpdateYtDlpOption(
 		// --===--  Channels Description  --===--
 		Text(
 			text = stringResource(R.string.settings_update_ytdlp_option_description),
-			style = MaterialTheme.typography.labelMedium.copy(
-				color = MaterialTheme.colorScheme.onSurfaceVariant
-			)
+			color = MaterialTheme.colorScheme.onSurfaceVariant,
+			style = MaterialTheme.typography.labelMedium
 		)
 
 		Spacer(Modifier.height(dimensionResource(R.dimen.settings_update_ytdlp_description_bottom_padding)))

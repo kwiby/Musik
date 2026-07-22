@@ -29,7 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.LoadingIndicator
-import com.example.musik.ui.misc.LocalFolderManager
+import com.example.musik.ui.misc.folder_manager.LocalFolderManager
 import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.DownloadLocationContainer
 import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.downloader_container.DownloadContainer
 import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.info.NoDownloadLocationMsg

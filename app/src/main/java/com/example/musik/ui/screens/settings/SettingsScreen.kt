@@ -28,8 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
+import com.example.musik.ui.components.LoadingIndicator
 import com.example.musik.ui.screens.settings.components.options.app_icon.AppIconOption
 import com.example.musik.ui.screens.settings.components.options.downloading.DownloadingOption
 import com.example.musik.ui.screens.settings.components.options.entry_tab.EntryTabOption
@@ -45,6 +47,9 @@ fun SettingsScreen(
 	settingsViewModel: SettingsViewModel,
 	navViewModel: NavViewModel
 ) {
+	val dataStoreYtDlpVersion by settingsViewModel.dataStoreYtDlpVersion.collectAsStateWithLifecycle()
+	val dataStoreDoConvertMp3 by settingsViewModel.dataStoreDoConvertMp3.collectAsStateWithLifecycle()
+
 	val scrollState = rememberScrollState()
 	val hasScrolled by remember {
 		derivedStateOf { scrollState.value > 0 }
@@ -110,12 +115,16 @@ fun SettingsScreen(
 			) {
 				Spacer(Modifier.height(dimensionResource(R.dimen.settings_options_top_padding)))
 
-				EntryTabOption(navViewModel)
-				ThemeOption()
-				AppIconOption()
-				DownloadingOption()
-				UpdateYtDlpOption(settingsViewModel)
-				UpdateMusikOption()
+				if (dataStoreYtDlpVersion == null || dataStoreDoConvertMp3 == null) {
+					LoadingIndicator()
+				} else {
+					EntryTabOption(navViewModel)
+					ThemeOption()
+					AppIconOption()
+					DownloadingOption(settingsViewModel)
+					UpdateYtDlpOption(settingsViewModel)
+					UpdateMusikOption()
+				}
 
 				Spacer(Modifier.height(dimensionResource(R.dimen.settings_options_bottom_padding)))
 			}
