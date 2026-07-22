@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -32,17 +33,19 @@ fun DownloadingOption(
 			modifier = Modifier.weight(1f)
 		) {
 			Text(
-				text = "Convert all audio files to mp3",
+				text = stringResource(R.string.settings_downloading_option_title),
 				color = MaterialTheme.colorScheme.onSecondary,
 				style = MaterialTheme.typography.labelLarge
 			)
 
 			Text(
-				text = "Enabling this will lengthen the overall download time",
+				text = stringResource(R.string.settings_downloading_option_description),
 				color = MaterialTheme.colorScheme.onSurfaceVariant,
 				style = MaterialTheme.typography.labelMedium
 			)
 		}
+
+		Spacer(Modifier.width(dimensionResource(R.dimen.medium_padding)))
 
 		Switch(
 			checked = doConvertMp3 ?: false,

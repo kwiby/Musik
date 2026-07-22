@@ -17,8 +17,8 @@ android {
         minSdk = 29
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 55
-        versionName = "1.8.6"
+        versionCode = 56
+        versionName = "1.8.7"
 
         ndk {
             abiFilters.add("x86")

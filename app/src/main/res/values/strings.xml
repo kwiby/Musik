@@ -73,6 +73,9 @@
     <string name="settings_header_update_ytdlp" translatable="true">Update YtDlp</string>
     <string name="settings_header_update_musik" translatable="true">Update Musik</string>
 
+    <string name="settings_downloading_option_title" translatable="true">Convert all audio files to mp3</string>
+    <string name="settings_downloading_option_description" translatable="true">Enabling this will lengthen the overall download time</string>
+
     <string name="settings_update_ytdlp_option_cur_version">Current Version:</string>
     <string name="settings_update_ytdlp_option_stable">Stable</string>
     <string name="settings_update_ytdlp_option_nightly">Nightly</string>
