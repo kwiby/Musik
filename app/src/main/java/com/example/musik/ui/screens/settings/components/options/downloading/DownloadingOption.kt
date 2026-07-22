@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -47,18 +49,20 @@ fun DownloadingOption(
 
 		Spacer(Modifier.width(dimensionResource(R.dimen.medium_padding)))
 
-		Switch(
-			checked = doConvertMp3 ?: false,
-			onCheckedChange = { settingsViewModel.toggleDoConvertMp3() },
-			colors = SwitchDefaults.colors(
-				uncheckedThumbColor = MaterialTheme.colorScheme.outline,
-				uncheckedBorderColor = MaterialTheme.colorScheme.outline,
-				uncheckedTrackColor = MaterialTheme.colorScheme.onSurface,
-				checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-				checkedBorderColor = MaterialTheme.colorScheme.outline,
-				checkedTrackColor = MaterialTheme.colorScheme.outline
+		CompositionLocalProvider(LocalRippleConfiguration provides null) {
+			Switch(
+				checked = doConvertMp3 ?: false,
+				onCheckedChange = { settingsViewModel.toggleDoConvertMp3() },
+				colors = SwitchDefaults.colors(
+					uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+					uncheckedBorderColor = MaterialTheme.colorScheme.outline,
+					uncheckedTrackColor = MaterialTheme.colorScheme.onSurface,
+					checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+					checkedBorderColor = MaterialTheme.colorScheme.outline,
+					checkedTrackColor = MaterialTheme.colorScheme.outline
+				)
 			)
-		)
+		}
 	}
 
 	Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))

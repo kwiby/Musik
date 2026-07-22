@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -23,6 +24,7 @@ import com.example.musik.R
 import com.example.musik.ui.components.CustomIconButton
 import com.example.musik.ui.components.LoadingIndicator
 import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.YouTubeLinkField
+import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.downloader_container.components.VideoInfoCard
 import com.example.musik.ui.tabs.all_music.pages.add_yt_music.components.downloader_container.components.info.InfoMsg
 import com.example.musik.ui.view_models.AddYtMusicViewModel
 
@@ -54,10 +56,10 @@ fun DownloadContainer(
 
 			Spacer(Modifier.width(dimensionResource(R.dimen.yt_link_field_right_padding)))
 
-			// --===--  Download Button  --===--
+			// --===--  Start Download Button  --===--
 			CustomIconButton(
 				iconImageVector = Icons.Rounded.Download,
-				contentDescription = stringResource(R.string.yt_link_field_submit_button),
+				contentDescription = stringResource(R.string.yt_link_field_start_button),
 				colour = when(uiState) {
 					is AddYtMusicViewModel.DownloaderUiState.Loading -> MaterialTheme.colorScheme.onSurface
 					is AddYtMusicViewModel.DownloaderUiState.Downloading -> MaterialTheme.colorScheme.onSurface
@@ -65,7 +67,22 @@ fun DownloadContainer(
 				}
 			) {
 				if (!addYtMusicViewModel.isProcessing()) {
-					addYtMusicViewModel.downloadButton()
+					addYtMusicViewModel.startDownloadButton()
+				}
+			}
+
+			// --===--  Stop Download Button  --===--
+			CustomIconButton(
+				iconImageVector = Icons.Rounded.Cancel,
+				contentDescription = stringResource(R.string.yt_link_field_stop_button),
+				colour = when(uiState) {
+					is AddYtMusicViewModel.DownloaderUiState.Loading -> MaterialTheme.colorScheme.onSecondary
+					is AddYtMusicViewModel.DownloaderUiState.Downloading -> MaterialTheme.colorScheme.onSecondary
+					else -> MaterialTheme.colorScheme.onSurface
+				}
+			) {
+				if (addYtMusicViewModel.isProcessing()) {
+					addYtMusicViewModel.stopDownloadButton()
 				}
 			}
 
@@ -99,8 +116,8 @@ fun DownloadContainer(
 							-> stringResource(R.string.downloader_info_msg_loading)
 						AddYtMusicViewModel.DownloaderUiState.Downloading
 							-> when (downloadPercent) {
-								100 -> stringResource(R.string.downloader_info_msg_finishing)
-								0, -1 -> stringResource(R.string.downloader_info_msg_processing)
+								100f -> stringResource(R.string.downloader_info_msg_finishing)
+								0f, -1f -> stringResource(R.string.downloader_info_msg_processing)
 								else -> stringResource(R.string.downloader_info_msg_downloading) +
 										"\n(${downloadPercent}% - $downloadSpeed - $eta)"
 							}
@@ -118,7 +135,14 @@ fun DownloadContainer(
 				if (uiState == AddYtMusicViewModel.DownloaderUiState.Loading
 					|| uiState == AddYtMusicViewModel.DownloaderUiState.Downloading) {
 					Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
-					LoadingIndicator(includeDefaultHeight = false)
+					LoadingIndicator(
+						includeDefaultHeight = false,
+						fillMaxSize = false
+					)
+				}
+
+				if (uiState != AddYtMusicViewModel.DownloaderUiState.Empty) {
+					VideoInfoCard(addYtMusicViewModel)
 				}
 			}
 		}

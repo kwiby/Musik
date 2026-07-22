@@ -44,7 +44,8 @@
     <string name="set_location_content_description" translatable="true">Set a download location</string>
     <string name="link_download_content_description" translatable="true">Download music by YouTube Link</string>
     <string name="yt_link_field" translatable="true">Enter a YouTube video link</string>
-    <string name="yt_link_field_submit_button" translatable="true">Submit YouTube link</string>
+    <string name="yt_link_field_start_button" translatable="true">Start Download</string>
+    <string name="yt_link_field_stop_button" translatable="true">Stop Download</string>
 
     <string name="downloader_info_msg_empty" translatable="true">Enter a link to continue</string>
     <string name="downloader_info_msg_loading" translatable="true">Loading</string>

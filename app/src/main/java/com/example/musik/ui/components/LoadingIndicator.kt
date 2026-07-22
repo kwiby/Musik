@@ -14,7 +14,8 @@ import com.example.musik.R
 
 @Composable
 fun LoadingIndicator(
-	includeDefaultHeight: Boolean = true
+	includeDefaultHeight: Boolean = true,
+	fillMaxSize: Boolean = true
 ) {
 	if (includeDefaultHeight) {
 		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.x_large_padding)))
@@ -22,7 +23,11 @@ fun LoadingIndicator(
 
 	Box(
 		contentAlignment = Alignment.TopCenter,
-		modifier = Modifier.fillMaxSize()
+		modifier = if (fillMaxSize) {
+			Modifier.fillMaxSize()
+		} else {
+			Modifier
+		}
 	) {
 		CircularProgressIndicator(color = MaterialTheme.colorScheme.onSecondary)
 	}

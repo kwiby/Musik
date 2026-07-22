@@ -6,7 +6,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
+import com.example.musik.data.data_classes.VideoInfo
 import com.example.musik.data.datastore.DataStoreManager
+import com.example.musik.ui.misc.formatDuration
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLRequest
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.io.File
 
 class YtDlp(
@@ -25,8 +28,11 @@ class YtDlp(
 		data object Success: DownloadResult
 		data object OutdatedYtDlp: DownloadResult
 		data object VideoUnavailable: DownloadResult
+		data object Cancelled: DownloadResult
 		data object Error: DownloadResult
 	}
+
+	private var isCancelled = true
 
 	private val linkCheckRegex = Regex(
 		"""^(https?://)?(www\.|m\.)?(youtube\.com/watch\?v=|youtu\.be/)[a-zA-Z0-9_-]{11}(&\S*)?(\?\S*)?$"""
@@ -34,29 +40,34 @@ class YtDlp(
 	private val downloadSpeedRegex = Regex(
 		"""at\s+([\d.]+\s*\w+/s)"""
 	)
-	private val etaRegex = Regex(
-		"""ETA\s+(\d+:\d+)"""
-	)
 
-	private val _downloadPercent = MutableStateFlow(0)
-	val downloadPercent: StateFlow<Int> = _downloadPercent.asStateFlow()
+	private val _videoInfo = MutableStateFlow<VideoInfo?>(null)
+	val videoInfo: StateFlow<VideoInfo?> = _videoInfo.asStateFlow()
 
-	private val _downloadSpeed = MutableStateFlow("0.0KiB/s")
+	private val _downloadPercent = MutableStateFlow(0f)
+	val downloadPercent: StateFlow<Float> = _downloadPercent.asStateFlow()
+
+	private val _downloadSpeed = MutableStateFlow("???")
 	val downloadSpeed = _downloadSpeed.asStateFlow()
 
-	private val _eta = MutableStateFlow("00:00")
+	private val _eta = MutableStateFlow("?? ?")
 	val eta = _eta.asStateFlow()
 
 	private val _ytDlpVersion = MutableStateFlow("UNKNOWN")
 	val ytDlpVersion: StateFlow<String> = _ytDlpVersion.asStateFlow()
 
 	private val processId: String = "MusikProcess"
-	private val callback = { percent: Float, _: Long, line: String ->
+	private val callback = { percent: Float, eta: Long, line: String ->
 		CoroutineScope(Dispatchers.Main).launch {
-			_downloadPercent.value = percent.toInt()
+			_downloadPercent.value = percent
 
 			extractDownloadSpeed(line)?.let { _downloadSpeed.value = it }
-			extractEta(line)?.let { _eta.value = it }
+			_eta.value = formatEta(eta)
+
+			if (line.trimStart().startsWith("{")) {
+				parseVideoInfoLine(line)?.let { _videoInfo.value = it }
+			}
+
 			Log.d("debug", line)
 		}
 		Unit
@@ -66,8 +77,9 @@ class YtDlp(
 	private fun extractDownloadSpeed(line: String): String? {
 		return downloadSpeedRegex.find(line)?.groupValues?.get(1)
 	}
-	private fun extractEta(line: String): String? {
-		return etaRegex.find(line)?.groupValues?.get(1)
+	private fun formatEta(eta: Long): String {
+		val ms = eta * 1000 // Eta is in seconds, so it must be converted to milliseconds
+		return ms.formatDuration()
 	}
 
 
@@ -76,6 +88,21 @@ class YtDlp(
 	}
 	private fun isVideoUnavailable(responseOutput: String): Boolean {
 		return responseOutput.contains("Video unavailable", ignoreCase = true)
+	}
+
+	private fun parseVideoInfoLine(line: String): VideoInfo? {
+		try {
+			val json = JSONObject(line)
+			return VideoInfo(
+				title = json.optString("title", "Unknown Title"),
+				artist = json.optString("artist").ifBlank { json.optString("uploader").ifBlank { "Unknown Artist" } },
+				duration = json.optDouble("duration").takeIf { !it.isNaN() }?.times(1000)?.toLong() ?: 0L, // s -> ms
+				thumbnailUrl = json.optString("thumbnail").ifBlank { null },
+			)
+		} catch (e: Exception) {
+			Log.e("YtDlp", "Failed to parse video info line: $line", e)
+			return null
+		}
 	}
 
 	private fun getMimeTypeFromExtension(extension: String): String {
@@ -116,16 +143,27 @@ class YtDlp(
 		}
 	}
 
+	private fun clearTempDir() {
+		val tempDir = File(appContext.cacheDir, "musik_temp_dir")
+		if (tempDir.exists()) {
+			tempDir.listFiles()?.forEach { it.delete() }
+		}
+	}
+
 	suspend fun startDownload(
 		doConvertMp3: Boolean,
 		downloadLocationStr: String,
 		link: String
 	): DownloadResult {
+		isCancelled = false
+
 		val tempDir = File(appContext.cacheDir, "musik_temp_dir")
 		if (!tempDir.exists()) {
 			tempDir.mkdirs()
 		}
-		tempDir.listFiles()?.forEach { it.delete() }
+		clearTempDir()
+
+		_videoInfo.value = null
 
 		val request = YoutubeDLRequest(link)
 		/*
@@ -141,6 +179,11 @@ class YtDlp(
 		request.addOption("--no-mtime")
 		request.addOption("--embed-thumbnail")
 		request.addOption("-o", "${tempDir.absolutePath}/%(title)s.%(ext)s")
+		request.addOption("--progress")
+		request.addOption(
+			"--print",
+			"before_dl:%(.{title,uploader,artist,duration,thumbnail})j"
+		)
 
 		try {
 			val response = withContext(Dispatchers.IO) {
@@ -164,7 +207,6 @@ class YtDlp(
 						downloadLocationStr.toUri()
 					)
 				}
-				_downloadPercent.value = 0
 
 				if (isMoveSuccess) {
 					emitToast("Download completed")
@@ -180,8 +222,14 @@ class YtDlp(
 				return DownloadResult.Error
 			}
 		} catch (e: Exception) {
-			Log.e("YtDlp", "DOWNLOAD FAILED: ${e.message}")
+			if (isCancelled) {
+				isCancelled = false
+				Log.w("YtDlp", "Download was stopped/canceled")
 
+				return DownloadResult.Cancelled
+			}
+
+			Log.e("YtDlp", "DOWNLOAD FAILED: ${e.message}")
 			return if (e.message != null) {
 				val msg = e.message!!
 
@@ -196,6 +244,21 @@ class YtDlp(
 			} else {
 				DownloadResult.Error
 			}
+		} finally {
+			_downloadPercent.value = 0f
+		}
+	}
+
+	fun stopDownload() {
+		isCancelled = true
+		try {
+			YoutubeDL.getInstance().destroyProcessById(processId)
+			emitToast("Downloading stopped")
+		} catch (e: Exception) {
+			Log.e("YtDlp", "Failed to stop the download", e)
+			emitToast("Failed to stop downloading")
+		} finally {
+			clearTempDir()
 		}
 	}
 

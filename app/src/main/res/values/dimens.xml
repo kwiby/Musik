@@ -98,5 +98,5 @@
 
     <dimen name="info_box_horizontal_padding">20dp</dimen>
     <dimen name="info_box_bottom_padding">80dp</dimen>
-    <dimen name="downloader_info_msg_offset">80dp</dimen>
+    <dimen name="downloader_info_msg_offset">30dp</dimen>
 </resources>
