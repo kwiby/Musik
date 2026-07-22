@@ -78,10 +78,25 @@ class YtDlp(
 		return responseOutput.contains("Video unavailable", ignoreCase = true)
 	}
 
+	private fun getMimeTypeFromExtension(extension: String): String {
+		return when (extension.lowercase()) {
+			"mp3" -> "audio/mpeg"
+			"m4a" -> "audio/mp4"
+			"opus" -> "audio/opus"
+			"ogg", "oga" -> "audio/ogg"
+			"wav" -> "audio/wav"
+			"flac" -> "audio/flac"
+			"webm" -> "audio/webm"
+			"aac" -> "audio/aac"
+			else -> "application/octet-stream"
+		}
+	}
+
 	private fun moveFileToDownloadLocation(appContext: Context, sourceFile: File, treeUri: Uri): Boolean {
 		try {
 			val downloadLocation = DocumentFile.fromTreeUri(appContext, treeUri)
-			val newFile = downloadLocation?.createFile("audio/mpeg", sourceFile.name)
+			val mimeType = getMimeTypeFromExtension(sourceFile.extension)
+			val newFile = downloadLocation?.createFile(mimeType, sourceFile.name)
 				?: throw Exception("Download location is null")
 
 			newFile.uri.let { destUri ->
@@ -102,6 +117,7 @@ class YtDlp(
 	}
 
 	suspend fun startDownload(
+		doConvertMp3: Boolean,
 		downloadLocationStr: String,
 		link: String
 	): DownloadResult {
@@ -109,6 +125,7 @@ class YtDlp(
 		if (!tempDir.exists()) {
 			tempDir.mkdirs()
 		}
+		tempDir.listFiles()?.forEach { it.delete() }
 
 		val request = YoutubeDLRequest(link)
 		/*
@@ -117,7 +134,7 @@ class YtDlp(
 		 */
 		request.addOption("-f", "bestaudio/best")
 		request.addOption("--extract-audio", "")
-		if (true) {
+		if (doConvertMp3) {
 			request.addOption("--audio-format", "mp3")
 		}
 		request.addOption("--add-metadata")
@@ -131,11 +148,13 @@ class YtDlp(
 			}
 
 			if (response.exitCode == 0) {
+				val validAudioExtensions = setOf("mp3", "m4a", "opus", "ogg", "wav", "flac", "webm", "aac")
+
 				val downloadedFile = tempDir.listFiles { file ->
-					file.extension == "mp3"
-				}?.firstOrNull()
+					file.extension.lowercase() in validAudioExtensions
+				}?.maxByOrNull { it.lastModified() }
 					?: run {
-						Log.e("YtDlp", "No mp3 file found in temp directory after download")
+						Log.e("YtDlp", "No audio file found in temp directory after download")
 						return DownloadResult.Error
 					}
 				val isMoveSuccess = withContext(Dispatchers.IO) {

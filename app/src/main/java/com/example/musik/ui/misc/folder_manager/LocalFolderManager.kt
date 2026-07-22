@@ -1,4 +1,4 @@
-package com.example.musik.ui.misc
+package com.example.musik.ui.misc.folder_manager
 
 import androidx.compose.runtime.staticCompositionLocalOf
 

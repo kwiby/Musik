@@ -11,8 +11,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.musik.crash_handling.CrashScreen
 import com.example.musik.ui.MusikApplication
-import com.example.musik.ui.misc.FolderManager
-import com.example.musik.ui.misc.LocalFolderManager
+import com.example.musik.ui.misc.folder_manager.FolderManager
+import com.example.musik.ui.misc.folder_manager.LocalFolderManager
 import com.example.musik.ui.theme.AppTheme
 import com.example.musik.ui.theme.MusikTheme
 import com.example.musik.ui.view_models.NavViewModel

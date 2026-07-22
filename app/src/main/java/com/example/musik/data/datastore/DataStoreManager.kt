@@ -1,6 +1,7 @@
 package com.example.musik.data.datastore
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -14,8 +15,9 @@ class DataStoreManager(
 ) {
 	companion object {
 		val DOWNLOAD_LOCATION_KEY = stringPreferencesKey("download_location")
-		val ENTRY_TAB = stringPreferencesKey("entry_tab")
-		val YTDLP_VERSION = stringPreferencesKey("ytdlp_version")
+		val ENTRY_TAB_KEY = stringPreferencesKey("entry_tab")
+		val YTDLP_VERSION_KEY = stringPreferencesKey("ytdlp_version")
+		val DO_CONVERT_MP3_KEY = booleanPreferencesKey("do_convert_mp3")
 	}
 
 	// --===--  Download Location  --===--
@@ -30,21 +32,31 @@ class DataStoreManager(
 
 	// --===--  Entry Tab  --===--
 	val entryTab: Flow<String> = appContext.dataStore.data.map { prefs ->
-		prefs[ENTRY_TAB] ?: "all_music"
+		prefs[ENTRY_TAB_KEY] ?: "all_music"
 	}
 	suspend fun setEntryTab(newTab: String) {
 		appContext.dataStore.edit { prefs ->
-			prefs[ENTRY_TAB] = newTab
+			prefs[ENTRY_TAB_KEY] = newTab
 		}
 	}
 
 	// --===--  YtDlp Version  --===--
 	val ytDlpVersion: Flow<String> = appContext.dataStore.data.map { prefs ->
-		prefs[YTDLP_VERSION] ?: "UNKNOWN"
+		prefs[YTDLP_VERSION_KEY] ?: "UNKNOWN"
 	}
 	suspend fun setYtDlpVersion(newVersion: String) {
 		appContext.dataStore.edit { prefs ->
-			prefs[YTDLP_VERSION] = newVersion
+			prefs[YTDLP_VERSION_KEY] = newVersion
+		}
+	}
+
+	// --===--  Do Convert Mp3  --===--
+	val doConvertMp3: Flow<Boolean> = appContext.dataStore.data.map { prefs ->
+		prefs[DO_CONVERT_MP3_KEY] ?: false
+	}
+	suspend fun setDoConvertMp3(newBool: Boolean) {
+		appContext.dataStore.edit { prefs ->
+			prefs[DO_CONVERT_MP3_KEY] = newBool
 		}
 	}
 }

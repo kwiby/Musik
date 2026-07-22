@@ -1,6 +1,5 @@
 package com.example.musik.ui.view_models
 
-//import com.example.musik.ui.misc.YtDlp.YtDlp
 import android.app.Application
 import android.net.ConnectivityManager
 import android.net.Network
@@ -9,7 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.musik.data.datastore.DataStoreManager
 import com.example.musik.data.repositories.audio_file.AudioFileRepository
-import com.example.musik.ui.misc.FolderManager
+import com.example.musik.ui.misc.folder_manager.FolderManager
 import com.example.musik.ui.misc.ytdlp.YtDlp
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -19,14 +18,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class AddYtMusicViewModel(
 	application: Application,
-	dataStoreManager: DataStoreManager,
-	private val audioFileRepo: AudioFileRepository,
-	private val ytDlp: YtDlp
+	private val dataStoreManager: DataStoreManager,
+	private val ytDlp: YtDlp,
+	private val audioFileRepo: AudioFileRepository
 ) : AndroidViewModel(application) {
 	sealed interface DownloaderUiState {
 		data object Empty: DownloaderUiState // No actions executed yet
@@ -72,6 +72,7 @@ class AddYtMusicViewModel(
 		check(downloadLocation.value != null)
 
 		val downloadResult: YtDlp.DownloadResult = ytDlp.startDownload(
+			dataStoreManager.doConvertMp3.first(),
 			downloadLocation.value!!,
 			link
 		)
