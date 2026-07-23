@@ -6,12 +6,19 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.example.musik.data.data_classes.VideoInfo
 import com.example.musik.data.datastore.DataStoreManager
 import com.example.musik.data.repositories.audio_file.AudioFileRepository
 import com.example.musik.ui.misc.folder_manager.FolderManager
 import com.example.musik.ui.misc.ytdlp.YtDlp
-import kotlinx.coroutines.Job
+import com.example.musik.work_manager.DownloadWorker
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,13 +27,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class AddYtMusicViewModel(
 	application: Application,
-	private val dataStoreManager: DataStoreManager,
+	dataStoreManager: DataStoreManager,
 	private val ytDlp: YtDlp,
 	private val audioFileRepo: AudioFileRepository
 ) : AndroidViewModel(application) {
@@ -40,7 +46,7 @@ class AddYtMusicViewModel(
 		data object Error: DownloaderUiState // Unexpected errors
 	}
 
-	private var downloadJob: Job? = null
+	private val workManager = WorkManager.getInstance(application)
 
 	private val _uiState = MutableStateFlow<DownloaderUiState>(DownloaderUiState.Empty)
 	val uiState: StateFlow<DownloaderUiState> = _uiState.asStateFlow()
@@ -64,35 +70,50 @@ class AddYtMusicViewModel(
 	val eta: StateFlow<String> = ytDlp.eta
 
 
-	private suspend fun startDownload(link: String) {
-		/*
-		 * This function should only be called when the download location is already selected,
-		 * hence the non-null value
-		 */
-		check(downloadLocation.value != null)
-
-		val downloadResult: YtDlp.DownloadResult = ytDlp.startDownload(
-			dataStoreManager.doConvertMp3.first(),
-			downloadLocation.value!!,
-			link
-		)
-
-		when (downloadResult) {
-			YtDlp.DownloadResult.Success -> _uiState.value = DownloaderUiState.Success
-			YtDlp.DownloadResult.OutdatedYtDlp -> _uiState.value = DownloaderUiState.OutdatedYtDlp
-			YtDlp.DownloadResult.VideoUnavailable -> _uiState.value = DownloaderUiState.InvalidLink
-			YtDlp.DownloadResult.Cancelled -> {} // State already change to Empty in stopDownload()
-			YtDlp.DownloadResult.Error -> _uiState.value = DownloaderUiState.Error
+	private fun applyWorkInfo(workInfo: WorkInfo) {
+		when (workInfo.state) {
+			WorkInfo.State.ENQUEUED -> _uiState.value = DownloaderUiState.Loading
+			WorkInfo.State.RUNNING -> _uiState.value = DownloaderUiState.Downloading
+			WorkInfo.State.SUCCEEDED -> _uiState.value = DownloaderUiState.Success
+			WorkInfo.State.CANCELLED -> {
+				if (!isProcessing()) {
+					_uiState.value = DownloaderUiState.Empty
+				}
+			}
+			WorkInfo.State.FAILED -> {
+				_uiState.value = when (workInfo.outputData.getString(DownloadWorker.KEY_FAILURE_REASON)) {
+					DownloadWorker.REASON_OUTDATED_YTDLP -> DownloaderUiState.OutdatedYtDlp
+					DownloadWorker.REASON_VIDEO_UNAVAILABLE -> DownloaderUiState.InvalidLink
+					DownloadWorker.REASON_CANCELLED -> DownloaderUiState.Empty
+					else -> DownloaderUiState.Error
+				}
+			}
+			WorkInfo.State.BLOCKED -> {}
 		}
 	}
 
-	private fun stopDownload() {
-		ytDlp.stopDownload()
+	private fun enqueueDownload(link: String) {
+		check(downloadLocation.value != null)
 
-		downloadJob?.cancel()
-		downloadJob = null
+		val request = OneTimeWorkRequestBuilder<DownloadWorker>()
+			.setConstraints(
+				Constraints.Builder()
+					.setRequiredNetworkType(NetworkType.CONNECTED)
+					.build()
+			)
+			.setInputData(
+				workDataOf(
+					DownloadWorker.KEY_LINK to link,
+					DownloadWorker.KEY_DOWNLOAD_LOCATION to downloadLocation.value
+				)
+			)
+			.build()
 
-		_uiState.value = DownloaderUiState.Empty
+		workManager.enqueueUniqueWork(
+			DownloadWorker.WORK_NAME,
+			ExistingWorkPolicy.REPLACE,
+			request
+		)
 	}
 
 	fun checkValidLink(): Boolean {
@@ -109,11 +130,11 @@ class AddYtMusicViewModel(
 			val link = _ytLink.value
 			_uiState.value = DownloaderUiState.Loading
 
-			downloadJob = viewModelScope.launch {
+			viewModelScope.launch {
 				val result = checkValidLink()
 				if (result) {
 					_uiState.value = DownloaderUiState.Downloading
-					startDownload(link)
+					enqueueDownload(link)
 				} else {
 					_uiState.value = DownloaderUiState.InvalidLink
 				}
@@ -122,7 +143,9 @@ class AddYtMusicViewModel(
 	}
 
 	fun stopDownloadButton() {
-		stopDownload()
+		ytDlp.stopDownload()
+		workManager.cancelUniqueWork(DownloadWorker.WORK_NAME)
+		_uiState.value = DownloaderUiState.Empty
 	}
 
 	fun checkFolderPerms(folderManager: FolderManager) {
@@ -147,29 +170,19 @@ class AddYtMusicViewModel(
 			_uiState.value = DownloaderUiState.Empty
 		}
 	}
+
+
+	init {
+		workManager.getWorkInfosForUniqueWorkLiveData(DownloadWorker.WORK_NAME)
+			.observeForever { workInfos ->
+				val workInfo = workInfos?.firstOrNull() ?: return@observeForever
+				applyWorkInfo(workInfo)
+			}
+	}
 }
 
 
 // --===--  ConnectivityManager Stuff  --===--
-/*
-fun ConnectivityManager.isConnected(): Boolean {
-	val network = this.activeNetwork ?: return false
-	val capabilities = this.getNetworkCapabilities(network) ?: return false
-
-	val hasInternetCapability =
-		capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-				&& capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-	val hasTransportCapability =
-		capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-				|| capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-				|| capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-				|| capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
-
-
-	return hasInternetCapability && hasTransportCapability
-}
- */
-
 fun ConnectivityManager.observeConnectivity(): Flow<Boolean> = callbackFlow {
 	val networkCallback = object : ConnectivityManager.NetworkCallback() {
 		private fun isConnected(capabilities: NetworkCapabilities?): Boolean {

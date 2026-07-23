@@ -113,7 +113,7 @@ fun DownloadContainer(
 						AddYtMusicViewModel.DownloaderUiState.Empty
 							-> stringResource(R.string.downloader_info_msg_empty)
 						AddYtMusicViewModel.DownloaderUiState.Loading
-							-> stringResource(R.string.downloader_info_msg_loading)
+							-> stringResource(R.string.downloader_info_msg_processing)
 						AddYtMusicViewModel.DownloaderUiState.Downloading
 							-> when (downloadPercent) {
 								100f -> stringResource(R.string.downloader_info_msg_finishing)
@@ -141,7 +141,10 @@ fun DownloadContainer(
 					)
 				}
 
-				if (uiState != AddYtMusicViewModel.DownloaderUiState.Empty) {
+				if (uiState != AddYtMusicViewModel.DownloaderUiState.Empty
+					&& uiState != AddYtMusicViewModel.DownloaderUiState.InvalidLink
+					&& uiState != AddYtMusicViewModel.DownloaderUiState.Loading
+				) {
 					VideoInfoCard(addYtMusicViewModel)
 				}
 			}

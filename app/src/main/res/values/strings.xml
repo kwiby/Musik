@@ -48,7 +48,6 @@
     <string name="yt_link_field_stop_button" translatable="true">Stop Download</string>
 
     <string name="downloader_info_msg_empty" translatable="true">Enter a link to continue</string>
-    <string name="downloader_info_msg_loading" translatable="true">Loading</string>
     <string name="downloader_info_msg_processing" translatable="true">
         Processing
         \n
@@ -99,6 +98,11 @@
     <string name="copy_crash_log">Copy Crash Log</string>
     <string name="save_crash_log">Save Crash Log</string>
     <string name="restart_app">Restart App</string>
+
+    <!-- DownloadWorker -->
+    <string name="downloadworker_channel_name" translatable="true">WorkManager Notifications</string>
+    <string name="downloadworker_notif_title" translatable="true">Downloading</string>
+    <string name="downloadworker_notif_text" translatable="true">Musik is downloading an audio file</string>
 
 
     <!-- Null Value Defaults -->
