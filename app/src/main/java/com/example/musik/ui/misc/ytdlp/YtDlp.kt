@@ -21,6 +21,8 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.File
 
+private const val LOG_TAG = "YtDLp"
+
 class YtDlp(
 	private val appContext: Context
 ) {
@@ -100,7 +102,7 @@ class YtDlp(
 				thumbnailUrl = json.optString("thumbnail").ifBlank { null },
 			)
 		} catch (e: Exception) {
-			Log.e("YtDlp", "Failed to parse video info line: $line", e)
+			Log.e(LOG_TAG, "Failed to parse video info line: $line", e)
 			return null
 		}
 	}
@@ -137,7 +139,7 @@ class YtDlp(
 
 			return true
 		} catch (e: Exception) {
-			Log.e("YtDlp", "Failed to move file", e)
+			Log.e(LOG_TAG, "Failed to move file", e)
 
 			return false
 		}
@@ -197,7 +199,7 @@ class YtDlp(
 					file.extension.lowercase() in validAudioExtensions
 				}?.maxByOrNull { it.lastModified() }
 					?: run {
-						Log.e("YtDlp", "No audio file found in temp directory after download")
+						Log.e(LOG_TAG, "No audio file found in temp directory after download")
 						return DownloadResult.Error
 					}
 				val isMoveSuccess = withContext(Dispatchers.IO) {
@@ -216,7 +218,7 @@ class YtDlp(
 					return DownloadResult.Error
 				}
 			} else {
-				Log.e("YtDlp", "UNEXPECTED ERROR")
+				Log.e(LOG_TAG, "UNEXPECTED ERROR")
 
 				emitToast("Download failed")
 				return DownloadResult.Error
@@ -224,12 +226,12 @@ class YtDlp(
 		} catch (e: Exception) {
 			if (isCancelled) {
 				isCancelled = false
-				Log.w("YtDlp", "Download was stopped/canceled")
+				Log.w(LOG_TAG, "Download was stopped/canceled")
 
 				return DownloadResult.Cancelled
 			}
 
-			Log.e("YtDlp", "DOWNLOAD FAILED: ${e.message}")
+			Log.e(LOG_TAG, "DOWNLOAD FAILED: ${e.message}")
 			return if (e.message != null) {
 				val msg = e.message!!
 
@@ -255,7 +257,7 @@ class YtDlp(
 			YoutubeDL.getInstance().destroyProcessById(processId)
 			emitToast("Downloading stopped")
 		} catch (e: Exception) {
-			Log.e("YtDlp", "Failed to stop the download", e)
+			Log.e(LOG_TAG, "Failed to stop the download", e)
 			emitToast("Failed to stop downloading")
 		} finally {
 			clearTempDir()

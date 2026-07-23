@@ -141,7 +141,10 @@ fun DownloadContainer(
 					)
 				}
 
-				if (uiState != AddYtMusicViewModel.DownloaderUiState.Empty) {
+				if (uiState != AddYtMusicViewModel.DownloaderUiState.Empty
+					&& uiState != AddYtMusicViewModel.DownloaderUiState.InvalidLink
+					&& uiState != AddYtMusicViewModel.DownloaderUiState.Loading
+				) {
 					VideoInfoCard(addYtMusicViewModel)
 				}
 			}

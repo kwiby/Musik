@@ -25,6 +25,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
+private const val LOG_TAG = "PlaybackViewModel"
+
 class PlaybackViewModel(
 	application: MusikApplication
 ) : AndroidViewModel(application) {
@@ -133,7 +135,7 @@ class PlaybackViewModel(
 			}
 
 			override fun onPlayerError(error: PlaybackException) {
-				Log.e("PlaybackViewModel", "PLAYBACK ERROR: ${error.errorCodeName}", error)
+				Log.e(LOG_TAG, "PLAYBACK ERROR: ${error.errorCodeName}", error)
 
 				val controller = mediaController ?: return
 				val failedIndex = controller.currentMediaItemIndex
@@ -302,11 +304,11 @@ class PlaybackViewModel(
 				controller.play()
 				isPlaying.value = true
 			} else {
-				Log.e("PlaybackViewModel", "Track $id not found in queue.")
+				Log.e(LOG_TAG, "Track $id not found in queue.")
 			}
 		} else {
 			pendingPlayId = id
-			Log.e("PlaybackViewModel", "Cannot play music, mediaController is not ready.")
+			Log.e(LOG_TAG, "Cannot play music, mediaController is not ready.")
 		}
 	}
 
