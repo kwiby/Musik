@@ -100,6 +100,11 @@
     <string name="save_crash_log">Save Crash Log</string>
     <string name="restart_app">Restart App</string>
 
+    <!-- DownloadWorker -->
+    <string name="downloadworker_channel_name" translatable="true">WorkManager Notifications</string>
+    <string name="downloadworker_notif_title" translatable="true">Downloading</string>
+    <string name="downloadworker_notif_text" translatable="true">Musik is downloading an audio file</string>
+
 
     <!-- Null Value Defaults -->
     <string name="duration_null_value_default" translatable="true">0:00:00</string>
