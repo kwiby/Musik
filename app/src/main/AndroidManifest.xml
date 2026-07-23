@@ -2,11 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <attribution android:tag="@string/empty" android:label="@string/attribution_description" />
+    <attribution android:tag="audioPlayback" android:label="@string/attribution_description" />
+
     <!-- PERMISSION -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
         tools:ignore="ForegroundServicesPolicy" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
@@ -22,12 +24,16 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Musik">
+        android:extractNativeLibs="true"
+        android:theme="@style/Theme.Musik"
+        android:requestLegacyExternalStorage="true"> <!-- May or may not be needed -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Musik"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,5 +50,4 @@
             </intent-filter>
         </service>
     </application>
-
 </manifest>

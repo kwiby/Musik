@@ -13,9 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.musik.R
-import com.example.musik.ui.tabs.all_music.tabs.add_music.AddMusicScreen
-import com.example.musik.ui.tabs.all_music.tabs.music_list.MusicListScreen
+import com.example.musik.ui.tabs.all_music.pages.add_music.AddMusicPage
+import com.example.musik.ui.tabs.all_music.pages.add_yt_music.AddYtMusicPage
+import com.example.musik.ui.tabs.all_music.pages.music_list.MusicListScreen
 import com.example.musik.ui.view_models.AddMusicViewModel
+import com.example.musik.ui.view_models.AddYtMusicViewModel
 import com.example.musik.ui.view_models.MusicListViewModel
 import com.example.musik.ui.view_models.PlaybackViewModel
 import com.example.musik.ui.view_models.ViewModelProvider
@@ -24,9 +26,11 @@ import com.example.musik.ui.view_models.ViewModelProvider
 fun AllMusicTab(
 	musicListViewModel: MusicListViewModel = viewModel(factory = ViewModelProvider.Factory),
 	addMusicViewModel: AddMusicViewModel = viewModel(factory = ViewModelProvider.Factory),
+	addYtMusicViewModel: AddYtMusicViewModel = viewModel(factory = ViewModelProvider.Factory),
 	playbackViewModel: PlaybackViewModel
 ) {
 	var isAddingMusic by remember { mutableStateOf(false) }
+	var isAddingYtMusic by remember { mutableStateOf(false) }
 
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally
@@ -35,10 +39,21 @@ fun AllMusicTab(
 
 		if (isAddingMusic) {
 			addMusicViewModel.resetMusicAdding()
-			AddMusicScreen(addMusicViewModel) { isAddingMusic = false }
+			AddMusicPage(
+				addMusicViewModel
+			) { isAddingMusic = false }
+		} else if (isAddingYtMusic) {
+			AddYtMusicPage(
+				addYtMusicViewModel
+			) { isAddingYtMusic = false }
 		} else {
 			musicListViewModel.resetMusicList()
-			MusicListScreen(musicListViewModel, playbackViewModel) { isAddingMusic = true }
+			MusicListScreen(
+				musicListViewModel,
+				playbackViewModel,
+				{ isAddingMusic = true },
+				{ isAddingYtMusic = true }
+			)
 		}
 	}
 }

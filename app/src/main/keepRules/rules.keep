@@ -10,3 +10,12 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+
+-keep class com.yausername.** { *; }
+-keep class org.apache.commons.compress.archivers.zip.** { *; }
+
+# Backup for above
+#-keep class org.apache.commons.compress.** { *; }
+#-keepattributes Signature,InnerClasses,EnclosingMethod
+#-dontwarn org.apache.commons.compress.**

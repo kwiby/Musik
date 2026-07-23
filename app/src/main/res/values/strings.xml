@@ -1,14 +1,20 @@
 <resources>
+    <!-- App Name -->
     <string name="app_name" translatable="false">Musik</string>
 
-    <string name="all_music_tab" translatable="true">All Music</string>
-    <string name="playlists_tab" translatable="true">Playlists</string>
-    <string name="stats_tab" translatable="true">Statistics</string>
+    <!-- Tab Names -->
+    <string name="all_music" translatable="true">All Music</string>
+    <string name="playlists" translatable="true">Playlists</string>
+    <string name="stats" translatable="true">Statistics</string>
 
+    <!-- Info Messages -->
     <string name="no_permissions_msg" translatable="true">Allow audio permissions in settings</string>
     <string name="no_music_msg" translatable="true">No music added</string>
     <string name="no_audio_files_msg" translatable="true">No audio files</string>
+    <string name="no_download_location_msg" translatable="true">Select a download location to continue</string>
+    <string name="no_internet_msg" translatable="true">No internet connection</string>
 
+    <!-- Button Content Descriptions -->
     <string name="settings_button" translatable="true">Settings</string>
     <string name="add_music_button" translatable="true">Add Music</string>
     <string name="enter_move_mode_button" translatable="true">Move Music</string>
@@ -21,15 +27,84 @@
     <string name="refresh_button" translatable="true">Refresh</string>
     <string name="back_button" translatable="true">Back</string>
 
+    <!-- Other Music Stuff -->
     <string name="album_art" translatable="true">Album Art</string>
     <string name="add_music_search_bar" translatable="true">Search audio files</string>
     <string name="move_music" translatable="true">Move Music</string>
 
+    <!-- Playback Control Button Content Descriptions -->
     <string name="skip_prev" translatable="true">Skip to Previous</string>
     <string name="play_pause" translatable="true">Play/Pause</string>
     <string name="skip_next" translatable="true">Skip to Next</string>
     <string name="shuffle" translatable="true">Toggle Shuffle</string>
     <string name="loop_mode" translatable="true">Change Loop Mode</string>
 
+    <!-- Add YouTube Music Tab -->
+    <string name="no_location_selected" translatable="true">No download location selected</string>
+    <string name="set_location_content_description" translatable="true">Set a download location</string>
+    <string name="link_download_content_description" translatable="true">Download music by YouTube Link</string>
+    <string name="yt_link_field" translatable="true">Enter a YouTube video link</string>
+    <string name="yt_link_field_start_button" translatable="true">Start Download</string>
+    <string name="yt_link_field_stop_button" translatable="true">Stop Download</string>
+
+    <string name="downloader_info_msg_empty" translatable="true">Enter a link to continue</string>
+    <string name="downloader_info_msg_loading" translatable="true">Loading</string>
+    <string name="downloader_info_msg_processing" translatable="true">
+        Processing
+        \n
+        This may take some time
+    </string>
+    <string name="downloader_info_msg_downloading" translatable="true">Downloading</string>
+    <string name="downloader_info_msg_finishing" translatable="true">
+        Installing and finalizing
+        \n
+        This may take some time
+    </string>
+    <string name="downloader_info_msg_invalid_link" translatable="true">Link is invalid</string>
+    <string name="downloader_info_msg_outdated_ytdlp" translatable="true">Please update YtDlp in settings</string>
+    <string name="downloader_info_msg_success" translatable="true">Download completed</string>
+    <string name="downloader_info_msg_error" translatable="true">An error occurred</string>
+
+    <!-- Settings Page -->
+    <string name="settings_title" translatable="true">Settings</string>
+    <string name="settings_header_entry_tab" translatable="true">Entry Tab</string>
+    <string name="settings_header_theme" translatable="true">Theme</string>
+    <string name="settings_header_app_icon" translatable="true">App Icon</string>
+    <string name="settings_header_downloading" translatable="true">Downloading</string>
+    <string name="settings_header_update_ytdlp" translatable="true">Update YtDlp</string>
+    <string name="settings_header_update_musik" translatable="true">Update Musik</string>
+
+    <string name="settings_downloading_option_title" translatable="true">Convert all audio files to mp3</string>
+    <string name="settings_downloading_option_description" translatable="true">Enabling this will lengthen the overall download time</string>
+
+    <string name="settings_update_ytdlp_option_cur_version">Current Version:</string>
+    <string name="settings_update_ytdlp_option_stable">Stable</string>
+    <string name="settings_update_ytdlp_option_nightly">Nightly</string>
+    <string name="settings_update_ytdlp_option_master">Master</string>
+    <string name="settings_update_ytdlp_option_description">
+        YtDlp should be updated every ~90 days to prevent external breakage (i.e. YouTube changing
+        their logic).
+        \n\n
+        \"Stable\" releases are published on a monthly schedule. While it is named \"stable\"
+        due to being extensively tested, it is often \"stale\" and prone to external breakage.
+        \n\n
+        \"Nightly\" releases are published before midnight on any day that sees changes to the
+        codebase of YtDlp. This is the RECOMMENDED channel.
+        \n\n
+        \"Master\" provides the latest fixes and features, but may be prone to bugs or regressions.
+    </string>
+
+    <!-- Crash Screen -->
+    <string name="crash_title">A CRASH HAS OCCURRED</string>
+    <string name="copy_crash_log">Copy Crash Log</string>
+    <string name="save_crash_log">Save Crash Log</string>
+    <string name="restart_app">Restart App</string>
+
+
+    <!-- Null Value Defaults -->
     <string name="duration_null_value_default" translatable="true">0:00:00</string>
+
+    <!-- "attributionTag  not declared in manifest of com.example.musiky" -->
+    <string name="empty" />
+    <string name="attribution_description">Audio Playback</string>
 </resources>

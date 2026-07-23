@@ -8,9 +8,33 @@ import com.example.musik.ui.MusikApplication
 
 object ViewModelProvider {
 	val Factory = viewModelFactory {
+		// --===--  NavViewModel  --===--
+		initializer {
+			NavViewModel(
+				musikApplication().container.dataStoreManager
+			)
+		}
+
+		// --===--  SettingsViewModel  --===--
+		initializer {
+			SettingsViewModel(
+				musikApplication().container.dataStoreManager,
+				musikApplication().container.ytDlp
+			)
+		}
+
 		// --===--  MusicListViewModel  --===--
 		initializer {
-			MusicListViewModel(musikApplication().container.audioFileRepository)
+			MusicListViewModel(
+				musikApplication().container.audioFileRepository
+			)
+		}
+
+		// --===--  PlayBackViewModel  --===--
+		initializer {
+			PlaybackViewModel(
+				musikApplication()
+			)
 		}
 
 		// --===--  AddMusicViewModel  --===--
@@ -18,12 +42,17 @@ object ViewModelProvider {
 			AddMusicViewModel(
 				musikApplication(),
 				musikApplication().container.audioFileRepository
-				)
+			)
 		}
 
-		// --===--  PlayBackViewModel  --===--
+		// --===--  AddYtMusicViewModel  --===--
 		initializer {
-			PlaybackViewModel(musikApplication())
+			AddYtMusicViewModel(
+				musikApplication(),
+				musikApplication().container.dataStoreManager,
+				musikApplication().container.ytDlp,
+				musikApplication().container.audioFileRepository
+			)
 		}
 	}
 }

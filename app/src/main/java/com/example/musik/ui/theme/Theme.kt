@@ -16,13 +16,13 @@ private val NightColorScheme = darkColorScheme(
     background = Color(0xFF1D1D26), // Background
     onPrimary = Color(0xFFC6C6E7), // Title text
     onSecondary = Color(0xFFFFFFFF), // General text and buttons
-    onTertiary = Color(0xFF9E9E9E), // Duration text
     onSurfaceVariant = Color(0xFF999999), // Artist text, drag handler, & app settings button
     surface = Color(0xFF353549), // Version text
     onSurface = Color(0xFF15151C), // Shadows
-    secondaryContainer = Color(0xFF212126), // Text field background
-    outline = Color(0xFF4d7581), // Slider track
-    outlineVariant = Color(0xFF476a75) // Slider thumb
+    secondaryContainer = Color(0xFF212126), // Field background
+    secondaryFixed = Color(0xFF292930), // Field border
+    outline = Color(0xFF4d7581), // Main Accent
+    outlineVariant = Color(0xFF476a75) // Alt Accent
 
     /* Other default colours to override
     background = Color(0xFFFFFBFE),

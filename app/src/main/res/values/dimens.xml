@@ -26,7 +26,7 @@
     <dimen name="tab_selected_height">50dp</dimen>
     <dimen name="tab_top_corners_radius">10dp</dimen>
 
-    <!-- All Music Screen -->
+    <!-- All Music Tab -->
     <dimen name="tabs_buttons_padding">25dp</dimen>
     <dimen name="buttons_horizontal_padding">12dp</dimen>
     <dimen name="buttons_vertical_padding">10dp</dimen>
@@ -55,4 +55,48 @@
     <dimen name="player_screen_playback_mode_button_size">30dp</dimen>
     <dimen name="player_screen_playback_control_button_padding">5dp</dimen>
     <dimen name="player_screen_playback_mode_button_padding">25dp</dimen>
+
+    <!-- Settings Screen -->
+    <dimen name="settings_back_button_top_padding">55dp</dimen>
+    <dimen name="settings_back_button_right_padding">11dp</dimen>
+    <dimen name="settings_title_font_size">30dp</dimen>
+    <dimen name="settings_top_section_bottom_padding">10dp</dimen>
+    <dimen name="settings_options_top_padding">20dp</dimen>
+    <dimen name="settings_options_horizontal_padding">25dp</dimen>
+    <dimen name="settings_options_bottom_padding">60dp</dimen>
+    <dimen name="settings_option_section_vertical_padding">25dp</dimen>
+
+    <dimen name="option_header_bottom_padding">13dp</dimen>
+    <dimen name="option_header_divider_horizontal_padding">7dp</dimen>
+    <dimen name="option_divider_thickness">1.5dp</dimen>
+
+    <dimen name="option_button_height">40dp</dimen>
+    <dimen name="option_button_horizontal_padding">5dp</dimen>
+    <dimen name="option_button_border_thickness">1dp</dimen>
+    <dimen name="option_button_shadow_elevation">3dp</dimen>
+
+    <dimen name="settings_update_ytdlp_description_top_padding">8dp</dimen>
+    <dimen name="settings_update_ytdlp_description_bottom_padding">15dp</dimen>
+
+    <!-- Add YouTube Music Tab -->
+    <dimen name="no_download_location_offset">75dp</dimen>
+    <dimen name="no_internet_offset">75dp</dimen>
+
+    <dimen name="container_border_stroke">1dp</dimen>
+    <dimen name="container_shadow_elevation">3dp</dimen>
+
+    <dimen name="download_location_container_height">40dp</dimen>
+    <dimen name="download_location_container_left_padding">10dp</dimen>
+    <dimen name="download_location_container_right_padding">25dp</dimen>
+    <dimen name="download_location_inner_padding">10dp</dimen>
+
+    <dimen name="yt_link_field_top_padding">20dp</dimen>
+    <dimen name="yt_link_field_bottom_padding">10dp</dimen>
+    <dimen name="yt_link_field_left_padding">20dp</dimen>
+    <dimen name="yt_link_field_right_padding">5dp</dimen>
+    <dimen name="yt_link_field_submit_button_right_padding">10dp</dimen>
+
+    <dimen name="info_box_horizontal_padding">20dp</dimen>
+    <dimen name="info_box_bottom_padding">80dp</dimen>
+    <dimen name="downloader_info_msg_offset">30dp</dimen>
 </resources>

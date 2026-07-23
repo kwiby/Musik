@@ -14,19 +14,38 @@ android {
 
     defaultConfig {
         applicationId = "com.example.musiky"
-        minSdk = 24
+        minSdk = 29
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 42
-        versionName = "1.6.7"
+        versionCode = 58
+        versionName = "1.8.9"
+
+        ndk {
+            abiFilters.add("x86")
+            abiFilters.add("x86_64")
+            abiFilters.add("armeabi-v7a")
+            abiFilters.add("arm64-v8a")
+        }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    splits.abi {
+        isEnable = true
+        reset()
+        include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+        isUniversalApk = true
+    }
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 
     buildTypes {
         release {
             optimization {
-                enable = false // Update this to 'true' when building the production APK!
+                enable = true // TODO: Update this to 'true' when building the production APK!
             }
         }
     }
@@ -41,6 +60,15 @@ android {
 }
 
 dependencies {
+    implementation(libs.library)
+    implementation(libs.ffmpeg)
+
+    implementation(libs.androidx.core.splashscreen)
+
+    implementation(libs.androidx.documentfile)
+
+    implementation(libs.androidx.datastore.preferences)
+
     implementation(libs.reorderable)
 
     implementation(libs.androidx.media3.exoplayer)

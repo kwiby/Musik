@@ -11,19 +11,25 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.example.musik.data.services.PlaybackService
+import com.example.musik.ui.MusikApplication
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-class PlaybackViewModel(application: Application) : AndroidViewModel(application) {
+private const val LOG_TAG = "PlaybackViewModel"
+
+class PlaybackViewModel(
+	application: MusikApplication
+) : AndroidViewModel(application) {
 	// ================================================================================================
 	// --===--  Variables  --===--
 	private var controllerFuture: ListenableFuture<MediaController>? = null
@@ -39,9 +45,10 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 
 	val hasPrevious = mutableStateOf(false)
 	val hasNext = mutableStateOf(false)
-	val isPlayerScreenOpen = mutableStateOf(false)
 
 	val currentPos = mutableLongStateOf(0L)
+
+	var onDeadTrackDetected: (suspend (Set<Long>) -> Unit)? = null
 	// ================================================================================================
 
 
@@ -126,13 +133,38 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 				loopMode.intValue = newMode
 				updateSkipStates()
 			}
+
+			override fun onPlayerError(error: PlaybackException) {
+				Log.e(LOG_TAG, "PLAYBACK ERROR: ${error.errorCodeName}", error)
+
+				val controller = mediaController ?: return
+				val failedIndex = controller.currentMediaItemIndex
+				val failedItem = controller.currentMediaItem
+				val failedId = failedItem?.mediaId?.toLongOrNull()
+
+				if (failedIndex in 0 until controller.mediaItemCount) {
+					controller.removeMediaItem(failedIndex)
+				}
+
+				// Remove the dead track from the db
+				failedId?.let { id ->
+					viewModelScope.launch {
+						onDeadTrackDetected?.invoke(setOf(id))
+					}
+				}
+
+				controller.pause()
+				isPlaying.value = false
+				if (controller.mediaItemCount == 0) {
+					currentTrack.value = null
+				}
+			}
 		})
 	}
 
 	override fun onCleared() {
 		controllerFuture?.let { MediaController.releaseFuture(it) }
 		mediaController?.release()
-		super.onCleared()
 	}
 	// ================================================================================================
 
@@ -160,11 +192,21 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		posJob = null
 	}
 
-	fun onPlayerScreenOpenChanged(isVisible: Boolean) {
-		isPlayerScreenOpen.value = isVisible
+	fun onPlayerScreenOpenChanged(isVisible: Boolean, navViewModel: NavViewModel) {
+		if (isVisible) {
+			navViewModel.navToScreen(Screen.PLAYER)
+		} else {
+			navViewModel.navToScreen(Screen.MAIN)
+		}
 
-		if (isVisible && isPlaying.value) {
-			startPosUpdates()
+		if (isVisible) {
+			mediaController?.let {
+				currentPos.longValue = it.currentPosition
+			}
+
+			if (isPlaying.value) {
+				startPosUpdates()
+			}
 		} else {
 			stopPosUpdates()
 		}
@@ -262,11 +304,11 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 				controller.play()
 				isPlaying.value = true
 			} else {
-				Log.e("PlaybackViewModel", "Track $id not found in queue.")
+				Log.e(LOG_TAG, "Track $id not found in queue.")
 			}
 		} else {
 			pendingPlayId = id
-			Log.e("PlaybackViewModel", "Cannot play music, mediaController is not ready.")
+			Log.e(LOG_TAG, "Cannot play music, mediaController is not ready.")
 		}
 	}
 
@@ -324,7 +366,7 @@ class PlaybackViewModel(application: Application) : AndroidViewModel(application
 		val nextShuffleMode = !isShuffling.value
 
 		isShuffling.value = nextShuffleMode
-		mediaController?.shuffleModeEnabled = nextShuffleMode
+		controller.shuffleModeEnabled = nextShuffleMode
 	}
 	// ================================================================================================
 
