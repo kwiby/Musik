@@ -4,8 +4,10 @@ import android.app.Application
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.musik.data.data_classes.AudioFile
 import com.example.musik.data.data_classes.VideoInfo
 import com.example.musik.data.datastore.DataStoreManager
 import com.example.musik.data.repositories.audio_file.AudioFileRepository
@@ -42,6 +44,8 @@ class AddYtMusicViewModel(
 
 	private var downloadJob: Job? = null
 
+	val videoInfo: StateFlow<VideoInfo?> = ytDlp.videoInfo
+
 	private val _uiState = MutableStateFlow<DownloaderUiState>(DownloaderUiState.Empty)
 	val uiState: StateFlow<DownloaderUiState> = _uiState.asStateFlow()
 
@@ -50,8 +54,6 @@ class AddYtMusicViewModel(
 
 	private val _ytLink = MutableStateFlow("")
 	val ytLink = _ytLink.asStateFlow()
-
-	val videoInfo: StateFlow<VideoInfo?> = ytDlp.videoInfo
 
 	val downloadLocation = dataStoreManager.downloadLocation.stateIn(
 		scope = viewModelScope,
@@ -78,7 +80,18 @@ class AddYtMusicViewModel(
 		)
 
 		when (downloadResult) {
-			YtDlp.DownloadResult.Success -> _uiState.value = DownloaderUiState.Success
+			is YtDlp.DownloadResult.Success -> {
+				addDownloadedMusic(
+					id = downloadResult.id,
+					contentUri = downloadResult.contentUri,
+					albumArtUri = downloadResult.albumArtUri,
+					title = downloadResult.title,
+					artist = downloadResult.artist,
+					duration = downloadResult.duration,
+				)
+
+				_uiState.value = DownloaderUiState.Success
+			}
 			YtDlp.DownloadResult.OutdatedYtDlp -> _uiState.value = DownloaderUiState.OutdatedYtDlp
 			YtDlp.DownloadResult.VideoUnavailable -> _uiState.value = DownloaderUiState.InvalidLink
 			YtDlp.DownloadResult.Cancelled -> {} // State already change to Empty in stopDownload()
@@ -93,6 +106,31 @@ class AddYtMusicViewModel(
 		downloadJob = null
 
 		_uiState.value = DownloaderUiState.Empty
+	}
+
+	private fun addDownloadedMusic(
+		id: Long,
+		contentUri: Uri,
+		albumArtUri: Uri,
+		title: String,
+		artist: String,
+		duration: Long
+	) {
+		viewModelScope.launch {
+			audioFileRepo.insertAudioFile(
+				AudioFile(
+					id = id,
+					contentUri = contentUri.toString(),
+					albumArtUri = albumArtUri.toString(),
+					title = title,
+					artist = artist,
+					duration = duration
+				).copy(
+					// 0-indexed, so the next orderPos is just the total count of db items
+					orderPos = audioFileRepo.getAudioFileCount()
+				)
+			)
+		}
 	}
 
 	fun checkValidLink(): Boolean {
