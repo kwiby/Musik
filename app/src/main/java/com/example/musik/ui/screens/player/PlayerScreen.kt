@@ -124,7 +124,7 @@ fun PlayerScreen(
 					)
 				) { artworkUri ->
 					AlbumArtImage(
-						contentUri = artworkUri,
+						albumArtUri = artworkUri,
 						size = dimensionResource(R.dimen.player_screen_image_size),
 						shape = MaterialTheme.shapes.extraLarge
 					)

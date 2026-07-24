@@ -112,7 +112,7 @@ fun PlayerBar(
 										)
 									) { artworkUri ->
 										AlbumArtImage(
-											contentUri = artworkUri,
+											albumArtUri = artworkUri,
 											size = dimensionResource(R.dimen.player_bar_image_size),
 											shape = MaterialTheme.shapes.extraLarge
 										)

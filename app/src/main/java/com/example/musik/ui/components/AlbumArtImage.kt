@@ -26,7 +26,7 @@ import com.example.musik.R
 
 @Composable
 fun AlbumArtImage(
-	contentUri: String,
+	albumArtUri: String,
 	size: Dp = dimensionResource(R.dimen.album_art_image_size),
 	shape: Shape = MaterialTheme.shapes.small
 ) {
@@ -36,9 +36,9 @@ fun AlbumArtImage(
 		size.roundToPx()
 	}
 
-	val request = remember(contentUri) {
+	val request = remember(albumArtUri) {
 		ImageRequest.Builder(context)
-			.data(contentUri.toUri())
+			.data(albumArtUri.toUri())
 			.size(Size(sizePx, sizePx))
 			.crossfade(true)
 			.build()

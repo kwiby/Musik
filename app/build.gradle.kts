@@ -13,12 +13,12 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.musiky"
+        applicationId = "com.example.musiky" // TODO: Change applicationId to "com.example.musik"
         minSdk = 29
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 59
-        versionName = "1.8.10"
+        versionCode = 60
+        versionName = "1.8.11"
 
         ndk {
             abiFilters.add("x86")
@@ -28,6 +28,10 @@ android {
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        base.archivesName.set(
+            "Musik_v$versionName.$versionCode-alpha"
+        )
     }
 
     splits.abi {
@@ -36,6 +40,7 @@ android {
         include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
         isUniversalApk = true
     }
+
     packaging {
         jniLibs {
             useLegacyPackaging = true
@@ -44,8 +49,10 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             optimization {
-                enable = true // TODO: Update this to 'true' when building the production APK!
+                enable = true
             }
         }
     }

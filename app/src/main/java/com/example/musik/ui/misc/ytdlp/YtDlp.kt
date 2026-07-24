@@ -87,7 +87,6 @@ class YtDlp(
 		Unit
 	}
 
-
 	private suspend fun getExtraDetails(treeUri: Uri, fileName: String): Pair<Long, Uri> {
 		val docId = DocumentsContract.getTreeDocumentId(treeUri)
 		val parts = docId.split(":")
@@ -108,12 +107,12 @@ class YtDlp(
 			null, null, null
 		)?.use { cursor ->
 			if (cursor.moveToFirst()) {
-				audioId = cursor.getLong(0)
-				albumId = cursor.getLong(1)
+				audioId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
+				albumId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID))
 			}
 		}
-		val albumArtUri = ContentUris.withAppendedId("content://media/external/audio/albumart".toUri(), albumId)
 
+		val albumArtUri = ContentUris.withAppendedId("content://media/external/audio/albumart".toUri(), albumId)
 		return Pair(audioId, albumArtUri)
 	}
 
@@ -218,6 +217,7 @@ class YtDlp(
 		if (doConvertMp3) {
 			request.addOption("--audio-format", "mp3")
 		}
+		request.addOption("--parse-metadata", "%(title)s:%(meta_album)s")
 		request.addOption("--add-metadata")
 		request.addOption("--no-mtime")
 		request.addOption("--embed-thumbnail")
