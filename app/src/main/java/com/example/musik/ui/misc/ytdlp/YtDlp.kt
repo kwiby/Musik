@@ -1,7 +1,11 @@
 package com.example.musik.ui.misc.ytdlp
 
+import android.content.ContentUris
 import android.content.Context
+import android.media.MediaScannerConnection
 import android.net.Uri
+import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.core.net.toUri
@@ -17,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.File
@@ -27,7 +32,14 @@ class YtDlp(
 	private val appContext: Context
 ) {
 	sealed interface DownloadResult {
-		data object Success: DownloadResult
+		data class Success(
+			val id: Long,
+			val contentUri: Uri,
+			val albumArtUri: Uri,
+			val title: String,
+			val artist: String,
+			val duration: Long,
+		): DownloadResult
 		data object OutdatedYtDlp: DownloadResult
 		data object VideoUnavailable: DownloadResult
 		data object Cancelled: DownloadResult
@@ -76,6 +88,35 @@ class YtDlp(
 	}
 
 
+	private suspend fun getExtraDetails(treeUri: Uri, fileName: String): Pair<Long, Uri> {
+		val docId = DocumentsContract.getTreeDocumentId(treeUri)
+		val parts = docId.split(":")
+		val filePath = "/storage/emulated/0/${parts.getOrElse(1) { "" }}/$fileName"
+
+		val audioUri = suspendCancellableCoroutine<Uri> { cont ->
+			MediaScannerConnection.scanFile(appContext, arrayOf(filePath), null) { _, uri ->
+				cont.resume(uri) { _, _, _ -> /*onCancellation()*/ }
+			}
+		}
+
+		var audioId = 0L
+		var albumId = 0L
+
+		appContext.contentResolver.query(
+			audioUri,
+			arrayOf(MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ALBUM_ID),
+			null, null, null
+		)?.use { cursor ->
+			if (cursor.moveToFirst()) {
+				audioId = cursor.getLong(0)
+				albumId = cursor.getLong(1)
+			}
+		}
+		val albumArtUri = ContentUris.withAppendedId("content://media/external/audio/albumart".toUri(), albumId)
+
+		return Pair(audioId, albumArtUri)
+	}
+
 	private fun extractDownloadSpeed(line: String): String? {
 		return downloadSpeedRegex.find(line)?.groupValues?.get(1)
 	}
@@ -90,6 +131,13 @@ class YtDlp(
 	}
 	private fun isVideoUnavailable(responseOutput: String): Boolean {
 		return responseOutput.contains("Video unavailable", ignoreCase = true)
+	}
+
+	private fun clearTempDir() {
+		val tempDir = File(appContext.cacheDir, "musik_temp_dir")
+		if (tempDir.exists()) {
+			tempDir.listFiles()?.forEach { it.delete() }
+		}
 	}
 
 	private fun parseVideoInfoLine(line: String): VideoInfo? {
@@ -121,7 +169,7 @@ class YtDlp(
 		}
 	}
 
-	private fun moveFileToDownloadLocation(appContext: Context, sourceFile: File, treeUri: Uri): Boolean {
+	private fun moveFileToDownloadLocation(appContext: Context, sourceFile: File, treeUri: Uri): Uri? {
 		try {
 			val downloadLocation = DocumentFile.fromTreeUri(appContext, treeUri)
 			val mimeType = getMimeTypeFromExtension(sourceFile.extension)
@@ -137,18 +185,11 @@ class YtDlp(
 			}
 			sourceFile.delete()
 
-			return true
+			return newFile.uri
 		} catch (e: Exception) {
 			Log.e(LOG_TAG, "Failed to move file", e)
 
-			return false
-		}
-	}
-
-	private fun clearTempDir() {
-		val tempDir = File(appContext.cacheDir, "musik_temp_dir")
-		if (tempDir.exists()) {
-			tempDir.listFiles()?.forEach { it.delete() }
+			return null
 		}
 	}
 
@@ -202,7 +243,7 @@ class YtDlp(
 						Log.e(LOG_TAG, "No audio file found in temp directory after download")
 						return DownloadResult.Error
 					}
-				val isMoveSuccess = withContext(Dispatchers.IO) {
+				val contentUri = withContext(Dispatchers.IO) {
 					moveFileToDownloadLocation(
 						appContext,
 						downloadedFile,
@@ -210,10 +251,23 @@ class YtDlp(
 					)
 				}
 
-				if (isMoveSuccess) {
+				if (contentUri != null) {
+					val pair = getExtraDetails(contentUri, downloadedFile.name)
+					val id = pair.first
+					val albumArtUri = pair.second
+
 					emitToast("Download completed")
-					return DownloadResult.Success
+					return DownloadResult.Success(
+						id = id,
+						contentUri = contentUri,
+						albumArtUri = albumArtUri,
+						title = _videoInfo.value?.title ?: "Unknown Title",
+						artist = _videoInfo.value?.artist ?: "Unknown Artist",
+						duration = _videoInfo.value?.duration ?: 0L
+					)
 				} else {
+					Log.e(LOG_TAG, "UNEXPECTED ERROR")
+
 					emitToast("Download failed")
 					return DownloadResult.Error
 				}

@@ -109,8 +109,8 @@ fun SettingsScreen(
 				modifier = Modifier
 					.fillMaxSize()
 					.background(MaterialTheme.colorScheme.background)
-					.padding(horizontal = dimensionResource(R.dimen.settings_options_horizontal_padding))
-					.verticalScroll(scrollState),
+					.verticalScroll(scrollState)
+					.padding(horizontal = dimensionResource(R.dimen.settings_options_horizontal_padding)),
 				horizontalAlignment = Alignment.Start
 			) {
 				Spacer(Modifier.height(dimensionResource(R.dimen.settings_options_top_padding)))
