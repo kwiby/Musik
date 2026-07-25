@@ -20,9 +20,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_default_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_default_launcher_round"
         android:supportsRtl="true"
         android:extractNativeLibs="true"
         android:theme="@style/Theme.Musik"
@@ -33,13 +33,136 @@
             android:theme="@style/Theme.Musik"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi,LockedOrientationActivity">
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
+
+        <!-- Default Icon -->
+        <activity-alias
+            android:name=".DefaultIcon"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_default_launcher"
+            android:roundIcon="@mipmap/ic_default_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-alias>
+        <!-- Black Icon -->
+        <activity-alias
+            android:name=".BlackIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_black_launcher"
+            android:roundIcon="@mipmap/ic_black_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <!-- Blue Icon -->
+        <activity-alias
+            android:name=".BlueIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_blue_launcher"
+            android:roundIcon="@mipmap/ic_blue_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <!-- Green Icon -->
+        <activity-alias
+            android:name=".GreenIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_green_launcher"
+            android:roundIcon="@mipmap/ic_green_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <!-- Orange Icon -->
+        <activity-alias
+            android:name=".OrangeIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_orange_launcher"
+            android:roundIcon="@mipmap/ic_orange_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <!-- Pink Icon -->
+        <activity-alias
+            android:name=".PinkIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_pink_launcher"
+            android:roundIcon="@mipmap/ic_pink_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <!-- Purple Icon -->
+        <activity-alias
+            android:name=".PurpleIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_purple_launcher"
+            android:roundIcon="@mipmap/ic_purple_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <!-- Red Icon -->
+        <activity-alias
+            android:name=".RedIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_red_launcher"
+            android:roundIcon="@mipmap/ic_red_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <!-- White Icon -->
+        <activity-alias
+            android:name=".WhiteIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_white_launcher"
+            android:roundIcon="@mipmap/ic_white_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+
         <service
             android:name=".data.services.PlaybackService"
             android:foregroundServiceType="mediaPlayback"

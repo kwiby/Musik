@@ -78,6 +78,13 @@
     <dimen name="settings_update_ytdlp_description_top_padding">8dp</dimen>
     <dimen name="settings_update_ytdlp_description_bottom_padding">15dp</dimen>
 
+    <dimen name="settings_app_icon_option_vertical_padding">10dp</dimen>
+
+    <dimen name="settings_theme_option_vertical_padding">10dp</dimen>
+    <dimen name="settings_theme_button_border_width">1dp</dimen>
+
+    <dimen name="radiobutton_image_size">50dp</dimen>
+
     <!-- Add YouTube Music Tab -->
     <dimen name="no_download_location_offset">75dp</dimen>
     <dimen name="no_internet_offset">75dp</dimen>

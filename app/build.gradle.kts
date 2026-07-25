@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.musik"
+    namespace = "com.kwiby.musik"
     compileSdk {
         version = release(37) {
             minorApiLevel = 0
@@ -13,12 +13,12 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.musiky" // TODO: Change applicationId to "com.example.musik"
+        applicationId = "com.kwiby.musik"
         minSdk = 29
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 60
-        versionName = "1.8.11"
+        versionCode = 62
+        versionName = "1.9.0"
 
         ndk {
             abiFilters.add("x86")
