@@ -60,7 +60,7 @@ fun ThemeButton(
 					.size(dimensionResource(R.dimen.radiobutton_image_size))
 					.border(
 						width = dimensionResource(R.dimen.settings_theme_button_border_width),
-						color = MaterialTheme.colorScheme.outline,
+						color = appTheme.colorScheme().outline,
 						shape = MaterialTheme.shapes.medium
 					)
 					.clip(MaterialTheme.shapes.medium)

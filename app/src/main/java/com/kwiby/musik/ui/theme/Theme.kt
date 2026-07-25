@@ -5,8 +5,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.kwiby.musik.ui.theme.colour_schemes.NightDarkColorScheme
-import com.kwiby.musik.ui.theme.colour_schemes.NightLightColorScheme
+import com.kwiby.musik.ui.theme.colour_schemes.NightDarkColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.NightLightColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.SunsetDarkColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.SunsetLightColourScheme
 
 enum class ThemeMode {
     DARK,
@@ -19,7 +21,8 @@ enum class ThemeMode {
 }
 
 enum class ThemeStyle {
-    NIGHT;
+    NIGHT,
+    SUNSET;
 
     companion object {
         val DEFAULT = NIGHT
@@ -39,11 +42,13 @@ data class AppTheme(
 }
 fun AppTheme.colorScheme(): ColorScheme = when (mode) {
     ThemeMode.DARK -> when (style) {
-        ThemeStyle.NIGHT -> NightDarkColorScheme
+        ThemeStyle.NIGHT -> NightDarkColourScheme
+        ThemeStyle.SUNSET -> SunsetDarkColourScheme
     }
 
     ThemeMode.LIGHT -> when (style) {
-        ThemeStyle.NIGHT -> NightLightColorScheme
+        ThemeStyle.NIGHT -> NightLightColourScheme
+        ThemeStyle.SUNSET -> SunsetLightColourScheme
     }
 }
 

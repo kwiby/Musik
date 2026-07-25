@@ -72,6 +72,8 @@ fun ThemeOption(
 		) {
 			ThemeButton(settingsViewModel, ThemeStyle.NIGHT)
 			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
+			ThemeButton(settingsViewModel, ThemeStyle.SUNSET)
+			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
 		}
 	}
 
