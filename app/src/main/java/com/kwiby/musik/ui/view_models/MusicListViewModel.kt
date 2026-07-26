@@ -7,7 +7,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.kwiby.musik.data.data_classes.AudioFile
 import com.kwiby.musik.data.data_classes.MusicDetails
-import com.kwiby.musik.data.repositories.audio_file.AudioFileRepository
+import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
 import com.kwiby.musik.ui.misc.formatDuration
 import com.kwiby.musik.ui.misc.unformatDuration
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MusicListViewModel(
-	private val audioFileRepo: AudioFileRepository
+	private val musicListRepo: OfflineMusicListRepository
 ) : ViewModel() {
 	private val _queue = mutableListOf<MusicDetails>()
 	private var _previousQueueForSync: List<MusicDetails> = emptyList()
@@ -37,7 +37,7 @@ class MusicListViewModel(
 	}
 
 	val uiState: StateFlow<MusicUiState> = combine(
-		audioFileRepo.getAllAudioFilesStream(), _manualQueue
+		musicListRepo.getAllAudioFilesStream(), _manualQueue
 	) { musicList, manualQueue ->
 		if (musicList.isEmpty()) {
 			_queue.clear()
@@ -127,7 +127,7 @@ class MusicListViewModel(
 
 		playbackViewModel.removeFromQueue(selectedMusic)
 		withContext(Dispatchers.IO) {
-			audioFileRepo.deleteMultipleAudioFilesById(selectedMusic)
+			musicListRepo.deleteMultipleAudioFilesById(selectedMusic)
 		}
 
 		resetMusicList()
@@ -135,7 +135,7 @@ class MusicListViewModel(
 
 	suspend fun deleteTracksByIds(ids: Set<Long>) {
 		withContext(Dispatchers.IO) {
-			audioFileRepo.deleteMultipleAudioFilesById(ids)
+			musicListRepo.deleteMultipleAudioFilesById(ids)
 		}
 
 		_queue.removeAll { it.id in ids }
@@ -187,7 +187,7 @@ class MusicListViewModel(
 		setMoveMode(false)
 
 		viewModelScope.launch(Dispatchers.IO) {
-			audioFileRepo.updateMultipleOrderPos(queue.map { it.id })
+			musicListRepo.updateMultipleOrderPos(queue.map { it.id })
 		}
 	}
 
@@ -232,11 +232,12 @@ fun MusicDetails.toMediaItem(): MediaItem {
 			MediaMetadata.Builder()
 				.setTitle(title)
 				.setArtist(artist)
-				.setDurationMs(duration.unformatDuration())
+				.setDurationMs(durationMs.unformatDuration())
 				.setArtworkUri(albumArtUri.toUri())
 				.build()
 		).build()
 }
+
 
 // MusicDetails --> AudioFile
 fun MusicDetails.toAudioFile(): AudioFile = AudioFile(
@@ -245,7 +246,7 @@ fun MusicDetails.toAudioFile(): AudioFile = AudioFile(
 	albumArtUri = albumArtUri,
 	title = title,
 	artist = artist,
-	duration = duration.unformatDuration(),
+	durationMs = durationMs.unformatDuration(),
 	orderPos = orderPos
 )
 
@@ -256,6 +257,6 @@ fun AudioFile.toMusicDetails(): MusicDetails = MusicDetails(
 	albumArtUri = albumArtUri,
 	title = title,
 	artist = artist,
-	duration = duration.formatDuration(),
+	durationMs = durationMs.formatDuration(),
 	orderPos = orderPos
 )

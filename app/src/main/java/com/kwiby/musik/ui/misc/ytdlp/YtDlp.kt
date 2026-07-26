@@ -38,7 +38,7 @@ class YtDlp(
 			val albumArtUri: Uri,
 			val title: String,
 			val artist: String,
-			val duration: Long,
+			val durationMs: Long,
 		): DownloadResult
 		data object OutdatedYtDlp: DownloadResult
 		data object VideoUnavailable: DownloadResult
@@ -145,7 +145,7 @@ class YtDlp(
 			return VideoInfo(
 				title = json.optString("title", "Unknown Title"),
 				artist = json.optString("artist").ifBlank { json.optString("uploader").ifBlank { "Unknown Artist" } },
-				duration = json.optDouble("duration").takeIf { !it.isNaN() }?.times(1000)?.toLong() ?: 0L, // s -> ms
+				durationMs = json.optDouble("duration").takeIf { !it.isNaN() }?.times(1000)?.toLong() ?: 0L, // s -> ms
 				thumbnailUrl = json.optString("thumbnail").ifBlank { null },
 			)
 		} catch (e: Exception) {
@@ -263,7 +263,7 @@ class YtDlp(
 						albumArtUri = albumArtUri,
 						title = _videoInfo.value?.title ?: "Unknown Title",
 						artist = _videoInfo.value?.artist ?: "Unknown Artist",
-						duration = _videoInfo.value?.duration ?: 0L
+						durationMs = _videoInfo.value?.durationMs ?: 0L
 					)
 				} else {
 					Log.e(LOG_TAG, "UNEXPECTED ERROR")

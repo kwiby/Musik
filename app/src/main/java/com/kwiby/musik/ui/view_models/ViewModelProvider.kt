@@ -26,7 +26,7 @@ object ViewModelProvider {
 		// --===--  MusicListViewModel  --===--
 		initializer {
 			MusicListViewModel(
-				musikApplication().container.audioFileRepository
+				musikApplication().container.musicListRepo
 			)
 		}
 
@@ -41,7 +41,7 @@ object ViewModelProvider {
 		initializer {
 			AddMusicViewModel(
 				musikApplication(),
-				musikApplication().container.audioFileRepository
+				musikApplication().container.musicListRepo
 			)
 		}
 
@@ -51,7 +51,7 @@ object ViewModelProvider {
 				musikApplication(),
 				musikApplication().container.dataStoreManager,
 				musikApplication().container.ytDlp,
-				musikApplication().container.audioFileRepository
+				musikApplication().container.musicListRepo
 			)
 		}
 	}

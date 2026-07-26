@@ -13,6 +13,8 @@ class CrashHandler(
 	override fun uncaughtException(t: Thread, e: Throwable) {
 		val stackTrace = Log.getStackTraceString(e)
 
+		Log.e("CrashHandler", "Uncaught exception on thread '${t.name}'", e)
+
 		val intent = Intent(context, MainActivity::class.java).apply {
 			putExtra("crash_log", stackTrace)
 			flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

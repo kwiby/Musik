@@ -17,9 +17,9 @@ import androidx.media3.common.Timeline
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.kwiby.musik.data.services.PlaybackService
-import com.kwiby.musik.ui.MusikApplication
 import com.google.common.util.concurrent.ListenableFuture
+import com.kwiby.musik.data.services.playback_service.PlaybackService
+import com.kwiby.musik.ui.MusikApplication
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -52,28 +52,37 @@ class PlaybackViewModel(
 	// ================================================================================================
 
 
+	// ================================================================================================
+	// --===--  Music Stats  --===--
 	/*
-	private fun createMediaItem(
-		id: Long,
-		contentUri: String,
-		artworkUri: String,
-		title: String,
-		artist: String,
-		duration: String
-	): MediaItem {
-		return MediaItem.Builder()
-			.setMediaId(id.toString())
-			.setUri(contentUri.toUri())
-			.setMediaMetadata(
-				MediaMetadata.Builder()
-					.setTitle(title)
-					.setArtist(artist)
-					.setDurationMs(duration.unformatDuration())
-					.setArtworkUri(artworkUri.toUri())
-					.build()
-			).build()
+	private var sessionTrackId: Long? = null
+	private var sessionStartTimeMs: Long? = null
+
+	private fun startListenTimeTracking(trackId: Long?) {
+		if (trackId == null) {
+			Log.w(LOG_TAG, "Cannot start listen time tracking, trackId is null")
+			return
+		}
+
+		sessionTrackId = trackId
+		sessionStartTimeMs = SystemClock.elapsedRealtime()
+	}
+
+	private fun logListenTime() {
+		val id = sessionTrackId ?: return
+		val startTimeMs = sessionStartTimeMs ?: return
+
+		val listenTimeMs = SystemClock.elapsedRealtime() - startTimeMs
+		sessionStartTimeMs = null
+
+		if (listenTimeMs > 0) {
+			viewModelScope.launch {
+				musicStatsRepo.logMusicSession(id, listenTimeMs)
+			}
+		}
 	}
 	 */
+	// ================================================================================================
 
 
 	// ================================================================================================
@@ -81,13 +90,21 @@ class PlaybackViewModel(
 	private fun observePlayer() {
 		mediaController?.addListener(object : Player.Listener {
 			override fun onIsPlayingChanged(playing: Boolean) {
-				// Use this code to keep the pause button icon displaying between skips
+				// Use this code to keep the pause button icon displaying between skips ---
 				val state = mediaController?.playbackState
 				if ((skipInProgress || state == Player.STATE_BUFFERING) && !playing) {
 					return
 				}
 				skipInProgress = false
 				// ---
+
+				/*
+				if (playing) {
+					startListenTimeTracking(currentTrack.value?.mediaId?.toLongOrNull())
+				} else {
+					logListenTime()
+				}
+				 */
 
 				isPlaying.value = playing
 			}
@@ -96,6 +113,13 @@ class PlaybackViewModel(
 				currentPos.longValue = 0L
 				currentTrack.value = mediaItem
 				updateSkipStates()
+
+				/*
+				logListenTime()
+				if (isPlaying.value) {
+					startListenTimeTracking(mediaItem?.mediaId?.toLongOrNull())
+				}
+				 */
 			}
 
 			override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -137,6 +161,8 @@ class PlaybackViewModel(
 			override fun onPlayerError(error: PlaybackException) {
 				Log.e(LOG_TAG, "PLAYBACK ERROR: ${error.errorCodeName}", error)
 
+				//logListenTime()
+
 				val controller = mediaController ?: return
 				val failedIndex = controller.currentMediaItemIndex
 				val failedItem = controller.currentMediaItem
@@ -163,6 +189,8 @@ class PlaybackViewModel(
 	}
 
 	override fun onCleared() {
+		//logListenTime()
+
 		controllerFuture?.let { MediaController.releaseFuture(it) }
 		mediaController?.release()
 	}
