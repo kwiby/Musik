@@ -53,39 +53,6 @@ class PlaybackViewModel(
 
 
 	// ================================================================================================
-	// --===--  Music Stats  --===--
-	/*
-	private var sessionTrackId: Long? = null
-	private var sessionStartTimeMs: Long? = null
-
-	private fun startListenTimeTracking(trackId: Long?) {
-		if (trackId == null) {
-			Log.w(LOG_TAG, "Cannot start listen time tracking, trackId is null")
-			return
-		}
-
-		sessionTrackId = trackId
-		sessionStartTimeMs = SystemClock.elapsedRealtime()
-	}
-
-	private fun logListenTime() {
-		val id = sessionTrackId ?: return
-		val startTimeMs = sessionStartTimeMs ?: return
-
-		val listenTimeMs = SystemClock.elapsedRealtime() - startTimeMs
-		sessionStartTimeMs = null
-
-		if (listenTimeMs > 0) {
-			viewModelScope.launch {
-				musicStatsRepo.logMusicSession(id, listenTimeMs)
-			}
-		}
-	}
-	 */
-	// ================================================================================================
-
-
-	// ================================================================================================
 	// --===--  Player Observer  --===--
 	private fun observePlayer() {
 		mediaController?.addListener(object : Player.Listener {
@@ -98,14 +65,6 @@ class PlaybackViewModel(
 				skipInProgress = false
 				// ---
 
-				/*
-				if (playing) {
-					startListenTimeTracking(currentTrack.value?.mediaId?.toLongOrNull())
-				} else {
-					logListenTime()
-				}
-				 */
-
 				isPlaying.value = playing
 			}
 
@@ -113,13 +72,6 @@ class PlaybackViewModel(
 				currentPos.longValue = 0L
 				currentTrack.value = mediaItem
 				updateSkipStates()
-
-				/*
-				logListenTime()
-				if (isPlaying.value) {
-					startListenTimeTracking(mediaItem?.mediaId?.toLongOrNull())
-				}
-				 */
 			}
 
 			override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -161,8 +113,6 @@ class PlaybackViewModel(
 			override fun onPlayerError(error: PlaybackException) {
 				Log.e(LOG_TAG, "PLAYBACK ERROR: ${error.errorCodeName}", error)
 
-				//logListenTime()
-
 				val controller = mediaController ?: return
 				val failedIndex = controller.currentMediaItemIndex
 				val failedItem = controller.currentMediaItem
@@ -189,8 +139,6 @@ class PlaybackViewModel(
 	}
 
 	override fun onCleared() {
-		//logListenTime()
-
 		controllerFuture?.let { MediaController.releaseFuture(it) }
 		mediaController?.release()
 	}

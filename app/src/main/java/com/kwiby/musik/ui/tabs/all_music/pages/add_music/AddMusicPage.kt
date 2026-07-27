@@ -69,6 +69,7 @@ fun AddMusicPage(
 			// ---===---  Back Button  ---===---
 			Row {
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
+
 				CustomIconButton(
 					iconImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
 					contentDescription = stringResource(R.string.back_button)

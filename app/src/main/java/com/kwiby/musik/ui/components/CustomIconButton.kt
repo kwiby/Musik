@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.kwiby.musik.R
 
 @Composable
@@ -22,7 +21,7 @@ fun CustomIconButton(
 	iconImageVector: ImageVector,
 	contentDescription: String,
 	modifier: Modifier = Modifier,
-	size: Dp = 24.dp,
+	size: Dp = dimensionResource(R.dimen.custom_icon_button_size_default),
 	colour: Color = MaterialTheme.colorScheme.onSecondary,
 	onClick: () -> Unit
 ) {
@@ -34,8 +33,7 @@ fun CustomIconButton(
 			colors = IconButtonDefaults.iconButtonColors(
 				contentColor = colour
 			),
-			onClick = onClick,
-			//modifier = modifier
+			onClick = onClick
 		) {
 			Icon(
 				iconImageVector,

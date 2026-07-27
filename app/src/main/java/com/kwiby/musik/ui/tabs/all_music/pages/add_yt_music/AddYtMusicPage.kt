@@ -31,7 +31,7 @@ import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.misc.folder_manager.LocalFolderManager
 import com.kwiby.musik.ui.tabs.all_music.pages.add_yt_music.components.DownloadLocationContainer
-import com.kwiby.musik.ui.tabs.all_music.pages.add_yt_music.components.downloader_container.DownloadContainer
+import com.kwiby.musik.ui.tabs.all_music.pages.add_yt_music.components.downloader_container.DownloaderContainer
 import com.kwiby.musik.ui.tabs.all_music.pages.add_yt_music.components.info.NoDownloadLocationMsg
 import com.kwiby.musik.ui.tabs.all_music.pages.add_yt_music.components.info.NoInternetMsg
 import com.kwiby.musik.ui.view_models.AddYtMusicViewModel
@@ -90,6 +90,7 @@ fun AddYtMusicPage(
 		onBackToMusicList()
 	}
 
+
 	Column(
 		verticalArrangement = Arrangement.Top,
 		horizontalAlignment = Alignment.CenterHorizontally
@@ -124,7 +125,7 @@ fun AddYtMusicPage(
 			// --===--  No Internet Connection Message  --===--
 			NoInternetMsg()
 		} else {
-			DownloadContainer(addYtMusicViewModel)
+			DownloaderContainer(addYtMusicViewModel)
 		}
 	}
 }

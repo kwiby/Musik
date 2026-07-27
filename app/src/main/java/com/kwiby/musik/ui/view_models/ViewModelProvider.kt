@@ -15,6 +15,20 @@ object ViewModelProvider {
 			)
 		}
 
+		// --===--  PlayBackViewModel  --===--
+		initializer {
+			PlaybackViewModel(
+				musikApplication()
+			)
+		}
+
+		// --===--  StatsViewModel  --===--
+		initializer {
+			StatsViewModel(
+				musikApplication().container.musicStatsRepo
+			)
+		}
+
 		// --===--  SettingsViewModel  --===--
 		initializer {
 			SettingsViewModel(
@@ -27,13 +41,6 @@ object ViewModelProvider {
 		initializer {
 			MusicListViewModel(
 				musikApplication().container.musicListRepo
-			)
-		}
-
-		// --===--  PlayBackViewModel  --===--
-		initializer {
-			PlaybackViewModel(
-				musikApplication()
 			)
 		}
 

@@ -24,10 +24,10 @@ import com.kwiby.musik.ui.view_models.ViewModelProvider
 
 @Composable
 fun AllMusicTab(
+	playbackViewModel: PlaybackViewModel,
 	musicListViewModel: MusicListViewModel = viewModel(factory = ViewModelProvider.Factory),
 	addMusicViewModel: AddMusicViewModel = viewModel(factory = ViewModelProvider.Factory),
-	addYtMusicViewModel: AddYtMusicViewModel = viewModel(factory = ViewModelProvider.Factory),
-	playbackViewModel: PlaybackViewModel
+	addYtMusicViewModel: AddYtMusicViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
 	var isAddingMusic by remember { mutableStateOf(false) }
 	var isAddingYtMusic by remember { mutableStateOf(false) }

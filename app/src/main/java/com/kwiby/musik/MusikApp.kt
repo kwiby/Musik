@@ -15,6 +15,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.kwiby.musik.data.misc.RequestPermissions
 import com.kwiby.musik.data.misc.rememberPermissionHandler
 import com.kwiby.musik.ui.components.MusikTopAppBar
@@ -26,8 +28,6 @@ import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.Screen
 import com.kwiby.musik.ui.view_models.SettingsViewModel
 import com.kwiby.musik.ui.view_models.ViewModelProvider
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

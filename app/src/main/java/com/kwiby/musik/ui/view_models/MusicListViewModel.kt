@@ -75,7 +75,7 @@ class MusicListViewModel(
 				newQueue
 			} else {
 				_previousQueueForSync = newQueue
-				null // null = don't sync
+				null // null => don't sync
 			}
 		}
 		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)

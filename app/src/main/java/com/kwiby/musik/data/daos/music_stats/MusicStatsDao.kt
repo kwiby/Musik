@@ -5,16 +5,43 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.kwiby.musik.data.data_classes.AudioFile
 import com.kwiby.musik.data.data_classes.MusicStats
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MusicStatsDao {
 	@Query("SELECT * FROM music_stats WHERE musicId = :id")
-	fun observeStats(id: Long): Flow<MusicStats>
+	fun observeStatsById(id: Long): Flow<MusicStats>
 
 	@Query("SELECT * FROM music_stats WHERE musicId = :id")
-	suspend fun getStats(id: Long): MusicStats
+	suspend fun getStatsById(id: Long): MusicStats
+
+	@Query("""
+		SELECT music_list.* FROM music_list
+		LEFT JOIN music_stats ON music_list.id = music_stats.musicId
+		ORDER BY
+			CASE WHEN music_stats.playCount IS NULL OR music_stats.playCount = 0 
+				THEN 1 
+				ELSE 0 
+			END,
+			music_stats.playCount DESC,
+			music_list.title ASC;
+	""")
+	suspend fun getStatsOrderedByPlayCountDESC(): List<AudioFile>
+
+	@Query("""
+		SELECT music_list.* FROM music_list
+		LEFT JOIN music_stats ON music_list.id = music_stats.musicId
+		ORDER BY
+			CASE WHEN music_stats.totalListenTimeMs IS NULL OR music_stats.totalListenTimeMs = 0 
+				THEN 1 
+				ELSE 0 
+			END,
+			music_stats.totalListenTimeMs DESC,
+			music_list.title ASC;
+	""")
+	suspend fun getStatsOrderedByListenTimeDESC(): List<AudioFile>
 
 	@Insert(onConflict = OnConflictStrategy.IGNORE)
 	suspend fun insertIfAbsent(stats: MusicStats)

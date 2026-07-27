@@ -117,6 +117,9 @@
         \"Master\" provides the latest fixes and features, but may be prone to bugs or regressions.
     </string>
 
+    <!-- Statistics Tab -->
+    <string name="refresh_stats_button" translatable="true">Refresh statistics</string>
+
     <!-- Crash Screen -->
     <string name="crash_title">A CRASH HAS OCCURRED</string>
     <string name="copy_crash_log">Copy Crash Log</string>

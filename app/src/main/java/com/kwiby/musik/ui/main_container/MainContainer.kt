@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.kwiby.musik.R
 import com.kwiby.musik.data.misc.rememberPermissionHandler
 import com.kwiby.musik.ui.main_container.components.PlayerBar
@@ -29,8 +31,6 @@ import com.kwiby.musik.ui.tabs.stats.StatsTab
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.Tab
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -40,6 +40,8 @@ fun MainContainer(
 	playbackViewModel: PlaybackViewModel,
 	modifier: Modifier = Modifier
 ) {
+	val permissionStatus = rememberPermissionHandler()
+
 	Box(
 		modifier = modifier.fillMaxSize()
 	) {
@@ -55,7 +57,6 @@ fun MainContainer(
 				shadowElevation = dimensionResource(R.dimen.main_container_shadows),
 				modifier = Modifier.fillMaxSize()
 			) {
-				val permissionStatus = rememberPermissionHandler()
 				if (permissionStatus.status.isGranted) {
 					// --===--  Main Screens  --===--
 					when (navViewModel.curTab) {
