@@ -36,6 +36,7 @@ class PlaybackViewModel(
 	private var mediaController: MediaController? = null
 	private var skipInProgress = false
 	private var pendingPlayId: Long? = null
+	private var pendingQueue: List<MediaItem>? = null
 	private var posJob: Job? = null
 
 	val currentTrack = mutableStateOf<MediaItem?>(null)
@@ -77,7 +78,8 @@ class PlaybackViewModel(
 			override fun onTimelineChanged(timeline: Timeline, reason: Int) {
 				updateSkipStates()
 
-				pendingPlayId?.let { id ->
+				val id = pendingPlayId
+				if (id != null) {
 					val index = (0 until (mediaController?.mediaItemCount ?: 0)).firstOrNull {
 						mediaController?.getMediaItemAt(it)?.mediaId == id.toString()
 					}
@@ -89,6 +91,9 @@ class PlaybackViewModel(
 						mediaController?.play()
 						isPlaying.value = true
 					}
+				} else {
+					currentTrack.value = mediaController?.currentMediaItem
+					currentPos.longValue = mediaController?.currentPosition ?: 0L
 				}
 			}
 
@@ -193,7 +198,11 @@ class PlaybackViewModel(
 	// ================================================================================================
 	// --===--  Player Queue Controls  --===--
 	fun setQueue(items: List<MediaItem>) {
-		val controller = mediaController ?: return
+		val controller = mediaController
+		if (controller == null) {
+			pendingQueue = items
+			return
+		}
 
 		val currentIds = (0 until controller.mediaItemCount).map {
 			controller.getMediaItemAt(it).mediaId
@@ -370,12 +379,18 @@ class PlaybackViewModel(
 				}
 				loopMode.intValue = player.repeatMode
 
+				observePlayer()
+
+				pendingQueue?.let { queue ->
+					pendingQueue = null
+					setQueue(queue)
+				}
+
 				if (player.mediaItemCount == 0) {
 					player.prepare()
 				}
 
 				updateSkipStates()
-				observePlayer()
 			}
 		}, ContextCompat.getMainExecutor(application))
 	}

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -27,7 +28,6 @@ class MusicListViewModel(
 	private val musicListRepo: OfflineMusicListRepository
 ) : ViewModel() {
 	private val _queue = mutableListOf<MusicDetails>()
-	private var _previousQueueForSync: List<MusicDetails> = emptyList()
 	private var _queueBeforeMove: List<MusicDetails> = emptyList()
 	private val _manualQueue = MutableStateFlow<List<MusicDetails>?>(null)
 
@@ -65,20 +65,13 @@ class MusicListViewModel(
 
 	val queueSyncEvent: StateFlow<List<MusicDetails>?> = uiState
 		.map { state ->
-			val newQueue = if (state is MusicUiState.Success) {
+			if (state is MusicUiState.Success) {
 				state.musicList
 			} else {
 				emptyList()
 			}
-
-			if (newQueue != _previousQueueForSync) {
-				_previousQueueForSync = newQueue
-				newQueue
-			} else {
-				_previousQueueForSync = newQueue
-				null // null => don't sync
-			}
 		}
+		.distinctUntilChanged()
 		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
 
