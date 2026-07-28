@@ -23,7 +23,6 @@ import androidx.compose.material.icons.rounded.SmartDisplay
 import androidx.compose.material.icons.rounded.UnfoldMore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -34,14 +33,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
 import com.kwiby.musik.ui.components.CustomIconButton
+import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.MusicListItem
-import com.kwiby.musik.ui.tabs.all_music.components.info.NoMusicMsg
 import com.kwiby.musik.ui.components.verticalScrollbar
 import com.kwiby.musik.ui.tabs.all_music.components.ListDivider
-import com.kwiby.musik.ui.components.LoadingIndicator
+import com.kwiby.musik.ui.tabs.all_music.components.info.NoMusicMsg
 import com.kwiby.musik.ui.view_models.MusicListViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
-import com.kwiby.musik.ui.view_models.toMediaItem
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -54,8 +52,8 @@ fun MusicListScreen(
 	onAddYtMusic: () -> Unit
 ) {
 	val selectedIds by musicListViewModel.selectedIds.collectAsStateWithLifecycle()
-	val isInSelectionMode by musicListViewModel.isInSelectionMode.collectAsStateWithLifecycle()
 	val isInMoveMode by musicListViewModel.isInMoveMode.collectAsStateWithLifecycle()
+	val isInSelectionMode by musicListViewModel.isInSelectionMode.collectAsStateWithLifecycle()
 
 	val scope = rememberCoroutineScope()
 
@@ -64,19 +62,6 @@ fun MusicListScreen(
 		musicListViewModel.onMove(from.index, to.index)
 	}
 
-	val queueSyncEvent by musicListViewModel.queueSyncEvent.collectAsStateWithLifecycle()
-	LaunchedEffect(queueSyncEvent) {
-		if (!isInMoveMode) {
-			queueSyncEvent?.let { q ->
-				playbackViewModel.setQueue(q.map { it.toMediaItem() })
-			}
-		}
-	}
-	LaunchedEffect(musicListViewModel, playbackViewModel) {
-		playbackViewModel.onDeadTrackDetected = { ids ->
-			musicListViewModel.deleteTracksByIds(ids)
-		}
-	}
 	DisposableEffect(Unit) {
 		onDispose {
 			musicListViewModel.resetMusicList()

@@ -14,10 +14,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.kwiby.musik.R
@@ -28,9 +32,12 @@ import com.kwiby.musik.ui.main_container.components.info.NoPermsMsg
 import com.kwiby.musik.ui.tabs.all_music.AllMusicTab
 import com.kwiby.musik.ui.tabs.playlists.PlaylistsTab
 import com.kwiby.musik.ui.tabs.stats.StatsTab
+import com.kwiby.musik.ui.view_models.MusicListViewModel
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.Tab
+import com.kwiby.musik.ui.view_models.ViewModelProvider
+import com.kwiby.musik.ui.view_models.toMediaItem
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -38,8 +45,24 @@ fun MainContainer(
 	sharedTransitionScope: SharedTransitionScope,
 	navViewModel: NavViewModel,
 	playbackViewModel: PlaybackViewModel,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	musicListViewModel: MusicListViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
+	val isInMoveMode by musicListViewModel.isInMoveMode.collectAsStateWithLifecycle()
+	val queueSyncEvent by musicListViewModel.queueSyncEvent.collectAsStateWithLifecycle()
+	LaunchedEffect(queueSyncEvent) {
+		if (!isInMoveMode) {
+			queueSyncEvent?.let { q ->
+				playbackViewModel.setQueue(q.map { it.toMediaItem() })
+			}
+		}
+	}
+	LaunchedEffect(musicListViewModel, playbackViewModel) {
+		playbackViewModel.onDeadTrackDetected = { ids ->
+			musicListViewModel.deleteTracksByIds(ids)
+		}
+	}
+
 	val permissionStatus = rememberPermissionHandler()
 
 	Box(
@@ -60,7 +83,7 @@ fun MainContainer(
 				if (permissionStatus.status.isGranted) {
 					// --===--  Main Screens  --===--
 					when (navViewModel.curTab) {
-						Tab.ALL_MUSIC -> AllMusicTab(playbackViewModel = playbackViewModel)
+						Tab.ALL_MUSIC -> AllMusicTab(playbackViewModel, musicListViewModel)
 						Tab.PLAYLISTS -> PlaylistsTab()
 						Tab.STATS -> StatsTab()
 					}

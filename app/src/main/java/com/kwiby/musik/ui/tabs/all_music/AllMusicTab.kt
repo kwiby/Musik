@@ -25,7 +25,7 @@ import com.kwiby.musik.ui.view_models.ViewModelProvider
 @Composable
 fun AllMusicTab(
 	playbackViewModel: PlaybackViewModel,
-	musicListViewModel: MusicListViewModel = viewModel(factory = ViewModelProvider.Factory),
+	musicListViewModel: MusicListViewModel,
 	addMusicViewModel: AddMusicViewModel = viewModel(factory = ViewModelProvider.Factory),
 	addYtMusicViewModel: AddYtMusicViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
