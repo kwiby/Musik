@@ -119,6 +119,8 @@
 
     <!-- Statistics Tab -->
     <string name="refresh_stats_button" translatable="true">Refresh statistics</string>
+    <string name="stats_total_play_count" translatable="true">Total Play Count</string>
+    <string name="stats_total_listen_time" translatable="true">Total Listen Time</string>
 
     <!-- Crash Screen -->
     <string name="crash_title">A CRASH HAS OCCURRED</string>

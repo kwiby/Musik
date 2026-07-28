@@ -10,6 +10,8 @@ class OfflineMusicStatsRepository(
 ) : MusicStatsRepository {
 	override fun getStatsByIdStream(id: Long): Flow<MusicStats> = musicStatsDao.observeStatsById(id)
 	override suspend fun getStatsById(id: Long): MusicStats = musicStatsDao.getStatsById(id)
+	override suspend fun getOverallPlayCount(): Long? = musicStatsDao.getOverallPlayCount()
+	override suspend fun getOverallListenTime(): Long? = musicStatsDao.getOverallListenTime()
 	override suspend fun getStatsOrderedByPlayCountDESC(): List<AudioFile> =
 		musicStatsDao.getStatsOrderedByPlayCountDESC()
 	override suspend fun getStatsOrderedByListenTimeDESC(): List<AudioFile> =

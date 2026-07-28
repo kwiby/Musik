@@ -17,6 +17,12 @@ interface MusicStatsDao {
 	@Query("SELECT * FROM music_stats WHERE musicId = :id")
 	suspend fun getStatsById(id: Long): MusicStats
 
+	@Query("SELECT SUM(playCount) FROM music_stats")
+	suspend fun getOverallPlayCount(): Long?
+
+	@Query("SELECT SUM(totalListenTimeMs) FROM music_stats")
+	suspend fun getOverallListenTime(): Long?
+
 	@Query("""
 		SELECT music_list.* FROM music_list
 		LEFT JOIN music_stats ON music_list.id = music_stats.musicId
