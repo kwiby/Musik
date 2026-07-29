@@ -21,10 +21,11 @@ class PlaybackStatsTracker(
 	private val musicStatsRepo: OfflineMusicStatsRepository
 ) : Player.Listener {
 	private val flushDelay = 30_000.milliseconds
-	private val playCountThreshold = 15 // Seconds (converted to milliseconds later)
+	private val playCountThreshold = 5 // Seconds (converted to milliseconds later)
 
 	private var flushLoopJob: Job? = null
 	private var sessionTrackId: Long? = null
+	private var statsOwnerTrackId: Long? = null
 	private var sessionStartTimeMs: Long? = null
 
 	private var wasPlayCountLogged: Boolean = false
@@ -57,6 +58,18 @@ class PlaybackStatsTracker(
 		flushLoopJob = null
 	}
 
+	private fun ensureStatsFor(trackId: Long?) {
+		if (trackId == null) {
+			return
+		}
+
+		if (statsOwnerTrackId != trackId) {
+			totalListenedMs = 0L
+			wasPlayCountLogged = false
+			statsOwnerTrackId = trackId
+		}
+	}
+
 	private fun startAccumulating(trackId: Long?, doResetSession: Boolean) {
 		if (trackId == null) {
 			Log.w(LOG_TAG, "Cannot start listen time tracking, trackId is null")
@@ -68,6 +81,7 @@ class PlaybackStatsTracker(
 			wasPlayCountLogged = false
 		}
 
+		ensureStatsFor(trackId)
 		sessionTrackId = trackId
 		sessionStartTimeMs = SystemClock.elapsedRealtime()
 
@@ -101,6 +115,7 @@ class PlaybackStatsTracker(
 
 		val listenTimeMs = SystemClock.elapsedRealtime() - startTimeMs
 		if (listenTimeMs > 0) {
+			ensureStatsFor(trackId)
 			totalListenedMs += listenTimeMs
 			checkPlayCountThreshold(trackId)
 
@@ -127,10 +142,15 @@ class PlaybackStatsTracker(
 
 	override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 		flush()
+
+		val newTrackId = mediaItem?.mediaId?.toLongOrNull()
+		ensureStatsFor(newTrackId)
+
 		if (player.isPlaying) {
-			startAccumulating(mediaItem?.mediaId?.toLongOrNull(), true)
+			startAccumulating(newTrackId, true)
 		} else {
 			stopFlushLoop()
+			sessionTrackId = newTrackId
 		}
 	}
 

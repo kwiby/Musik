@@ -1,5 +1,8 @@
 package com.kwiby.musik.ui.view_models
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.kwiby.musik.data.data_classes.MusicDetails
@@ -45,6 +48,9 @@ class AddMusicViewModel(
 
 	private val _selectedIds = MutableStateFlow<Set<Long>>(emptySet())
 	val selectedIds: StateFlow<Set<Long>> = _selectedIds.asStateFlow()
+
+	var refreshTrigger by mutableStateOf(false)
+		private set
 
 
 	private fun clearSearchQuery() {
@@ -113,6 +119,7 @@ class AddMusicViewModel(
 
 	fun refreshButton() {
 		resetMusicAdding()
+		refreshTrigger = !refreshTrigger
 	}
 
 	fun resetMusicAdding() {

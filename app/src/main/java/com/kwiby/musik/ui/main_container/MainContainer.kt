@@ -26,7 +26,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.kwiby.musik.R
 import com.kwiby.musik.data.misc.rememberPermissionHandler
-import com.kwiby.musik.ui.main_container.components.PlayerBar
+import com.kwiby.musik.ui.components.PlayerBar
 import com.kwiby.musik.ui.main_container.components.TabButton
 import com.kwiby.musik.ui.main_container.components.info.NoPermsMsg
 import com.kwiby.musik.ui.tabs.all_music.AllMusicTab

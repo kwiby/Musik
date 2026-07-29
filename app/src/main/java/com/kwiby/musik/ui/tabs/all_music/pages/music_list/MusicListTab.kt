@@ -33,10 +33,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
 import com.kwiby.musik.ui.components.CustomIconButton
+import com.kwiby.musik.ui.components.ListDivider
 import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.MusicListItem
 import com.kwiby.musik.ui.components.verticalScrollbar
-import com.kwiby.musik.ui.tabs.all_music.components.ListDivider
 import com.kwiby.musik.ui.tabs.all_music.components.info.NoMusicMsg
 import com.kwiby.musik.ui.view_models.MusicListViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel

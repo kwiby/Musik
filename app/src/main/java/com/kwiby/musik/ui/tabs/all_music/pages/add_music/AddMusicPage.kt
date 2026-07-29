@@ -18,6 +18,7 @@ import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -27,10 +28,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
 import com.kwiby.musik.ui.components.CustomIconButton
+import com.kwiby.musik.ui.components.ListDivider
 import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.MusicListItem
 import com.kwiby.musik.ui.components.verticalScrollbar
-import com.kwiby.musik.ui.tabs.all_music.components.ListDivider
 import com.kwiby.musik.ui.tabs.all_music.pages.add_music.components.AddMusicSearchbar
 import com.kwiby.musik.ui.tabs.all_music.pages.add_music.components.info.NoAudioFilesMsg
 import com.kwiby.musik.ui.view_models.AddMusicViewModel
@@ -48,6 +49,7 @@ fun AddMusicPage(
 
 	val lazyListState = rememberLazyListState()
 	val scope = rememberCoroutineScope()
+	val searchQuery by addMusicViewModel.searchQuery.collectAsStateWithLifecycle()
 
 	DisposableEffect(Unit) {
 		onDispose {
@@ -56,6 +58,11 @@ fun AddMusicPage(
 	}
 	BackHandler(true) { // Always enabled in this page
 		onBackToMusicList()
+	}
+	LaunchedEffect(addMusicViewModel.refreshTrigger, searchQuery == "") {
+		if (lazyListState.firstVisibleItemIndex != 0) {
+			lazyListState.scrollToItem(0)
+		}
 	}
 
 	Column(

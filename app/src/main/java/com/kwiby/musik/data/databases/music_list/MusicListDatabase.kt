@@ -7,10 +7,10 @@ import androidx.room.RoomDatabase
 import com.kwiby.musik.data.daos.music_list.MusicListDao
 import com.kwiby.musik.data.daos.music_stats.MusicStatsDao
 import com.kwiby.musik.data.data_classes.AudioFile
-import com.kwiby.musik.data.data_classes.MusicStats
+import com.kwiby.musik.data.data_classes.AudioFileStats
 
 @Database(
-	entities = [AudioFile::class, MusicStats::class],
+	entities = [AudioFile::class, AudioFileStats::class],
 	version = 1, // EXAMPLE MIGRATION -> Make sure to bump this value up for each db migration
 	exportSchema = false
 )
