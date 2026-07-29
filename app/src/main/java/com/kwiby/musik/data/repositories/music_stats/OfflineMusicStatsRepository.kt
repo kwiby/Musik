@@ -20,4 +20,5 @@ class OfflineMusicStatsRepository(
 	override suspend fun incrementPlayCount(id: Long) = musicStatsDao.incrementPlayCount(id)
 	override suspend fun logMusicSession(id: Long, listenTimeMs: Long) =
 		musicStatsDao.logMusicSession(id, listenTimeMs)
+	override suspend fun deleteMultipleById(ids: Set<Long>) = musicStatsDao.deleteMultipleById(ids)
 }

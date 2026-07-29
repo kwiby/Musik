@@ -81,4 +81,7 @@ interface MusicStatsDao {
 		insertIfAbsent(AudioFileStats(id))
 		addListenTime(id, listenTimeMs)
 	}
+
+	@Query("DELETE FROM music_stats WHERE id IN (:ids)")
+	suspend fun deleteMultipleById(ids: Set<Long>)
 }

@@ -20,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -62,7 +63,9 @@ fun StatsTab(
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {
 			// ---===---  Change Sorting Rule Button  ---===---
-			Row {
+			Row(
+				verticalAlignment = Alignment.CenterVertically
+			) {
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 
 				CustomIconButton(
@@ -71,6 +74,24 @@ fun StatsTab(
 				) {
 					statsViewModel.switchSortingRuleButton()
 				}
+
+				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.small_padding)))
+
+				Text(
+					text = stringResource(R.string.stats_sorting_by_text),
+					color = MaterialTheme.colorScheme.onSecondary,
+					style = MaterialTheme.typography.labelLarge.copy(
+						fontWeight = FontWeight.W400
+					)
+				)
+
+				Spacer(Modifier.width(dimensionResource(R.dimen.x_small_padding)))
+
+				Text(
+					text = statsViewModel.selectedOrderRule,
+					color = MaterialTheme.colorScheme.onSecondary,
+					style = MaterialTheme.typography.labelLarge
+				)
 			}
 
 			// ---===---  Refresh Button  ---===---

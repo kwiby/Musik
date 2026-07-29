@@ -14,4 +14,5 @@ interface MusicStatsRepository {
 	suspend fun insertIfAbsent(stats: AudioFileStats)
 	suspend fun incrementPlayCount(id: Long)
 	suspend fun logMusicSession(id: Long, listenTimeMs: Long)
+	suspend fun deleteMultipleById(ids: Set<Long>)
 }

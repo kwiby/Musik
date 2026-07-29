@@ -8,6 +8,7 @@ import androidx.media3.common.MediaMetadata
 import com.kwiby.musik.data.data_classes.AudioFile
 import com.kwiby.musik.data.data_classes.MusicDetails
 import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
+import com.kwiby.musik.data.repositories.music_stats.OfflineMusicStatsRepository
 import com.kwiby.musik.ui.misc.formatDuration
 import com.kwiby.musik.ui.misc.unformatDuration
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MusicListViewModel(
-	private val musicListRepo: OfflineMusicListRepository
+	private val musicListRepo: OfflineMusicListRepository,
+	private val musicStatsRepo: OfflineMusicStatsRepository
 ) : ViewModel() {
 	private val _queue = mutableListOf<MusicDetails>()
 	private var _queueBeforeMove: List<MusicDetails> = emptyList()
@@ -122,6 +124,7 @@ class MusicListViewModel(
 		playbackViewModel.removeFromQueue(selectedMusic)
 		withContext(Dispatchers.IO) {
 			musicListRepo.deleteMultipleAudioFilesById(selectedMusic)
+			musicStatsRepo.deleteMultipleById(selectedMusic)
 		}
 
 		resetMusicList()
@@ -130,6 +133,7 @@ class MusicListViewModel(
 	suspend fun deleteTracksByIds(ids: Set<Long>) {
 		withContext(Dispatchers.IO) {
 			musicListRepo.deleteMultipleAudioFilesById(ids)
+			musicStatsRepo.deleteMultipleById(ids)
 		}
 
 		_queue.removeAll { it.id in ids }
