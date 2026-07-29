@@ -75,8 +75,6 @@ fun StatsTab(
 					statsViewModel.switchSortingRuleButton()
 				}
 
-				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.small_padding)))
-
 				Text(
 					text = stringResource(R.string.stats_sorting_by_text),
 					color = MaterialTheme.colorScheme.onSecondary,
