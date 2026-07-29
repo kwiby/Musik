@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.kwiby.musik.data.data_classes.AudioFile
 import com.kwiby.musik.data.data_classes.VideoInfo
 import com.kwiby.musik.data.datastore.DataStoreManager
-import com.kwiby.musik.data.repositories.audio_file.AudioFileRepository
+import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
 import com.kwiby.musik.ui.misc.folder_manager.FolderManager
 import com.kwiby.musik.ui.misc.ytdlp.YtDlp
 import kotlinx.coroutines.Job
@@ -30,7 +30,7 @@ class AddYtMusicViewModel(
 	application: Application,
 	private val dataStoreManager: DataStoreManager,
 	private val ytDlp: YtDlp,
-	private val audioFileRepo: AudioFileRepository
+	private val musicListRepo: OfflineMusicListRepository
 ) : AndroidViewModel(application) {
 	sealed interface DownloaderUiState {
 		data object Empty: DownloaderUiState // No actions executed yet
@@ -87,7 +87,7 @@ class AddYtMusicViewModel(
 					albumArtUri = downloadResult.albumArtUri,
 					title = downloadResult.title,
 					artist = downloadResult.artist,
-					duration = downloadResult.duration,
+					durationMs = downloadResult.durationMs,
 				)
 
 				_uiState.value = DownloaderUiState.Success
@@ -114,20 +114,20 @@ class AddYtMusicViewModel(
 		albumArtUri: Uri,
 		title: String,
 		artist: String,
-		duration: Long
+		durationMs: Long
 	) {
 		viewModelScope.launch {
-			audioFileRepo.insertAudioFile(
+			musicListRepo.insertAudioFile(
 				AudioFile(
 					id = id,
 					contentUri = contentUri.toString(),
 					albumArtUri = albumArtUri.toString(),
 					title = title,
 					artist = artist,
-					duration = duration
+					durationMs = durationMs
 				).copy(
 					// 0-indexed, so the next orderPos is just the total count of db items
-					orderPos = audioFileRepo.getAudioFileCount()
+					orderPos = musicListRepo.getAudioFileCount()
 				)
 			)
 		}

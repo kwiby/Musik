@@ -117,6 +117,13 @@
         \"Master\" provides the latest fixes and features, but may be prone to bugs or regressions.
     </string>
 
+    <!-- Statistics Tab -->
+    <string name="refresh_stats_button" translatable="true">Refresh statistics</string>
+    <string name="stats_total_play_count" translatable="true">Total Play Count</string>
+    <string name="stats_total_listen_time" translatable="true">Total Listen Time</string>
+    <string name="stats_no_music_added_msg" translatable="true">No music added</string>
+    <string name="stats_sorting_by_text" translatable="true">Sorting by:</string>
+
     <!-- Crash Screen -->
     <string name="crash_title">A CRASH HAS OCCURRED</string>
     <string name="copy_crash_log">Copy Crash Log</string>

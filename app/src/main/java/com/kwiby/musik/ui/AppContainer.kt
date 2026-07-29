@@ -1,23 +1,30 @@
 package com.kwiby.musik.ui
 
 import android.content.Context
+import com.kwiby.musik.data.databases.music_list.MusicListDatabase
 import com.kwiby.musik.data.datastore.DataStoreManager
-import com.kwiby.musik.data.db.AudioFileDatabase
-import com.kwiby.musik.data.repositories.audio_file.AudioFileRepository
-import com.kwiby.musik.data.repositories.audio_file.OfflineAudioFileRepository
+import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
+import com.kwiby.musik.data.repositories.music_stats.OfflineMusicStatsRepository
 import com.kwiby.musik.ui.misc.ytdlp.YtDlp
 
-//import com.example.musik.ui.misc.YtDlp.YtDlp
-
 interface AppContainer {
-	val audioFileRepository: AudioFileRepository
+	val musicListRepo: OfflineMusicListRepository
+	val musicStatsRepo: OfflineMusicStatsRepository
 	val dataStoreManager: DataStoreManager
 	val ytDlp: YtDlp
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
-	override val audioFileRepository: AudioFileRepository by lazy {
-		OfflineAudioFileRepository(AudioFileDatabase.getDatabase(context.applicationContext).audioFileDao())
+	override val musicListRepo: OfflineMusicListRepository by lazy {
+		OfflineMusicListRepository(
+			MusicListDatabase.getDatabase(context.applicationContext).musicListDao()
+		)
+	}
+
+	override val musicStatsRepo: OfflineMusicStatsRepository by lazy {
+		OfflineMusicStatsRepository(
+			MusicListDatabase.getDatabase(context.applicationContext).musicStatsDao()
+		)
 	}
 
 	override val dataStoreManager: DataStoreManager by lazy {

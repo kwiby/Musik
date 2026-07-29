@@ -1,10 +1,13 @@
 package com.kwiby.musik.ui.view_models
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.kwiby.musik.data.data_classes.MusicDetails
 import com.kwiby.musik.data.misc.fetchAudioFiles
-import com.kwiby.musik.data.repositories.audio_file.AudioFileRepository
+import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
 import com.kwiby.musik.ui.MusikApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,7 +23,7 @@ import kotlinx.coroutines.withContext
 
 class AddMusicViewModel(
 	application: MusikApplication,
-	private val audioFileRepo: AudioFileRepository
+	private val musicListRepo: OfflineMusicListRepository
 ) : AndroidViewModel(application) {
 	val searchQuery = MutableStateFlow("")
 
@@ -45,6 +48,9 @@ class AddMusicViewModel(
 
 	private val _selectedIds = MutableStateFlow<Set<Long>>(emptySet())
 	val selectedIds: StateFlow<Set<Long>> = _selectedIds.asStateFlow()
+
+	var refreshTrigger by mutableStateOf(false)
+		private set
 
 
 	private fun clearSearchQuery() {
@@ -76,8 +82,8 @@ class AddMusicViewModel(
 	suspend fun addSelectedMusic() {
 		val selectedMusic = _audioFiles.value.filter { it.id in _selectedIds.value }
 		withContext(Dispatchers.IO) {
-			val curCount = audioFileRepo.getAudioFileCount()
-			audioFileRepo.insertMultipleAudioFiles(
+			val curCount = musicListRepo.getAudioFileCount()
+			musicListRepo.insertMultipleAudioFiles(
 				selectedMusic.mapIndexed { index, music ->
 					music.toAudioFile().copy(orderPos = curCount + index)
 				}
@@ -113,6 +119,7 @@ class AddMusicViewModel(
 
 	fun refreshButton() {
 		resetMusicAdding()
+		refreshTrigger = !refreshTrigger
 	}
 
 	fun resetMusicAdding() {

@@ -7,7 +7,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.kwiby.musik.data.data_classes.AudioFile
 import com.kwiby.musik.data.data_classes.MusicDetails
-import com.kwiby.musik.data.repositories.audio_file.AudioFileRepository
+import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
+import com.kwiby.musik.data.repositories.music_stats.OfflineMusicStatsRepository
 import com.kwiby.musik.ui.misc.formatDuration
 import com.kwiby.musik.ui.misc.unformatDuration
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -23,10 +26,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MusicListViewModel(
-	private val audioFileRepo: AudioFileRepository
+	private val musicListRepo: OfflineMusicListRepository,
+	private val musicStatsRepo: OfflineMusicStatsRepository
 ) : ViewModel() {
 	private val _queue = mutableListOf<MusicDetails>()
-	private var _previousQueueForSync: List<MusicDetails> = emptyList()
 	private var _queueBeforeMove: List<MusicDetails> = emptyList()
 	private val _manualQueue = MutableStateFlow<List<MusicDetails>?>(null)
 
@@ -37,7 +40,7 @@ class MusicListViewModel(
 	}
 
 	val uiState: StateFlow<MusicUiState> = combine(
-		audioFileRepo.getAllAudioFilesStream(), _manualQueue
+		musicListRepo.getAllAudioFilesStream(), _manualQueue
 	) { musicList, manualQueue ->
 		if (musicList.isEmpty()) {
 			_queue.clear()
@@ -56,7 +59,7 @@ class MusicListViewModel(
 
 			return@combine MusicUiState.Success(manualQueue ?: _queue.toList())
 		}
-	}.stateIn(
+	}.flowOn(Dispatchers.Default).stateIn(
 		scope = viewModelScope,
 		started = SharingStarted.WhileSubscribed(5_000),
 		initialValue = MusicUiState.Loading
@@ -64,20 +67,13 @@ class MusicListViewModel(
 
 	val queueSyncEvent: StateFlow<List<MusicDetails>?> = uiState
 		.map { state ->
-			val newQueue = if (state is MusicUiState.Success) {
+			if (state is MusicUiState.Success) {
 				state.musicList
 			} else {
 				emptyList()
 			}
-
-			if (newQueue != _previousQueueForSync) {
-				_previousQueueForSync = newQueue
-				newQueue
-			} else {
-				_previousQueueForSync = newQueue
-				null // null = don't sync
-			}
 		}
+		.distinctUntilChanged()
 		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
 
@@ -127,7 +123,8 @@ class MusicListViewModel(
 
 		playbackViewModel.removeFromQueue(selectedMusic)
 		withContext(Dispatchers.IO) {
-			audioFileRepo.deleteMultipleAudioFilesById(selectedMusic)
+			musicListRepo.deleteMultipleAudioFilesById(selectedMusic)
+			musicStatsRepo.deleteMultipleById(selectedMusic)
 		}
 
 		resetMusicList()
@@ -135,7 +132,8 @@ class MusicListViewModel(
 
 	suspend fun deleteTracksByIds(ids: Set<Long>) {
 		withContext(Dispatchers.IO) {
-			audioFileRepo.deleteMultipleAudioFilesById(ids)
+			musicListRepo.deleteMultipleAudioFilesById(ids)
+			musicStatsRepo.deleteMultipleById(ids)
 		}
 
 		_queue.removeAll { it.id in ids }
@@ -187,7 +185,7 @@ class MusicListViewModel(
 		setMoveMode(false)
 
 		viewModelScope.launch(Dispatchers.IO) {
-			audioFileRepo.updateMultipleOrderPos(queue.map { it.id })
+			musicListRepo.updateMultipleOrderPos(queue.map { it.id })
 		}
 	}
 
@@ -232,11 +230,12 @@ fun MusicDetails.toMediaItem(): MediaItem {
 			MediaMetadata.Builder()
 				.setTitle(title)
 				.setArtist(artist)
-				.setDurationMs(duration.unformatDuration())
+				.setDurationMs(durationMs.unformatDuration())
 				.setArtworkUri(albumArtUri.toUri())
 				.build()
 		).build()
 }
+
 
 // MusicDetails --> AudioFile
 fun MusicDetails.toAudioFile(): AudioFile = AudioFile(
@@ -245,7 +244,7 @@ fun MusicDetails.toAudioFile(): AudioFile = AudioFile(
 	albumArtUri = albumArtUri,
 	title = title,
 	artist = artist,
-	duration = duration.unformatDuration(),
+	durationMs = durationMs.unformatDuration(),
 	orderPos = orderPos
 )
 
@@ -256,6 +255,6 @@ fun AudioFile.toMusicDetails(): MusicDetails = MusicDetails(
 	albumArtUri = albumArtUri,
 	title = title,
 	artist = artist,
-	duration = duration.formatDuration(),
+	durationMs = durationMs.formatDuration(),
 	orderPos = orderPos
 )

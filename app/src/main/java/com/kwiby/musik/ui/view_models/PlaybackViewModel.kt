@@ -17,9 +17,9 @@ import androidx.media3.common.Timeline
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.kwiby.musik.data.services.PlaybackService
-import com.kwiby.musik.ui.MusikApplication
 import com.google.common.util.concurrent.ListenableFuture
+import com.kwiby.musik.data.services.playback_service.PlaybackService
+import com.kwiby.musik.ui.MusikApplication
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,6 +36,7 @@ class PlaybackViewModel(
 	private var mediaController: MediaController? = null
 	private var skipInProgress = false
 	private var pendingPlayId: Long? = null
+	private var pendingQueue: List<MediaItem>? = null
 	private var posJob: Job? = null
 
 	val currentTrack = mutableStateOf<MediaItem?>(null)
@@ -52,36 +53,12 @@ class PlaybackViewModel(
 	// ================================================================================================
 
 
-	/*
-	private fun createMediaItem(
-		id: Long,
-		contentUri: String,
-		artworkUri: String,
-		title: String,
-		artist: String,
-		duration: String
-	): MediaItem {
-		return MediaItem.Builder()
-			.setMediaId(id.toString())
-			.setUri(contentUri.toUri())
-			.setMediaMetadata(
-				MediaMetadata.Builder()
-					.setTitle(title)
-					.setArtist(artist)
-					.setDurationMs(duration.unformatDuration())
-					.setArtworkUri(artworkUri.toUri())
-					.build()
-			).build()
-	}
-	 */
-
-
 	// ================================================================================================
 	// --===--  Player Observer  --===--
 	private fun observePlayer() {
 		mediaController?.addListener(object : Player.Listener {
 			override fun onIsPlayingChanged(playing: Boolean) {
-				// Use this code to keep the pause button icon displaying between skips
+				// Use this code to keep the pause button icon displaying between skips ---
 				val state = mediaController?.playbackState
 				if ((skipInProgress || state == Player.STATE_BUFFERING) && !playing) {
 					return
@@ -101,7 +78,8 @@ class PlaybackViewModel(
 			override fun onTimelineChanged(timeline: Timeline, reason: Int) {
 				updateSkipStates()
 
-				pendingPlayId?.let { id ->
+				val id = pendingPlayId
+				if (id != null) {
 					val index = (0 until (mediaController?.mediaItemCount ?: 0)).firstOrNull {
 						mediaController?.getMediaItemAt(it)?.mediaId == id.toString()
 					}
@@ -113,6 +91,9 @@ class PlaybackViewModel(
 						mediaController?.play()
 						isPlaying.value = true
 					}
+				} else {
+					currentTrack.value = mediaController?.currentMediaItem
+					currentPos.longValue = mediaController?.currentPosition ?: 0L
 				}
 			}
 
@@ -217,7 +198,11 @@ class PlaybackViewModel(
 	// ================================================================================================
 	// --===--  Player Queue Controls  --===--
 	fun setQueue(items: List<MediaItem>) {
-		val controller = mediaController ?: return
+		val controller = mediaController
+		if (controller == null) {
+			pendingQueue = items
+			return
+		}
 
 		val currentIds = (0 until controller.mediaItemCount).map {
 			controller.getMediaItemAt(it).mediaId
@@ -394,12 +379,18 @@ class PlaybackViewModel(
 				}
 				loopMode.intValue = player.repeatMode
 
+				observePlayer()
+
+				pendingQueue?.let { queue ->
+					pendingQueue = null
+					setQueue(queue)
+				}
+
 				if (player.mediaItemCount == 0) {
 					player.prepare()
 				}
 
 				updateSkipStates()
-				observePlayer()
 			}
 		}, ContextCompat.getMainExecutor(application))
 	}

@@ -105,7 +105,7 @@ fun MusicListItem(
 				},
 				trailingContent = {
 					Text(
-						text = musicDetails.duration,
+						text = musicDetails.durationMs,
 						style = MaterialTheme.typography.bodyMedium,
 						color = MaterialTheme.colorScheme.onSecondary,
 						maxLines = 1,

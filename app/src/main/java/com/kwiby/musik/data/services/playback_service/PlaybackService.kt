@@ -1,4 +1,4 @@
-package com.kwiby.musik.data.services
+package com.kwiby.musik.data.services.playback_service
 
 import android.app.PendingIntent
 import android.content.Intent
@@ -11,10 +11,19 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.kwiby.musik.MainActivity
+import com.kwiby.musik.data.services.playback_service.components.PlaybackStatsTracker
+import com.kwiby.musik.ui.MusikApplication
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 
 class PlaybackService: MediaSessionService() {
 	private var mediaSession: MediaSession? = null
 	private lateinit var player: ExoPlayer
+
+	private lateinit var statsTracker: PlaybackStatsTracker
+	private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
 	override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
 		return mediaSession
@@ -47,9 +56,18 @@ class PlaybackService: MediaSessionService() {
 		mediaSession = MediaSession.Builder(this, player)
 			.setSessionActivity(pendingIntent)
 			.build()
+
+		statsTracker = PlaybackStatsTracker(
+			player,
+			serviceScope,
+			(application as MusikApplication).container.musicStatsRepo
+		)
+		player.addListener(statsTracker)
 	}
 
 	override fun onDestroy() {
+		statsTracker.release()
+
 		mediaSession?.run {
 			if (player.isCommandAvailable(Player.COMMAND_STOP)) {
 				player.release()
@@ -58,6 +76,8 @@ class PlaybackService: MediaSessionService() {
 			release()
 			mediaSession = null
 		}
+
+		serviceScope.cancel()
 
 		super.onDestroy()
 	}
@@ -69,6 +89,7 @@ class PlaybackService: MediaSessionService() {
 			stopSelf()
 		}
 		 */
+		statsTracker.release()
 		stopSelf()
 
 		super.onTaskRemoved(rootIntent)

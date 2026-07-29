@@ -10,6 +10,8 @@
     <dimen name="x_large_padding">64dp</dimen>
     <dimen name="xx_large_padding">128dp</dimen>
 
+    <dimen name="custom_icon_button_size_default">24dp</dimen>
+
     <!-- Main Containers -->
     <dimen name="main_container_top_spacing">40dp</dimen>
     <dimen name="main_container_top_corners_radius">48dp</dimen>
@@ -85,7 +87,7 @@
 
     <dimen name="radiobutton_image_size">50dp</dimen>
 
-    <!-- Add YouTube Music Tab -->
+    <!-- Add YouTube Music Page -->
     <dimen name="no_download_location_offset">75dp</dimen>
     <dimen name="no_internet_offset">75dp</dimen>
 
@@ -97,13 +99,25 @@
     <dimen name="download_location_container_right_padding">25dp</dimen>
     <dimen name="download_location_inner_padding">10dp</dimen>
 
-    <dimen name="yt_link_field_top_padding">20dp</dimen>
+    <dimen name="yt_link_field_top_padding">15dp</dimen>
     <dimen name="yt_link_field_bottom_padding">10dp</dimen>
     <dimen name="yt_link_field_left_padding">20dp</dimen>
     <dimen name="yt_link_field_right_padding">5dp</dimen>
-    <dimen name="yt_link_field_submit_button_right_padding">10dp</dimen>
+    <dimen name="yt_link_field_buttons_right_padding">10dp</dimen>
 
     <dimen name="info_box_horizontal_padding">20dp</dimen>
     <dimen name="info_box_bottom_padding">80dp</dimen>
     <dimen name="downloader_info_msg_offset">30dp</dimen>
+
+    <!-- Statistics Tab -->
+    <dimen name="stats_top_padding">36dp</dimen>
+    <dimen name="stats_bottom_padding">80dp</dimen>
+    <dimen name="stats_container_gap">10dp</dimen>
+    <dimen name="stats_overview_container_height">80dp</dimen>
+    <dimen name="stats_container_horizontal_padding">20dp</dimen>
+    <dimen name="stats_overview_title_horizontal_padding">10dp</dimen>
+    <dimen name="stats_list_item_image_size">40dp</dimen>
+    <dimen name="stats_list_item_gap">10dp</dimen>
+    <dimen name="stats_play_count_width">50dp</dimen>
+    <dimen name="stats_listen_time_width">70dp</dimen>
 </resources>

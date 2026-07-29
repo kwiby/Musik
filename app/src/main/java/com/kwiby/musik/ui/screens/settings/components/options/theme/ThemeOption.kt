@@ -1,5 +1,6 @@
 package com.kwiby.musik.ui.screens.settings.components.options.theme
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,6 +37,12 @@ fun ThemeOption(
 	Column {
 		// --===--  Theme Mode  --===--
 		Row(
+			modifier = Modifier.clickable(
+				interactionSource = null,
+				indication = null
+			) {
+				settingsViewModel.switchThemeMode()
+			},
 			verticalAlignment = Alignment.CenterVertically
 		) {
 			Column(
@@ -56,11 +63,7 @@ fun ThemeOption(
 
 			Spacer(Modifier.width(dimensionResource(R.dimen.medium_padding)))
 
-			OptionSwitch(
-				dataStoreThemeMode == "DARK"
-			) {
-				settingsViewModel.switchThemeMode()
-			}
+			OptionSwitch(dataStoreThemeMode == "DARK")
 		}
 
 		Spacer(Modifier.height(dimensionResource(R.dimen.settings_theme_option_vertical_padding)))

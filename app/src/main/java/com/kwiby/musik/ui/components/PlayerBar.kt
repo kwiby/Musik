@@ -1,4 +1,4 @@
-package com.kwiby.musik.ui.main_container.components
+package com.kwiby.musik.ui.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -40,8 +40,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.kwiby.musik.R
-import com.kwiby.musik.ui.components.AlbumArtImage
-import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.Screen

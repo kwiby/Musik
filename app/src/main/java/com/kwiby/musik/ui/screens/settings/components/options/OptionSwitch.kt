@@ -10,12 +10,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 @Composable
 fun OptionSwitch(
 	checked: Boolean,
-	onCheckedChange: () -> Unit
 ) {
 	CompositionLocalProvider(LocalRippleConfiguration provides null) {
 		Switch(
 			checked = checked,
-			onCheckedChange = { onCheckedChange() },
+			onCheckedChange = null,
 			colors = SwitchDefaults.colors(
 				uncheckedThumbColor = MaterialTheme.colorScheme.outline,
 				uncheckedBorderColor = MaterialTheme.colorScheme.outline,

@@ -1,5 +1,6 @@
 package com.kwiby.musik.ui.screens.settings.components.options.downloading
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,12 @@ fun DownloadingOption(
 	Spacer(Modifier.height(dimensionResource(R.dimen.option_header_bottom_padding)))
 
 	Row(
+		modifier = Modifier.clickable(
+			interactionSource = null,
+			indication = null
+		) {
+			settingsViewModel.toggleDoConvertMp3()
+		},
 		verticalAlignment = Alignment.CenterVertically
 	) {
 		Column(
@@ -49,11 +56,7 @@ fun DownloadingOption(
 
 		Spacer(Modifier.width(dimensionResource(R.dimen.medium_padding)))
 
-		OptionSwitch(
-			doConvertMp3 ?: false
-		) {
-			settingsViewModel.toggleDoConvertMp3()
-		}
+		OptionSwitch(doConvertMp3 ?: false)
 	}
 
 	Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))

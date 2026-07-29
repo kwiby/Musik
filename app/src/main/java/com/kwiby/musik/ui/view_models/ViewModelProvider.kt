@@ -15,6 +15,20 @@ object ViewModelProvider {
 			)
 		}
 
+		// --===--  PlayBackViewModel  --===--
+		initializer {
+			PlaybackViewModel(
+				musikApplication()
+			)
+		}
+
+		// --===--  StatsViewModel  --===--
+		initializer {
+			StatsViewModel(
+				musikApplication().container.musicStatsRepo
+			)
+		}
+
 		// --===--  SettingsViewModel  --===--
 		initializer {
 			SettingsViewModel(
@@ -26,14 +40,8 @@ object ViewModelProvider {
 		// --===--  MusicListViewModel  --===--
 		initializer {
 			MusicListViewModel(
-				musikApplication().container.audioFileRepository
-			)
-		}
-
-		// --===--  PlayBackViewModel  --===--
-		initializer {
-			PlaybackViewModel(
-				musikApplication()
+				musikApplication().container.musicListRepo,
+				musikApplication().container.musicStatsRepo
 			)
 		}
 
@@ -41,7 +49,7 @@ object ViewModelProvider {
 		initializer {
 			AddMusicViewModel(
 				musikApplication(),
-				musikApplication().container.audioFileRepository
+				musikApplication().container.musicListRepo
 			)
 		}
 
@@ -51,7 +59,7 @@ object ViewModelProvider {
 				musikApplication(),
 				musikApplication().container.dataStoreManager,
 				musikApplication().container.ytDlp,
-				musikApplication().container.audioFileRepository
+				musikApplication().container.musicListRepo
 			)
 		}
 	}

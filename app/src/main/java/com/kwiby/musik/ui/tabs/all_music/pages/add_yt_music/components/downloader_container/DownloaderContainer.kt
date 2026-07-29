@@ -29,7 +29,7 @@ import com.kwiby.musik.ui.tabs.all_music.pages.add_yt_music.components.downloade
 import com.kwiby.musik.ui.view_models.AddYtMusicViewModel
 
 @Composable
-fun DownloadContainer(
+fun DownloaderContainer(
 	addYtMusicViewModel: AddYtMusicViewModel
 ) {
 	val uiState by addYtMusicViewModel.uiState.collectAsStateWithLifecycle()
@@ -86,7 +86,7 @@ fun DownloadContainer(
 				}
 			}
 
-			Spacer(Modifier.width(dimensionResource(R.dimen.yt_link_field_submit_button_right_padding)))
+			Spacer(Modifier.width(dimensionResource(R.dimen.yt_link_field_buttons_right_padding)))
 		}
 
 		Spacer(Modifier.height(dimensionResource(R.dimen.yt_link_field_bottom_padding)))

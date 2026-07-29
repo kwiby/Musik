@@ -1,4 +1,4 @@
-package com.kwiby.musik.ui.tabs.all_music.components
+package com.kwiby.musik.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +13,10 @@ import com.kwiby.musik.R
 import com.kwiby.musik.data.data_classes.MusicDetails
 
 @Composable
-fun ListDivider(index: Int, list: List<MusicDetails>) {
+fun ListDivider(
+	index: Int,
+	list: List<MusicDetails>
+) {
 	if (index < list.size - 1) {
 		Box(modifier = Modifier.fillMaxWidth()) {
 			HorizontalDivider(

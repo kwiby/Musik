@@ -1,32 +1,40 @@
-package com.kwiby.musik.data.db
+package com.kwiby.musik.data.daos.music_list
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.kwiby.musik.data.data_classes.AudioFile
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface AudioFileDao {
-	@Query("SELECT * from audio_files WHERE title LIKE '%' || :search || '%'")
+interface MusicListDao {
+	@Query("SELECT * from music_list WHERE title LIKE '%' || :search || '%'")
 	fun searchByTitle(search: String): Flow<List<AudioFile>>
 
-	@Query("SELECT * from audio_files WHERE id = :id")
+	@Query("SELECT * from music_list WHERE id = :id")
 	fun getById(id: Int): Flow<AudioFile>
 
-	@Query("SELECT * FROM audio_files ORDER BY orderPos ASC")
+	@Query("SELECT * FROM music_list ORDER BY orderPos ASC")
 	fun getAll(): Flow<List<AudioFile>>
 
-	@Query("SELECT COUNT(*) FROM audio_files")
+	@Query("SELECT COUNT(*) FROM music_list")
 	suspend fun getCount(): Int
 
-	@Query("UPDATE audio_files SET orderPos = :orderPos WHERE id = :id")
+	@Query("UPDATE music_list SET orderPos = :orderPos WHERE id = :id")
 	suspend fun updateOrderPos(id: Long, orderPos: Int)
 
-	@Query("DELETE FROM audio_files WHERE id IN (:ids)")
+	@Transaction
+	suspend fun updateMultipleOrderPos(orderedIds: List<Long>) {
+		orderedIds.forEachIndexed { index, id ->
+			updateOrderPos(id, index)
+		}
+	}
+
+	@Query("DELETE FROM music_list WHERE id IN (:ids)")
 	suspend fun deleteMultipleById(ids: Set<Long>)
 
 	@Insert(onConflict = OnConflictStrategy.IGNORE)
