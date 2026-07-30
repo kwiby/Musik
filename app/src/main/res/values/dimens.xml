@@ -120,4 +120,5 @@
     <dimen name="stats_list_item_gap">10dp</dimen>
     <dimen name="stats_play_count_width">50dp</dimen>
     <dimen name="stats_listen_time_width">70dp</dimen>
+    <dimen name="stats_sort_by_button_left_padding">20dp</dimen>
 </resources>

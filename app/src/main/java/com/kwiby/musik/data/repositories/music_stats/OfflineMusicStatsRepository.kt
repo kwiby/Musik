@@ -1,5 +1,6 @@
 package com.kwiby.musik.data.repositories.music_stats
 
+import android.database.sqlite.SQLiteConstraintException
 import com.kwiby.musik.data.daos.music_stats.MusicStatsDao
 import com.kwiby.musik.data.data_classes.AudioFileStats
 import com.kwiby.musik.data.data_classes.MusicStats
@@ -18,7 +19,10 @@ class OfflineMusicStatsRepository(
 		musicStatsDao.getStatsOrderedByListenTimeDESC()
 	override suspend fun insertIfAbsent(stats: AudioFileStats) = musicStatsDao.insertIfAbsent(stats)
 	override suspend fun incrementPlayCount(id: Long) = musicStatsDao.incrementPlayCount(id)
-	override suspend fun logMusicSession(id: Long, listenTimeMs: Long) =
-		musicStatsDao.logMusicSession(id, listenTimeMs)
+	override suspend fun logMusicSession(id: Long, listenTimeMs: Long) {
+		try {
+			musicStatsDao.logMusicSession(id, listenTimeMs)
+		} catch (_: SQLiteConstraintException) {}
+	}
 	override suspend fun deleteMultipleById(ids: Set<Long>) = musicStatsDao.deleteMultipleById(ids)
 }

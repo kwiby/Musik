@@ -123,6 +123,7 @@
     <string name="stats_total_listen_time" translatable="true">Total Listen Time</string>
     <string name="stats_no_music_added_msg" translatable="true">No music added</string>
     <string name="stats_sorting_by_text" translatable="true">Sorting by:</string>
+    <string name="stats_sorting_by_content_desc" translatable="true">Change sorting rule</string>
 
     <!-- Crash Screen -->
     <string name="crash_title">A CRASH HAS OCCURRED</string>

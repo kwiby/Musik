@@ -36,7 +36,7 @@ fun CustomIconButton(
 			onClick = onClick
 		) {
 			Icon(
-				iconImageVector,
+				imageVector = iconImageVector,
 				contentDescription = contentDescription,
 				modifier = modifier.size(size)
 			)

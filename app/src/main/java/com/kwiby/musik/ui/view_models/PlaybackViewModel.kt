@@ -3,6 +3,7 @@ package com.kwiby.musik.ui.view_models
 import android.app.Application
 import android.content.ComponentName
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -274,6 +275,19 @@ class PlaybackViewModel(
 
 	// ================================================================================================
 	// --===--  Player Playback Controls  --===--
+	private var toast: Toast? = null
+	private fun emitToast(text: String) {
+		toast?.cancel()
+		toast = Toast.makeText(getApplication(), text, Toast.LENGTH_SHORT).also {
+			it.show()
+		}
+	}
+
+	private fun updateSkipStates() {
+		hasPrevious.value = mediaController?.hasPreviousMediaItem() ?: false
+		hasNext.value = mediaController?.hasNextMediaItem() ?: false
+	}
+
 	fun start(id: Long) {
 		val controller = mediaController
 
@@ -309,11 +323,6 @@ class PlaybackViewModel(
 		}
 	}
 
-	private fun updateSkipStates() {
-		hasPrevious.value = mediaController?.hasPreviousMediaItem() ?: false
-		hasNext.value = mediaController?.hasNextMediaItem() ?: false
-	}
-
 	// seekToPrevious() is alternative
 	fun skipPrev() {
 		skipInProgress = true
@@ -334,11 +343,24 @@ class PlaybackViewModel(
 	}
 
 	fun cycleLoopMode() {
-		val nextLoopMode = when (mediaController?.repeatMode) {
-			Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE // Switch to loop current music
-			Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_OFF // Switch to loop whole queue
-			Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL // Switch to no loop
-			else -> Player.REPEAT_MODE_ALL // Default value just in case
+		var nextLoopMode: Int
+		when (mediaController?.repeatMode) {
+			Player.REPEAT_MODE_ALL -> {
+				nextLoopMode = Player.REPEAT_MODE_ONE
+				emitToast("Looping current song")
+			} // Switch to loop current music
+			Player.REPEAT_MODE_ONE -> {
+				nextLoopMode = Player.REPEAT_MODE_OFF
+				emitToast("Looping disabled")
+			}  // Switch to no loop
+			Player.REPEAT_MODE_OFF -> {
+				nextLoopMode = Player.REPEAT_MODE_ALL
+				emitToast("Looping whole queue")
+			} // Switch to loop whole queue
+			else -> {
+				nextLoopMode = Player.REPEAT_MODE_ALL
+				emitToast("Looping disabled")
+			} // Default value just in case
 		}
 
 		mediaController?.repeatMode = nextLoopMode

@@ -8,7 +8,6 @@ import androidx.media3.common.MediaMetadata
 import com.kwiby.musik.data.data_classes.AudioFile
 import com.kwiby.musik.data.data_classes.MusicDetails
 import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
-import com.kwiby.musik.data.repositories.music_stats.OfflineMusicStatsRepository
 import com.kwiby.musik.ui.misc.formatDuration
 import com.kwiby.musik.ui.misc.unformatDuration
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -26,12 +24,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MusicListViewModel(
-	private val musicListRepo: OfflineMusicListRepository,
-	private val musicStatsRepo: OfflineMusicStatsRepository
+	private val musicListRepo: OfflineMusicListRepository
 ) : ViewModel() {
-	private val _queue = mutableListOf<MusicDetails>()
+	private val _queue = MutableStateFlow<List<MusicDetails>>(emptyList())
 	private var _queueBeforeMove: List<MusicDetails> = emptyList()
-	private val _manualQueue = MutableStateFlow<List<MusicDetails>?>(null)
 
 	sealed interface MusicUiState {
 		data object Loading: MusicUiState
@@ -40,24 +36,26 @@ class MusicListViewModel(
 	}
 
 	val uiState: StateFlow<MusicUiState> = combine(
-		musicListRepo.getAllAudioFilesStream(), _manualQueue
-	) { musicList, manualQueue ->
-		if (musicList.isEmpty()) {
-			_queue.clear()
+		musicListRepo.getAllAudioFilesStream(), _queue
+	) { repoList, currentQueue ->
+		if (repoList.isEmpty()) {
+			_queue.value = emptyList()
 			return@combine MusicUiState.Empty
 		} else {
-			val newMusicDetails = musicList.map { it.toMusicDetails() }
-			val newIds = newMusicDetails.map { it.id }
-			val curIds = _queue.map { it.id }
+			val newMusicDetails = repoList.map { it.toMusicDetails() }
+			val newIds = newMusicDetails.map { it.id }.toSet()
+			val curIds = currentQueue.map { it.id }.toSet()
 
-			newMusicDetails.filter { it.id !in curIds }.forEach { _queue.add(it) }
-			_queue.removeAll { it.id !in newIds }
+			if (newIds != curIds) {
+				val keptSongs = currentQueue.filter { it.id in newIds }
+				val addedSongs = newMusicDetails.filter { it.id !in curIds }
+				val updatedQueue = keptSongs + addedSongs
+				_queue.value = updatedQueue
 
-			if (manualQueue != null) {
-				_manualQueue.value = null
+				return@combine MusicUiState.Success(updatedQueue)
+			} else {
+				return@combine MusicUiState.Success(currentQueue)
 			}
-
-			return@combine MusicUiState.Success(manualQueue ?: _queue.toList())
 		}
 	}.flowOn(Dispatchers.Default).stateIn(
 		scope = viewModelScope,
@@ -65,15 +63,7 @@ class MusicListViewModel(
 		initialValue = MusicUiState.Loading
 	)
 
-	val queueSyncEvent: StateFlow<List<MusicDetails>?> = uiState
-		.map { state ->
-			if (state is MusicUiState.Success) {
-				state.musicList
-			} else {
-				emptyList()
-			}
-		}
-		.distinctUntilChanged()
+	val queueSyncEvent: StateFlow<List<MusicDetails>?> = _queue
 		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
 
@@ -110,10 +100,7 @@ class MusicListViewModel(
 		if (_queueBeforeMove.isEmpty()) {
 			return
 		} else {
-			_queue.clear()
-			_queueBeforeMove.forEach { _queue.add(it) }
-			_manualQueue.value = _queue.toList()
-
+			_queue.value = _queueBeforeMove
 			_queueBeforeMove = emptyList()
 		}
 	}
@@ -124,7 +111,6 @@ class MusicListViewModel(
 		playbackViewModel.removeFromQueue(selectedMusic)
 		withContext(Dispatchers.IO) {
 			musicListRepo.deleteMultipleAudioFilesById(selectedMusic)
-			musicStatsRepo.deleteMultipleById(selectedMusic)
 		}
 
 		resetMusicList()
@@ -133,22 +119,19 @@ class MusicListViewModel(
 	suspend fun deleteTracksByIds(ids: Set<Long>) {
 		withContext(Dispatchers.IO) {
 			musicListRepo.deleteMultipleAudioFilesById(ids)
-			musicStatsRepo.deleteMultipleById(ids)
 		}
 
-		_queue.removeAll { it.id in ids }
-		_manualQueue.value = _queue.toList()
+		_queue.value = _queue.value.filterNot { it.id in ids }
 	}
 
 	fun onMove(fromIndex: Int, toIndex: Int) {
-		val list = _queue.toList().toMutableList()
-		val moved = list.removeAt(fromIndex)
-		list.add(toIndex, moved)
+		val list = _queue.value.toMutableList()
+		if (fromIndex in list.indices && toIndex in list.indices) {
+			val moved = list.removeAt(fromIndex)
+			list.add(toIndex, moved)
 
-		_queue.clear()
-		list.forEach { _queue.add(it) }
-
-		_manualQueue.value = _queue.toList()
+			_queue.value = list
+		}
 	}
 
 	fun handleTap(id: Long, onPlayMusic: () -> Unit) {
@@ -164,7 +147,7 @@ class MusicListViewModel(
 	}
 
 	fun enterMoveModeButton() {
-		_queueBeforeMove = _queue.toList()
+		_queueBeforeMove = _queue.value
 
 		clearSelection()
 		setMoveMode(true)
@@ -177,7 +160,7 @@ class MusicListViewModel(
 			return
 		}
 
-		val queue = _queue.toList()
+		val queue = _queue.value
 
 		playbackViewModel.setQueue(queue.map { it.toMediaItem() })
 		_queueBeforeMove = emptyList()

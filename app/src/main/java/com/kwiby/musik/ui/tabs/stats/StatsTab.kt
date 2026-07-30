@@ -1,6 +1,7 @@
 package com.kwiby.musik.ui.tabs.stats
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,8 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Sort
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material.icons.rounded.SwapVert
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -60,20 +62,26 @@ fun StatsTab(
 		// ---===---  All Buttons  ---===---
 		Row(
 			modifier = Modifier.fillMaxWidth(),
-			horizontalArrangement = Arrangement.SpaceBetween
+			horizontalArrangement = Arrangement.SpaceBetween,
+			verticalAlignment = Alignment.CenterVertically
 		) {
 			// ---===---  Change Sorting Rule Button  ---===---
 			Row(
+				modifier = Modifier
+					.padding(start = dimensionResource(R.dimen.stats_sort_by_button_left_padding))
+					.clickable(
+						interactionSource = null,
+						indication = null
+					) { statsViewModel.switchSortingRuleButton() },
+				horizontalArrangement = Arrangement.Start,
 				verticalAlignment = Alignment.CenterVertically
 			) {
-				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
+				Icon(
+					imageVector = Icons.AutoMirrored.Rounded.Sort,
+					contentDescription = stringResource(R.string.stats_sorting_by_content_desc)
+				)
 
-				CustomIconButton(
-					iconImageVector = Icons.Rounded.SwapVert,
-					contentDescription = stringResource(R.string.back_button)
-				) {
-					statsViewModel.switchSortingRuleButton()
-				}
+				Spacer(Modifier.width(dimensionResource(R.dimen.x_small_padding)))
 
 				Text(
 					text = stringResource(R.string.stats_sorting_by_text),
