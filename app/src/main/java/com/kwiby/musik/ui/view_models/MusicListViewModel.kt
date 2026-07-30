@@ -1,5 +1,6 @@
 package com.kwiby.musik.ui.view_models
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -77,6 +78,9 @@ class MusicListViewModel(
 	private val _isInMoveMode = MutableStateFlow(false)
 	val isInMoveMode: StateFlow<Boolean> = _isInMoveMode.asStateFlow()
 
+	var isInEditMetadataMode = mutableStateOf(false)
+		private set
+
 
 	private fun clearSelection() {
 		_selectedIds.value = emptySet()
@@ -84,6 +88,10 @@ class MusicListViewModel(
 
 	private fun setMoveMode(bool: Boolean) {
 		_isInMoveMode.value = bool
+	}
+
+	private fun setEditMetadataMode(bool: Boolean) {
+		isInEditMetadataMode.value = bool
 	}
 
 	private fun updateSelection(id: Long) {
@@ -146,13 +154,6 @@ class MusicListViewModel(
 		updateSelection(id)
 	}
 
-	fun enterMoveModeButton() {
-		_queueBeforeMove = _queue.value
-
-		clearSelection()
-		setMoveMode(true)
-	}
-
 	fun confirmMoveButton(playbackViewModel: PlaybackViewModel) {
 		val currentUiState = uiState.value
 		if (currentUiState !is MusicUiState.Success) {
@@ -172,9 +173,32 @@ class MusicListViewModel(
 		}
 	}
 
+	fun enterMoveModeButton() {
+		clearSelection()
+		setEditMetadataMode(false)
+
+		_queueBeforeMove = _queue.value
+		setMoveMode(true)
+	}
+
 	fun exitMoveModeButton() {
 		revertQueueToBeforeMove()
 		setMoveMode(false)
+	}
+
+	fun enterEditMetadataModeButton() {
+		clearSelection()
+		setMoveMode(false)
+
+		setEditMetadataMode(true)
+	}
+
+	fun exitEditMetadataModeButton() {
+		setEditMetadataMode(false)
+	}
+
+	fun editMetadataButton(id: Long) {
+
 	}
 
 	fun addToPlaylistButton() {
@@ -197,12 +221,15 @@ class MusicListViewModel(
 
 	fun resetMusicList() {
 		clearSelection()
+		setEditMetadataMode(false)
+
 		if (_isInMoveMode.value) {
 			revertQueueToBeforeMove()
 		}
 		setMoveMode(false)
 	}
 }
+
 
 // MusicDetails --> MediaItem
 fun MusicDetails.toMediaItem(): MediaItem {

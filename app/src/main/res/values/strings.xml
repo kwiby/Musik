@@ -20,14 +20,17 @@
 
     <!-- Button Content Descriptions -->
     <string name="settings_button" translatable="true">Settings</string>
-    <string name="add_music_button" translatable="true">Add Music</string>
-    <string name="enter_move_mode_button" translatable="true">Move Music</string>
-    <string name="confirm_move_button" translatable="true">Confirm Move</string>
-    <string name="exit_move_mode_button" translatable="true">Exit Move</string>
-    <string name="remove_music_button" translatable="true">Remove Music</string>
+    <string name="add_music_button" translatable="true">Add music</string>
+    <string name="enter_move_mode_button" translatable="true">Move music</string>
+    <string name="confirm_move_button" translatable="true">Confirm move</string>
+    <string name="exit_move_mode_button" translatable="true">Exit move mode</string>
+    <string name="remove_music_button" translatable="true">Remove music</string>
+    <string name="edit_metadata_button" translatable="true">Edit metadata</string>
+    <string name="enter_edit_metadata_mode_button" translatable="true">Enter edit metadata mode</string>
+    <string name="exit_edit_metadata_mode_button" translatable="true">Exit edit metadata mode</string>
     <string name="add_selected_music_button" translatable="true">Back</string>
     <string name="add_yt_music_button" translatable="true">Add Music from YouTube</string>
-    <string name="add_to_playlist_button" translatable="true">Add to Playlist</string>
+    <string name="add_to_playlist_button" translatable="true">Add to playlist</string>
     <string name="refresh_button" translatable="true">Refresh</string>
     <string name="back_button" translatable="true">Back</string>
 

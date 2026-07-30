@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DragIndicator
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -35,6 +36,8 @@ fun MusicListItem(
 	onClick: () -> Unit = {},
 	onLongClick: () -> Unit = {},
 	isInMoveMode: Boolean = false,
+	isInEditMetadataMode: Boolean = false,
+	onEditMetadataButton: () -> Unit = {},
 	reorderableScope: ReorderableCollectionItemScope? = null
 ) {
 	val interactionSource = remember { MutableInteractionSource() }
@@ -49,7 +52,7 @@ fun MusicListItem(
 			.padding(horizontal = dimensionResource(R.dimen.medium_padding))
 			.clip(RoundedCornerShape(dimensionResource(R.dimen.list_item_corner_radius)))
 			.then(
-				if (!isInMoveMode) {
+				if (!isInMoveMode && !isInEditMetadataMode) {
 					Modifier.combinedClickable(
 						interactionSource = interactionSource,
 						indication = ripple(
@@ -79,6 +82,7 @@ fun MusicListItem(
 			}
 
 			ListItem(
+				modifier = Modifier.weight(1f),
 				colors = ListItemDefaults.colors(
 					containerColor = Color.Transparent
 				),
@@ -113,6 +117,16 @@ fun MusicListItem(
 					)
 				}
 			)
+
+			if (isInEditMetadataMode) {
+				CustomIconButton (
+					iconImageVector = Icons.Rounded.Edit,
+					contentDescription = stringResource(R.string.edit_metadata_button),
+					colour = MaterialTheme.colorScheme.onSurfaceVariant
+				) {
+					onEditMetadataButton()
+				}
+			}
 		}
 	}
 }

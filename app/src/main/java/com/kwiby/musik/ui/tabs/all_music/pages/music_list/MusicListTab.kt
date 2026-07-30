@@ -19,6 +19,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DeleteOutline
+import androidx.compose.material.icons.rounded.EditNote
 import androidx.compose.material.icons.rounded.SmartDisplay
 import androidx.compose.material.icons.rounded.UnfoldMore
 import androidx.compose.runtime.Composable
@@ -67,7 +68,7 @@ fun MusicListScreen(
 			musicListViewModel.resetMusicList()
 		}
 	}
-	BackHandler(isInSelectionMode || isInMoveMode) {
+	BackHandler(isInSelectionMode || isInMoveMode || musicListViewModel.isInEditMetadataMode.value) {
 		musicListViewModel.handleBack()
 	}
 
@@ -83,6 +84,23 @@ fun MusicListScreen(
 			// ---===---  Editing Buttons  ---===---
 			Row {
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
+
+				// ---===---  Edit Metadata Button  ---===---
+				if (musicListViewModel.isInEditMetadataMode.value) {
+					CustomIconButton(
+						iconImageVector = Icons.Rounded.Close,
+						contentDescription = stringResource(R.string.exit_edit_metadata_mode_button)
+					) {
+						musicListViewModel.exitEditMetadataModeButton()
+					}
+				} else {
+					CustomIconButton(
+						iconImageVector = Icons.Rounded.EditNote,
+						contentDescription = stringResource(R.string.enter_edit_metadata_mode_button)
+					) {
+						musicListViewModel.enterEditMetadataModeButton()
+					}
+				}
 
 				// ---===---  Move Music Button  ---===---
 				if (isInMoveMode) {
@@ -192,14 +210,13 @@ fun MusicListScreen(
 							MusicListItem(
 								musicDetails = music,
 								isSelected = music.id in selectedIds,
-								onClick = { musicListViewModel.handleTap(
-									music.id
-								) {
+								onClick = { musicListViewModel.handleTap(music.id) {
 									playbackViewModel.start(music.id)
-								}
-										  },
+								} },
 								onLongClick = { musicListViewModel.handleHold(music.id) },
 								isInMoveMode = isInMoveMode,
+								isInEditMetadataMode = musicListViewModel.isInEditMetadataMode.value,
+								onEditMetadataButton = { musicListViewModel.editMetadataButton(music.id) },
 								reorderableScope = this,
 								modifier = Modifier.shadow(elevation)
 							)
