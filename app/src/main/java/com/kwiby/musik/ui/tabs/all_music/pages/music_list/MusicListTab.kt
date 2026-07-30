@@ -24,8 +24,12 @@ import androidx.compose.material.icons.rounded.SmartDisplay
 import androidx.compose.material.icons.rounded.UnfoldMore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -33,6 +37,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
+import com.kwiby.musik.data.data_classes.MusicDetails
 import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.components.ListDivider
 import com.kwiby.musik.ui.components.LoadingIndicator
@@ -59,8 +64,16 @@ fun MusicListScreen(
 	val scope = rememberCoroutineScope()
 
 	val lazyListState = rememberLazyListState()
+	val queueState by musicListViewModel.uiState.collectAsStateWithLifecycle()
+	var localOrder by remember { mutableStateOf<List<MusicDetails>?>(null) }
 	val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
-		musicListViewModel.onMove(from.index, to.index)
+		val current = localOrder
+			?: (queueState as? MusicListViewModel.MusicUiState.Success)?.musicList
+			?: return@rememberReorderableLazyListState
+		val list = current.toMutableList()
+		val moved = list.removeAt(from.index)
+		list.add(to.index, moved)
+		localOrder = list
 	}
 
 	DisposableEffect(Unit) {
@@ -71,6 +84,12 @@ fun MusicListScreen(
 	BackHandler(isInSelectionMode || isInMoveMode || musicListViewModel.isInEditMetadataMode.value) {
 		musicListViewModel.handleBack()
 	}
+	LaunchedEffect(isInMoveMode) {
+		if (!isInMoveMode) {
+			localOrder = null
+		}
+	}
+
 
 	Column(
 		verticalArrangement = Arrangement.Top,
@@ -109,7 +128,9 @@ fun MusicListScreen(
 						iconImageVector = Icons.Rounded.Check,
 						contentDescription = stringResource(R.string.confirm_move_button)
 					) {
+						localOrder?.let { musicListViewModel.setQueueOrder(it) }
 						musicListViewModel.confirmMoveButton(playbackViewModel)
+						localOrder = null
 					}
 					// ---===---  Exit Move Mode Button  ---===---
 					CustomIconButton(
@@ -175,7 +196,7 @@ fun MusicListScreen(
 
 		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.buttons_vertical_padding)))
 
-		when(val state = musicListViewModel.uiState.collectAsStateWithLifecycle().value) {
+		when(val state = queueState) {
 			is MusicListViewModel.MusicUiState.Loading -> {
 				LoadingIndicator()
 			}
@@ -185,6 +206,8 @@ fun MusicListScreen(
 			}
 			is MusicListViewModel.MusicUiState.Success -> {
 				// ---===---  Music List  ---===---
+				val displayList = localOrder ?: state.musicList
+
 				LazyColumn(
 					state = lazyListState,
 					contentPadding = PaddingValues(
@@ -193,10 +216,10 @@ fun MusicListScreen(
 					modifier = Modifier.fillMaxSize().verticalScrollbar(lazyListState)
 				) {
 					items(
-						count = state.musicList.size,
-						key = { state.musicList[it].id }
+						count = displayList.size,
+						key = { displayList[it].id }
 					) { index ->
-						val music = state.musicList[index]
+						val music = displayList[index]
 
 						ReorderableItem(reorderableLazyListState, music.id) { isDragging ->
 							val elevation by animateDpAsState(
@@ -222,7 +245,7 @@ fun MusicListScreen(
 							)
 						}
 
-						ListDivider(index, state.musicList)
+						ListDivider(index, displayList)
 					}
 				}
 			}

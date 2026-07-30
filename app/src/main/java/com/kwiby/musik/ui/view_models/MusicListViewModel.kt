@@ -36,34 +36,6 @@ class MusicListViewModel(
 		data class Success(val musicList: List<MusicDetails>): MusicUiState
 	}
 
-	val uiState: StateFlow<MusicUiState> = combine(
-		musicListRepo.getAllAudioFilesStream(), _queue
-	) { repoList, currentQueue ->
-		if (repoList.isEmpty()) {
-			_queue.value = emptyList()
-			return@combine MusicUiState.Empty
-		} else {
-			val newMusicDetails = repoList.map { it.toMusicDetails() }
-			val newIds = newMusicDetails.map { it.id }.toSet()
-			val curIds = currentQueue.map { it.id }.toSet()
-
-			if (newIds != curIds) {
-				val keptSongs = currentQueue.filter { it.id in newIds }
-				val addedSongs = newMusicDetails.filter { it.id !in curIds }
-				val updatedQueue = keptSongs + addedSongs
-				_queue.value = updatedQueue
-
-				return@combine MusicUiState.Success(updatedQueue)
-			} else {
-				return@combine MusicUiState.Success(currentQueue)
-			}
-		}
-	}.flowOn(Dispatchers.Default).stateIn(
-		scope = viewModelScope,
-		started = SharingStarted.WhileSubscribed(5_000),
-		initialValue = MusicUiState.Loading
-	)
-
 	val queueSyncEvent: StateFlow<List<MusicDetails>?> = _queue
 		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
@@ -80,6 +52,37 @@ class MusicListViewModel(
 
 	var isInEditMetadataMode = mutableStateOf(false)
 		private set
+
+	val uiState: StateFlow<MusicUiState> = combine(
+		musicListRepo.getAllAudioFilesStream(), _queue, _isInMoveMode
+	) { repoList, currentQueue, inMoveMode ->
+		if (repoList.isEmpty()) {
+			_queue.value = emptyList()
+			return@combine MusicUiState.Empty
+		}
+		if (inMoveMode) {
+			return@combine MusicUiState.Success(currentQueue)
+		}
+
+		val newMusicDetails = repoList.map { it.toMusicDetails() }
+		val newIds = newMusicDetails.map { it.id }.toSet()
+		val curIds = currentQueue.map { it.id }.toSet()
+
+		if (newIds != curIds) {
+			val keptSongs = currentQueue.filter { it.id in newIds }
+			val addedSongs = newMusicDetails.filter { it.id !in curIds }
+			val updatedQueue = keptSongs + addedSongs
+			_queue.value = updatedQueue
+
+			return@combine MusicUiState.Success(updatedQueue)
+		} else {
+			return@combine MusicUiState.Success(currentQueue)
+		}
+	}.flowOn(Dispatchers.Default).stateIn(
+		scope = viewModelScope,
+		started = SharingStarted.WhileSubscribed(5_000),
+		initialValue = MusicUiState.Loading
+	)
 
 
 	private fun clearSelection() {
@@ -132,14 +135,8 @@ class MusicListViewModel(
 		_queue.value = _queue.value.filterNot { it.id in ids }
 	}
 
-	fun onMove(fromIndex: Int, toIndex: Int) {
-		val list = _queue.value.toMutableList()
-		if (fromIndex in list.indices && toIndex in list.indices) {
-			val moved = list.removeAt(fromIndex)
-			list.add(toIndex, moved)
-
-			_queue.value = list
-		}
+	fun setQueueOrder(newOrder: List<MusicDetails>) {
+		_queue.value = newOrder
 	}
 
 	fun handleTap(id: Long, onPlayMusic: () -> Unit) {
