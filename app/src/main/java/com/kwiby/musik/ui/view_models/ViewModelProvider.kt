@@ -40,8 +40,7 @@ object ViewModelProvider {
 		// --===--  MusicListViewModel  --===--
 		initializer {
 			MusicListViewModel(
-				musikApplication().container.musicListRepo,
-				musikApplication().container.musicStatsRepo
+				musikApplication().container.musicListRepo
 			)
 		}
 
