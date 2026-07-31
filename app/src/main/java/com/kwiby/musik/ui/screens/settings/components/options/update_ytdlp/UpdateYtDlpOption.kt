@@ -15,8 +15,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
-import com.kwiby.musik.ui.screens.settings.components.options.OptionButton
-import com.kwiby.musik.ui.screens.settings.components.options.OptionHeader
+import com.kwiby.musik.ui.screens.components.OptionButton
+import com.kwiby.musik.ui.screens.components.OptionHeader
 import com.kwiby.musik.ui.view_models.SettingsViewModel
 import com.yausername.youtubedl_android.YoutubeDL
 
@@ -96,5 +96,5 @@ fun UpdateYtDlpOption(
 		}
 	}
 
-	Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
+	Spacer(Modifier.height(dimensionResource(R.dimen.screen_option_section_vertical_padding)))
 }

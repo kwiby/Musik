@@ -10,26 +10,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import com.kwiby.musik.R
-import com.kwiby.musik.data.data_classes.MusicDetails
 
 @Composable
-fun ListDivider(
-	index: Int,
-	list: List<MusicDetails>
-) {
-	if (index < list.size - 1) {
-		Box(modifier = Modifier.fillMaxWidth()) {
-			HorizontalDivider(
-				thickness = dimensionResource(R.dimen.horizontal_divider_thickness),
-				color = Color.DarkGray,
-				modifier = Modifier
-					.fillMaxWidth(0.785f)
-					.align(Alignment.CenterEnd)
-					.padding(
-						horizontal = dimensionResource(R.dimen.horizontal_divider_padding),
-						vertical = dimensionResource(R.dimen.vertical_divider_padding)
-					)
-			)
-		}
+fun ListDivider() {
+	Box(modifier = Modifier.fillMaxWidth()) {
+		HorizontalDivider(
+			thickness = dimensionResource(R.dimen.horizontal_divider_thickness),
+			color = Color.DarkGray,
+			modifier = Modifier
+				.fillMaxWidth(0.785f)
+				.align(Alignment.CenterEnd)
+				.padding(
+					horizontal = dimensionResource(R.dimen.horizontal_divider_padding),
+					vertical = dimensionResource(R.dimen.vertical_divider_padding)
+				)
+		)
 	}
 }

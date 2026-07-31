@@ -45,8 +45,13 @@
     <dimen name="player_bar_image_left_padding">5dp</dimen>
     <dimen name="player_bar_image_right_padding">10dp</dimen>
 
+    <!-- All Screens -->
+    <dimen name="screen_back_button_top_padding">55dp</dimen>
+    <dimen name="screen_back_button_right_padding">11dp</dimen>
+    <dimen name="screen_top_section_bottom_padding">10dp</dimen>
+    <dimen name="screen_option_section_vertical_padding">25dp</dimen>
+
     <!-- Player Screen -->
-    <dimen name="player_screen_back_button_top_padding">55dp</dimen>
     <dimen name="player_screen_image_top_padding">40dp</dimen>
     <dimen name="player_screen_image_bottom_padding">15dp</dimen>
     <dimen name="player_screen_image_size">250dp</dimen>
@@ -57,16 +62,12 @@
     <dimen name="player_screen_playback_mode_button_size">30dp</dimen>
     <dimen name="player_screen_playback_control_button_padding">5dp</dimen>
     <dimen name="player_screen_playback_mode_button_padding">25dp</dimen>
+    <dimen name="screen_options_top_padding">20dp</dimen>
+    <dimen name="screen_options_horizontal_padding">25dp</dimen>
 
     <!-- Settings Screen -->
-    <dimen name="settings_back_button_top_padding">55dp</dimen>
-    <dimen name="settings_back_button_right_padding">11dp</dimen>
     <dimen name="settings_title_font_size">30dp</dimen>
-    <dimen name="settings_top_section_bottom_padding">10dp</dimen>
-    <dimen name="settings_options_top_padding">20dp</dimen>
-    <dimen name="settings_options_horizontal_padding">25dp</dimen>
     <dimen name="settings_options_bottom_padding">60dp</dimen>
-    <dimen name="settings_option_section_vertical_padding">25dp</dimen>
 
     <dimen name="option_header_bottom_padding">13dp</dimen>
     <dimen name="option_header_divider_horizontal_padding">7dp</dimen>

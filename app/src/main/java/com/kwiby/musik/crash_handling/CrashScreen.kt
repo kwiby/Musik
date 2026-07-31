@@ -30,7 +30,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.kwiby.musik.R
 import com.kwiby.musik.ui.components.MusikTopAppBar
-import com.kwiby.musik.ui.screens.settings.components.options.OptionButton
+import com.kwiby.musik.ui.components.verticalScrollbar
+import com.kwiby.musik.ui.screens.components.OptionButton
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -42,13 +43,16 @@ fun CrashScreen(
 	onRestart: () -> Unit
 ) {
 	val context = LocalContext.current
+	val scrollState = rememberScrollState()
 
 	Scaffold(
 		containerColor = MaterialTheme.colorScheme.background,
 		topBar = { MusikTopAppBar(null) }
 	) { innerPadding ->
 		Column(
-			modifier = Modifier.padding(innerPadding).fillMaxSize(),
+			modifier = Modifier
+				.fillMaxSize()
+				.padding(innerPadding),
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {
 			// --===--  Crash Title  --===--
@@ -73,11 +77,14 @@ fun CrashScreen(
 						color = MaterialTheme.colorScheme.secondary,
 						shape = MaterialTheme.shapes.small
 					)
-					.verticalScroll(rememberScrollState())
+					.verticalScrollbar(scrollState)
 			) {
 				Text(
 					text = crashLog,
-					modifier = Modifier.padding(dimensionResource(R.dimen.small_padding)),
+					modifier = Modifier
+						.fillMaxSize()
+						.verticalScroll(scrollState)
+						.padding(dimensionResource(R.dimen.small_padding)),
 					color = MaterialTheme.colorScheme.onSecondary,
 					style = MaterialTheme.typography.bodyMedium
 				)

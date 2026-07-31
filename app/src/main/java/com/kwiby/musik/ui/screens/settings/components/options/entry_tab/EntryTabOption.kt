@@ -10,8 +10,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
-import com.kwiby.musik.ui.screens.settings.components.options.OptionButton
-import com.kwiby.musik.ui.screens.settings.components.options.OptionHeader
+import com.kwiby.musik.ui.screens.components.OptionButton
+import com.kwiby.musik.ui.screens.components.OptionHeader
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.Tab
 
@@ -53,5 +53,5 @@ fun EntryTabOption(
 		}
 	}
 
-	Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
+	Spacer(Modifier.height(dimensionResource(R.dimen.screen_option_section_vertical_padding)))
 }

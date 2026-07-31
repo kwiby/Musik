@@ -1,5 +1,6 @@
 package com.kwiby.musik.ui.view_models
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,10 +14,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-enum class Screen {
-	MAIN,
-	SETTINGS,
-	PLAYER
+sealed class Screen {
+	object Main: Screen()
+	object Settings: Screen()
+	object Player: Screen()
+	data class EditMetadata(val contentUri: Uri, val id: Long): Screen()
 }
 enum class Tab {
 	ALL_MUSIC,
@@ -55,7 +57,7 @@ class NavViewModel(
 	}
 
 	// --===--  Screen  --===--
-	var curScreen by mutableStateOf(Screen.MAIN)
+	var curScreen by mutableStateOf<Screen>(Screen.Main)
 		private set
 
 	fun navToScreen(newScreen: Screen) {

@@ -1,5 +1,6 @@
 package com.kwiby.musik.ui.view_models
 
+import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
@@ -194,8 +195,8 @@ class MusicListViewModel(
 		setEditMetadataMode(false)
 	}
 
-	fun editMetadataButton(id: Long) {
-
+	fun editMetadataButton(navViewModel: NavViewModel, contentUri: Uri, id: Long) {
+		navViewModel.navToScreen(Screen.EditMetadata(contentUri, id))
 	}
 
 	fun addToPlaylistButton() {

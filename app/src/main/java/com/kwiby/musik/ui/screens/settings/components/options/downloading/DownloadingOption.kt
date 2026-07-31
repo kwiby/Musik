@@ -16,8 +16,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
-import com.kwiby.musik.ui.screens.settings.components.options.OptionHeader
-import com.kwiby.musik.ui.screens.settings.components.options.OptionSwitch
+import com.kwiby.musik.ui.screens.components.OptionHeader
+import com.kwiby.musik.ui.screens.components.OptionSwitch
 import com.kwiby.musik.ui.view_models.SettingsViewModel
 
 @Composable
@@ -59,5 +59,5 @@ fun DownloadingOption(
 		OptionSwitch(doConvertMp3 ?: false)
 	}
 
-	Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
+	Spacer(Modifier.height(dimensionResource(R.dimen.screen_option_section_vertical_padding)))
 }

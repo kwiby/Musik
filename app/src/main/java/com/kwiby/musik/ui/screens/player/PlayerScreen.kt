@@ -68,7 +68,7 @@ fun PlayerScreen(
 	if (musicInfo == null) {
 		// This is for whenever the user deletes/moves the audio file from within the devices storage
 		Log.e("PlayerScreen", "The current track is missing. The audio file could have been deleted or moved")
-		navViewModel.navToScreen(Screen.MAIN)
+		navViewModel.navToScreen(Screen.Main)
 
 		return
 	}
@@ -76,7 +76,7 @@ fun PlayerScreen(
 	val metadata = musicInfo.mediaMetadata
 	val curPos = playbackViewModel.currentPos.longValue
 
-	val isPlayerScreenOpen = navViewModel.curScreen == Screen.PLAYER
+	val isPlayerScreenOpen = navViewModel.curScreen == Screen.Player
 	val isPlaying = playbackViewModel.isPlaying.value
 	val loopMode = playbackViewModel.loopMode.intValue
 
@@ -95,7 +95,7 @@ fun PlayerScreen(
 			Column(
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-				Spacer(Modifier.height(dimensionResource(R.dimen.player_screen_back_button_top_padding)))
+				Spacer(Modifier.height(dimensionResource(R.dimen.screen_back_button_top_padding)))
 
 				// --===--  Back Button  --===--
 				Row(

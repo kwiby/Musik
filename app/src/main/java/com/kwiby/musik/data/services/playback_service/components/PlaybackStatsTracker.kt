@@ -27,6 +27,7 @@ class PlaybackStatsTracker(
 	private var sessionTrackId: Long? = null
 	private var statsOwnerTrackId: Long? = null
 	private var sessionStartTimeMs: Long? = null
+	private var sessionTrackDurationMs: Long? = null
 
 	private var wasPlayCountLogged: Boolean = false
 	private var totalListenedMs: Long = 0L
@@ -81,9 +82,14 @@ class PlaybackStatsTracker(
 			wasPlayCountLogged = false
 		}
 
+		if (sessionTrackId != trackId) {
+			sessionTrackDurationMs = null
+		}
+
 		ensureStatsFor(trackId)
 		sessionTrackId = trackId
 		sessionStartTimeMs = SystemClock.elapsedRealtime()
+		player.duration.takeIf { it > 0 }?.let { sessionTrackDurationMs = it }
 
 		startFlushLoop()
 	}
@@ -93,14 +99,16 @@ class PlaybackStatsTracker(
 			return
 		}
 
-		val duration = player.duration
-		if (duration <= 0) {
-			return
+		val duration = sessionTrackDurationMs
+		val thresholdMs = playCountThreshold * 1000L
+		val thresholdMet = if (duration != null && duration > 0) {
+			totalListenedMs >= minOf(thresholdMs, duration)
+		} else {
+			totalListenedMs >= thresholdMs
 		}
 
-		if (totalListenedMs >= minOf(playCountThreshold * 1000L, duration)) {
+		if (thresholdMet) {
 			wasPlayCountLogged = true
-
 			scope.launch(Dispatchers.IO) {
 				musicStatsRepo.incrementPlayCount(trackId)
 			}
@@ -151,6 +159,17 @@ class PlaybackStatsTracker(
 		} else {
 			stopFlushLoop()
 			sessionTrackId = newTrackId
+			sessionTrackDurationMs = player.duration.takeIf { it > 0 }
+		}
+	}
+
+	override fun onPlaybackStateChanged(playbackState: Int) {
+		if (playbackState == Player.STATE_READY
+			&& sessionTrackId != null
+			&& sessionTrackId == currentTrackId()
+			&& sessionTrackDurationMs == null
+		) {
+			player.duration.takeIf { it > 0 }?.let { sessionTrackDurationMs = it }
 		}
 	}
 

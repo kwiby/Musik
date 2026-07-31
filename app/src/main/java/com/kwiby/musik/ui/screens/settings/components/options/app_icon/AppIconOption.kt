@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.kwiby.musik.R
-import com.kwiby.musik.ui.screens.settings.components.options.OptionHeader
+import com.kwiby.musik.ui.screens.components.OptionHeader
 import com.kwiby.musik.ui.screens.settings.components.options.app_icon.components.AppIconButton
 import com.kwiby.musik.ui.view_models.SettingsViewModel
 
@@ -63,5 +63,5 @@ fun AppIconOption(
 		}
 	}
 
-	Spacer(Modifier.height(dimensionResource(R.dimen.settings_option_section_vertical_padding)))
+	Spacer(Modifier.height(dimensionResource(R.dimen.screen_option_section_vertical_padding)))
 }

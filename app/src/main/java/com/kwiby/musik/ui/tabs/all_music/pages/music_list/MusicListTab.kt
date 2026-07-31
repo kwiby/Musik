@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
 import com.kwiby.musik.data.data_classes.MusicDetails
@@ -42,9 +43,10 @@ import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.components.ListDivider
 import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.MusicListItem
-import com.kwiby.musik.ui.components.verticalScrollbar
+import com.kwiby.musik.ui.components.lazyVerticalScrollbar
 import com.kwiby.musik.ui.tabs.all_music.components.info.NoMusicMsg
 import com.kwiby.musik.ui.view_models.MusicListViewModel
+import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
@@ -54,6 +56,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun MusicListScreen(
 	musicListViewModel: MusicListViewModel,
 	playbackViewModel: PlaybackViewModel,
+	navViewModel: NavViewModel,
 	onAddMusic: () -> Unit,
 	onAddYtMusic: () -> Unit
 ) {
@@ -213,7 +216,9 @@ fun MusicListScreen(
 					contentPadding = PaddingValues(
 						bottom = dimensionResource(R.dimen.x_large_padding)
 					),
-					modifier = Modifier.fillMaxSize().verticalScrollbar(lazyListState)
+					modifier = Modifier
+						.fillMaxSize()
+						.lazyVerticalScrollbar(lazyListState)
 				) {
 					items(
 						count = displayList.size,
@@ -239,13 +244,21 @@ fun MusicListScreen(
 								onLongClick = { musicListViewModel.handleHold(music.id) },
 								isInMoveMode = isInMoveMode,
 								isInEditMetadataMode = musicListViewModel.isInEditMetadataMode.value,
-								onEditMetadataButton = { musicListViewModel.editMetadataButton(music.id) },
+								onEditMetadataButton = {
+									musicListViewModel.editMetadataButton(
+										navViewModel,
+										music.contentUri.toUri(),
+										music.id
+									)
+							   	},
 								reorderableScope = this,
 								modifier = Modifier.shadow(elevation)
 							)
 						}
 
-						ListDivider(index, displayList)
+						if (index != displayList.lastIndex) {
+							ListDivider()
+						}
 					}
 				}
 			}

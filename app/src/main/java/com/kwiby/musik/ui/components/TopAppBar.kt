@@ -60,7 +60,7 @@ fun MusikTopAppBar(
 						contentDescription =  stringResource(R.string.settings_button),
 						colour =  MaterialTheme.colorScheme.onSurfaceVariant
 					) {
-						navViewModel.navToScreen(Screen.SETTINGS)
+						navViewModel.navToScreen(Screen.Settings)
 					}
 				}
 			}

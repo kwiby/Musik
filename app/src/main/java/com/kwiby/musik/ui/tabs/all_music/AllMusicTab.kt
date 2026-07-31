@@ -19,6 +19,7 @@ import com.kwiby.musik.ui.tabs.all_music.pages.music_list.MusicListScreen
 import com.kwiby.musik.ui.view_models.AddMusicViewModel
 import com.kwiby.musik.ui.view_models.AddYtMusicViewModel
 import com.kwiby.musik.ui.view_models.MusicListViewModel
+import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.ViewModelProvider
 
@@ -26,6 +27,7 @@ import com.kwiby.musik.ui.view_models.ViewModelProvider
 fun AllMusicTab(
 	playbackViewModel: PlaybackViewModel,
 	musicListViewModel: MusicListViewModel,
+	navViewModel: NavViewModel,
 	addMusicViewModel: AddMusicViewModel = viewModel(factory = ViewModelProvider.Factory),
 	addYtMusicViewModel: AddYtMusicViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
@@ -51,6 +53,7 @@ fun AllMusicTab(
 			MusicListScreen(
 				musicListViewModel,
 				playbackViewModel,
+				navViewModel,
 				{ isAddingMusic = true },
 				{ isAddingYtMusic = true }
 			)

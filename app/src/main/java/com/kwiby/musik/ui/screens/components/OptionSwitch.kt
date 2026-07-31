@@ -1,4 +1,4 @@
-package com.kwiby.musik.ui.screens.settings.components.options
+package com.kwiby.musik.ui.screens.components
 
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme

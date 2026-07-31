@@ -33,7 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kwiby.musik.R
 import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.components.LoadingIndicator
-import com.kwiby.musik.ui.components.verticalScrollbar
+import com.kwiby.musik.ui.components.lazyVerticalScrollbar
 import com.kwiby.musik.ui.tabs.stats.components.StatsListItem
 import com.kwiby.musik.ui.tabs.stats.components.StatsOverviewContainer
 import com.kwiby.musik.ui.tabs.stats.components.info.NoMusicStatsMsg
@@ -220,7 +220,7 @@ fun StatsTab(
 									state = lazyListState,
 									modifier = Modifier
 										.fillMaxSize()
-										.verticalScrollbar(lazyListState)
+										.lazyVerticalScrollbar(lazyListState)
 								) {
 									items(
 										count = statsViewModel.selectedStat.size,
