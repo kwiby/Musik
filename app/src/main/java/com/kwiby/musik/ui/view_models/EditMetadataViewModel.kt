@@ -8,11 +8,9 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.kwiby.musik.data.data_classes.Metadata
 import com.kwiby.musik.data.repositories.music_list.MusicListRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val LOG_TAG = "EditMetadataViewModel"
@@ -77,17 +75,25 @@ class EditMetadataViewModel(
 		}
 	}
 
-	fun setup(context: Context, contentUri: Uri, id: Long) {
-		this.id.value = id
-		viewModelScope.launch {
-			isLoading.value = true
-
-			metadata.value = withContext(Dispatchers.IO) {
-				getMetadata(context, contentUri)
-			}
-
-			isLoading.value = false
+	suspend fun setup(context: Context, contentUri: Uri, id: Long) {
+		if (this.id.value != id) {
+			this.metadata.value = null
+			this.isLoading.value = true
 		}
+		this.id.value = id
+
+		val newMetadata = withContext(Dispatchers.IO) {
+			getMetadata(context, contentUri)
+		}
+		metadata.value = newMetadata
+
+		isLoading.value = false
+	}
+
+	fun onDispose() {
+		isLoading.value = true
+		id.value = null
+		metadata.value = null
 	}
 
 	fun saveButton() {
