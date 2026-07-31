@@ -120,6 +120,32 @@
         \"Master\" provides the latest fixes and features, but may be prone to bugs or regressions.
     </string>
 
+    <!-- Edit Metadata Screen -->
+    <string name="edit_metadata_screen_title" translatable="true">Edit Metadata</string>
+    <string name="edit_metadata_save" translatable="true">Save</string>
+    <string name="edit_metadata_info" translatable="true">Info</string>
+    <string name="edit_metadata_artwork" translatable="true">Artwork</string>
+    <string name="edit_metadata_title" translatable="true">Title</string>
+    <string name="edit_metadata_artist" translatable="true">Artist</string>
+    <string name="edit_metadata_album" translatable="true">Album</string>
+    <string name="edit_metadata_album_artist" translatable="true">Album Artist</string>
+    <string name="edit_metadata_track_number" translatable="true">Track Number</string>
+    <string name="edit_metadata_disc_number" translatable="true">Disc Number</string>
+    <string name="edit_metadata_genre" translatable="true">Genre</string>
+    <string name="edit_metadata_year" translatable="true">Year</string>
+
+    <string name="edit_metadata_file_path" translatable="true">File Path:</string>
+    <string name="edit_metadata_duration" translatable="true">Duration:</string>
+    <string name="edit_metadata_bit_rate" translatable="true">Bit Rate:</string>
+    <string name="edit_metadata_sample_rate" translatable="true">Sample Rate:</string>
+    <string name="edit_metadata_mime_type" translatable="true">Mime Type:</string>
+
+    <string name="edit_metadata_unknown_file_path" translatable="true">Unknown File Path</string>
+    <string name="edit_metadata_unknown_duration" translatable="true">Unknown Duration</string>
+    <string name="edit_metadata_unknown_bit_rate" translatable="true">Unknown Bit Rate</string>
+    <string name="edit_metadata_unknown_sample_rate" translatable="true">Unknown Sample Rate</string>
+    <string name="edit_metadata_unknown_mime_type" translatable="true">Unknown Mime Type</string>
+
     <!-- Statistics Tab -->
     <string name="refresh_stats_button" translatable="true">Refresh statistics</string>
     <string name="stats_total_play_count" translatable="true">Total Play Count</string>

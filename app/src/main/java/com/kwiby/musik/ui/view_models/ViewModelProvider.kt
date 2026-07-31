@@ -37,6 +37,13 @@ object ViewModelProvider {
 			)
 		}
 
+		// --===--  EditMetadataViewModel  --===--
+		initializer {
+			EditMetadataViewModel(
+				musikApplication().container.musicListRepo
+			)
+		}
+
 		// --===--  MusicListViewModel  --===--
 		initializer {
 			MusicListViewModel(

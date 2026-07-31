@@ -31,7 +31,7 @@ import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.components.ListDivider
 import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.MusicListItem
-import com.kwiby.musik.ui.components.verticalScrollbar
+import com.kwiby.musik.ui.components.lazyVerticalScrollbar
 import com.kwiby.musik.ui.tabs.all_music.pages.add_music.components.AddMusicSearchbar
 import com.kwiby.musik.ui.tabs.all_music.pages.add_music.components.info.NoAudioFilesMsg
 import com.kwiby.musik.ui.view_models.AddMusicViewModel
@@ -129,7 +129,9 @@ fun AddMusicPage(
 					contentPadding = PaddingValues(
 						bottom = dimensionResource(R.dimen.x_large_padding)
 					),
-					modifier = Modifier.fillMaxSize().verticalScrollbar(lazyListState)
+					modifier = Modifier
+						.fillMaxSize()
+						.lazyVerticalScrollbar(lazyListState)
 				) {
 					items(
 						count = audioFiles.size,
@@ -143,7 +145,9 @@ fun AddMusicPage(
 							onLongClick = { addMusicViewModel.toggleSelection(music.id) }
 						)
 
-						ListDivider(index, audioFiles)
+						if (index != audioFiles.lastIndex) {
+							ListDivider()
+						}
 					}
 				}
 			}

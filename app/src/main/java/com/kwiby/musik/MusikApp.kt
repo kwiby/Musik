@@ -21,8 +21,10 @@ import com.kwiby.musik.data.misc.RequestPermissions
 import com.kwiby.musik.data.misc.rememberPermissionHandler
 import com.kwiby.musik.ui.components.MusikTopAppBar
 import com.kwiby.musik.ui.main_container.MainContainer
+import com.kwiby.musik.ui.screens.edit_metadata.EditMetadataScreen
 import com.kwiby.musik.ui.screens.player.PlayerScreen
 import com.kwiby.musik.ui.screens.settings.SettingsScreen
+import com.kwiby.musik.ui.view_models.EditMetadataViewModel
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.Screen
@@ -34,7 +36,8 @@ import com.kwiby.musik.ui.view_models.ViewModelProvider
 fun MusikApp(
 	navViewModel: NavViewModel = viewModel(factory = ViewModelProvider.Factory),
 	settingsViewModel: SettingsViewModel = viewModel(factory = ViewModelProvider.Factory),
-	playbackViewModel: PlaybackViewModel = viewModel(factory = ViewModelProvider.Factory)
+	playbackViewModel: PlaybackViewModel = viewModel(factory = ViewModelProvider.Factory),
+	editMetadataViewModel: EditMetadataViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
 	val permissionStatus = rememberPermissionHandler()
 	if (!permissionStatus.status.isGranted) {
@@ -60,7 +63,7 @@ fun MusikApp(
 			AnimatedContent(
 				targetState = navViewModel.curScreen,
 				transitionSpec = {
-					if (navViewModel.curScreen == Screen.PLAYER) {
+					if (navViewModel.curScreen == Screen.Player) {
 						fadeIn() togetherWith fadeOut()
 					} else {
 						EnterTransition.None togetherWith ExitTransition.None
@@ -69,17 +72,23 @@ fun MusikApp(
 				label = "screen_transition"
 			) { curScreen ->
 				when (curScreen) {
-					Screen.MAIN -> {
+					Screen.Main -> {
 						// Required for proper animation
 						Box(Modifier.fillMaxSize())
 					}
-					Screen.SETTINGS -> SettingsScreen(
+					Screen.Settings -> SettingsScreen(
 						settingsViewModel = settingsViewModel,
 						navViewModel = navViewModel
 					)
-					Screen.PLAYER -> PlayerScreen(
+					Screen.Player -> PlayerScreen(
 						sharedTransitionScope = this@SharedTransitionLayout,
 						playbackViewModel = playbackViewModel,
+						navViewModel = navViewModel
+					)
+					is Screen.EditMetadata -> EditMetadataScreen(
+						contentUri = curScreen.contentUri,
+						id = curScreen.id,
+						editMetadataViewModel = editMetadataViewModel,
 						navViewModel = navViewModel
 					)
 				}

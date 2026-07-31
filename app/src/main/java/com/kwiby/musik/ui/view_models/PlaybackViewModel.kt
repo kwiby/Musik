@@ -176,9 +176,9 @@ class PlaybackViewModel(
 
 	fun onPlayerScreenOpenChanged(isVisible: Boolean, navViewModel: NavViewModel) {
 		if (isVisible) {
-			navViewModel.navToScreen(Screen.PLAYER)
+			navViewModel.navToScreen(Screen.Player)
 		} else {
-			navViewModel.navToScreen(Screen.MAIN)
+			navViewModel.navToScreen(Screen.Main)
 		}
 
 		if (isVisible) {

@@ -52,7 +52,7 @@ fun PlayerBar(
 ) {
 	val interactionSource = remember { MutableInteractionSource() }
 	val curMusic = playbackViewModel.currentTrack.value
-	val isPlayerScreenClosed = navViewModel.curScreen == Screen.MAIN
+	val isPlayerScreenClosed = navViewModel.curScreen == Screen.Main
 
 	with(sharedTransitionScope) {
 		AnimatedVisibility(

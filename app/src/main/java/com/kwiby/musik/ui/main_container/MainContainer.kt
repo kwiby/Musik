@@ -69,7 +69,7 @@ fun MainContainer(
 		modifier = modifier.fillMaxSize()
 	) {
 		Column {
-			Spacer(modifier = Modifier.height(dimensionResource(R.dimen.main_container_top_spacing)))
+			Spacer(Modifier.height(dimensionResource(R.dimen.main_container_top_spacing)))
 
 			Surface(
 				shape = RoundedCornerShape(
@@ -83,7 +83,11 @@ fun MainContainer(
 				if (permissionStatus.status.isGranted) {
 					// --===--  Main Screens  --===--
 					when (navViewModel.curTab) {
-						Tab.ALL_MUSIC -> AllMusicTab(playbackViewModel, musicListViewModel)
+						Tab.ALL_MUSIC -> AllMusicTab(
+							playbackViewModel,
+							musicListViewModel,
+							navViewModel
+						)
 						Tab.PLAYLISTS -> PlaylistsTab()
 						Tab.STATS -> StatsTab()
 					}

@@ -1,4 +1,4 @@
-package com.kwiby.musik.ui.screens.settings.components.options
+package com.kwiby.musik.ui.screens.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

@@ -1,4 +1,4 @@
-package com.kwiby.musik.ui.screens.settings.components.options
+package com.kwiby.musik.ui.screens.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
