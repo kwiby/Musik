@@ -139,13 +139,13 @@
     <string name="edit_metadata_duration" translatable="true">Duration:</string>
     <string name="edit_metadata_bit_rate" translatable="true">Bit Rate:</string>
     <string name="edit_metadata_sample_rate" translatable="true">Sample Rate:</string>
-    <string name="edit_metadata_mime_type" translatable="true">Mime Type:</string>
+    <string name="edit_metadata_mime_type" translatable="true">Format:</string>
 
     <string name="edit_metadata_unknown_file_path" translatable="true">Unknown File Path</string>
     <string name="edit_metadata_unknown_duration" translatable="true">Unknown Duration</string>
     <string name="edit_metadata_unknown_bit_rate" translatable="true">Unknown Bit Rate</string>
     <string name="edit_metadata_unknown_sample_rate" translatable="true">Unknown Sample Rate</string>
-    <string name="edit_metadata_unknown_mime_type" translatable="true">Unknown Mime Type</string>
+    <string name="edit_metadata_unknown_mime_type" translatable="true">Unknown Format</string>
 
     <string name="edit_metadata_placeholder_title" translatable="true">No title set</string>
     <string name="edit_metadata_placeholder_artist" translatable="true">No artist set</string>
