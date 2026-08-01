@@ -2,6 +2,7 @@ package com.kwiby.musik.data.data_classes
 
 data class Metadata(
 	val filePath: String?,
+	val fileSizeMB: String?,
 	val durationMs: String?,
 	val bitRate: String?,
 	val sampleRate: String?,
@@ -23,6 +24,7 @@ data class Metadata(
 		other as Metadata
 
 		if (filePath != other.filePath) return false
+		if (fileSizeMB != other.fileSizeMB) return false
 		if (durationMs != other.durationMs) return false
 		if (bitRate != other.bitRate) return false
 		if (sampleRate != other.sampleRate) return false
@@ -45,6 +47,7 @@ data class Metadata(
 
 	override fun hashCode(): Int {
 		var result = filePath?.hashCode() ?: 0
+		result = 31 * result + (fileSizeMB?.hashCode() ?: 0)
 		result = 31 * result + (durationMs?.hashCode() ?: 0)
 		result = 31 * result + (bitRate?.hashCode() ?: 0)
 		result = 31 * result + (sampleRate?.hashCode() ?: 0)

@@ -13,6 +13,7 @@ import com.kwiby.musik.data.data_classes.Metadata
 import com.kwiby.musik.data.repositories.music_list.MusicListRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 private const val LOG_TAG = "EditMetadataViewModel"
 
@@ -37,7 +38,7 @@ class EditMetadataViewModel(
 	var genreQuery = mutableStateOf("")
 	var yearQuery = mutableStateOf("")
 
-	fun getFilepath(context: Context, uri: Uri): String? {
+	private fun getFilePath(context: Context, uri: Uri): String? {
 		val projection = arrayOf(
 			MediaStore.Audio.Media.RELATIVE_PATH,
 			MediaStore.Audio.Media.DISPLAY_NAME
@@ -54,13 +55,29 @@ class EditMetadataViewModel(
 		return null
 	}
 
+	fun getFileSize(context: Context, contentUri: Uri): String? {
+		val projection = arrayOf(MediaStore.Audio.Media.SIZE)
+		context.contentResolver.query(contentUri, projection, null, null, null)?.use { cursor ->
+			if (cursor.moveToFirst()) {
+				val sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
+				val sizeBytes = cursor.getLong(sizeIndex)
+				val sizeMB = sizeBytes / 1000000.0
+
+				return String.format(Locale.US, "%.2f MB", sizeMB)
+			}
+		}
+
+		return null
+	}
+
 	private fun getMetadata(context: Context, contentUri: Uri): Metadata? {
 		val retriever = MediaMetadataRetriever()
 		try {
 			retriever.setDataSource(context, contentUri)
 
 			return Metadata(
-				filePath = getFilepath(context, contentUri),
+				filePath = getFilePath(context, contentUri),
+				fileSizeMB = getFileSize(context, contentUri),
 				bitRate = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE),
 				durationMs = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION),
 				sampleRate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

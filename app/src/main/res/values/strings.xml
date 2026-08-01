@@ -135,17 +135,19 @@
     <string name="edit_metadata_genre" translatable="true">Genre</string>
     <string name="edit_metadata_year" translatable="true">Year</string>
 
-    <string name="edit_metadata_file_path" translatable="true">File Path:</string>
+    <string name="edit_metadata_file_path" translatable="true">File path:</string>
+    <string name="edit_metadata_file_size" translatable="true">File size:</string>
     <string name="edit_metadata_duration" translatable="true">Duration:</string>
-    <string name="edit_metadata_bit_rate" translatable="true">Bit Rate:</string>
-    <string name="edit_metadata_sample_rate" translatable="true">Sample Rate:</string>
+    <string name="edit_metadata_bit_rate" translatable="true">Bit rate:</string>
+    <string name="edit_metadata_sample_rate" translatable="true">Sample rate:</string>
     <string name="edit_metadata_mime_type" translatable="true">Format:</string>
 
-    <string name="edit_metadata_unknown_file_path" translatable="true">Unknown File Path</string>
-    <string name="edit_metadata_unknown_duration" translatable="true">Unknown Duration</string>
-    <string name="edit_metadata_unknown_bit_rate" translatable="true">Unknown Bit Rate</string>
-    <string name="edit_metadata_unknown_sample_rate" translatable="true">Unknown Sample Rate</string>
-    <string name="edit_metadata_unknown_mime_type" translatable="true">Unknown Format</string>
+    <string name="edit_metadata_unknown_file_path" translatable="true">Unknown file path</string>
+    <string name="edit_metadata_unknown_file_size" translatable="true">Unknown file size</string>
+    <string name="edit_metadata_unknown_duration" translatable="true">Unknown duration</string>
+    <string name="edit_metadata_unknown_bit_rate" translatable="true">Unknown bit rate</string>
+    <string name="edit_metadata_unknown_sample_rate" translatable="true">Unknown sample rate</string>
+    <string name="edit_metadata_unknown_mime_type" translatable="true">Unknown format</string>
 
     <string name="edit_metadata_placeholder_title" translatable="true">No title set</string>
     <string name="edit_metadata_placeholder_artist" translatable="true">No artist set</string>

@@ -47,6 +47,26 @@ fun InfoOption(
 
 		Spacer(Modifier.height(dimensionResource(R.dimen.x_small_padding)))
 
+		// --===--  File Size  --===--
+		Row {
+			Text(
+				text = stringResource(R.string.edit_metadata_file_size) + " ",
+				color = MaterialTheme.colorScheme.onSecondary,
+				style = MaterialTheme.typography.labelLarge.copy(
+					fontWeight = FontWeight.W400
+				)
+			)
+
+			Text(
+				text = metadata?.fileSizeMB
+					?: stringResource(R.string.edit_metadata_unknown_file_size),
+				color = MaterialTheme.colorScheme.onSecondary,
+				style = MaterialTheme.typography.labelLarge
+			)
+		}
+
+		Spacer(Modifier.height(dimensionResource(R.dimen.x_small_padding)))
+
 		// --===--  Duration  --===--
 		Row {
 			Text(
