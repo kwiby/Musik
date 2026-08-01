@@ -18,7 +18,7 @@ fun ListDivider() {
 			thickness = dimensionResource(R.dimen.horizontal_divider_thickness),
 			color = Color.DarkGray,
 			modifier = Modifier
-				.fillMaxWidth(0.785f)
+				.fillMaxWidth(0.8f)
 				.align(Alignment.CenterEnd)
 				.padding(
 					horizontal = dimensionResource(R.dimen.horizontal_divider_padding),
