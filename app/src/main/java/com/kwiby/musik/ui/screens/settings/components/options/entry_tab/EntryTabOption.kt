@@ -29,6 +29,7 @@ fun EntryTabOption(
 		OptionButton(
 			text = stringResource(R.string.all_music),
 			modifier = Modifier.weight(1f),
+			startPadding = dimensionResource(R.dimen.zero),
 			isSelected = entryPointTab == Tab.ALL_MUSIC
 		) {
 			navViewModel.setEntryTab(Tab.ALL_MUSIC)
@@ -47,6 +48,7 @@ fun EntryTabOption(
 		OptionButton(
 			text = stringResource(R.string.stats),
 			modifier = Modifier.weight(1f),
+			endPadding = dimensionResource(R.dimen.zero),
 			isSelected = entryPointTab == Tab.STATS
 		) {
 			navViewModel.setEntryTab(Tab.STATS)

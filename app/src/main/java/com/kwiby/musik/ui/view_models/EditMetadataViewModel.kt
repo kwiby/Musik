@@ -1,5 +1,6 @@
 package com.kwiby.musik.ui.view_models
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -18,12 +19,23 @@ private const val LOG_TAG = "EditMetadataViewModel"
 class EditMetadataViewModel(
 	private val musicListRepo: MusicListRepository
 ) : ViewModel() {
+	private var defaultMetadata = mutableStateOf<Metadata?>(null)
+
 	var isLoading = mutableStateOf(true)
 		private set
 	var id = mutableStateOf<Long?>(null)
 		private set
 	var metadata = mutableStateOf<Metadata?>(null)
 		private set
+
+	var titleQuery = mutableStateOf("")
+	var artistQuery = mutableStateOf("")
+	var albumQuery = mutableStateOf("")
+	var albumArtistQuery = mutableStateOf("")
+	var trackNumberQuery = mutableStateOf("")
+	var discNumberQuery = mutableStateOf("")
+	var genreQuery = mutableStateOf("")
+	var yearQuery = mutableStateOf("")
 
 	fun getFilepath(context: Context, uri: Uri): String? {
 		val projection = arrayOf(
@@ -86,6 +98,17 @@ class EditMetadataViewModel(
 			getMetadata(context, contentUri)
 		}
 		metadata.value = newMetadata
+		defaultMetadata.value = newMetadata
+
+		val metadata = metadata.value
+		titleQuery.value = metadata?.title ?: ""
+		artistQuery.value = metadata?.artist ?: ""
+		albumQuery.value = metadata?.album ?: ""
+		albumArtistQuery.value = metadata?.albumArtist ?: ""
+		trackNumberQuery.value = metadata?.trackNumber ?: ""
+		discNumberQuery.value = metadata?.discNumber ?: ""
+		genreQuery.value = metadata?.genre ?: ""
+		yearQuery.value = metadata?.year ?: ""
 
 		isLoading.value = false
 	}
@@ -96,7 +119,45 @@ class EditMetadataViewModel(
 		metadata.value = null
 	}
 
+	fun resetButton() {
+		val defaultMetadata = defaultMetadata.value
+		metadata.value = defaultMetadata
+
+		titleQuery.value = defaultMetadata?.title ?: ""
+		artistQuery.value = defaultMetadata?.artist ?: ""
+		albumQuery.value = defaultMetadata?.album ?: ""
+		albumArtistQuery.value = defaultMetadata?.albumArtist ?: ""
+		trackNumberQuery.value = defaultMetadata?.trackNumber ?: ""
+		discNumberQuery.value = defaultMetadata?.discNumber ?: ""
+		genreQuery.value = defaultMetadata?.genre ?: ""
+		yearQuery.value = defaultMetadata?.year ?: ""
+	}
+
 	fun saveButton() {
 
+	}
+
+	// --===--  Artwork  --===--
+	fun selectImageButton(context: Context, uri: Uri) {
+		try {
+			val byteArray = context.contentResolver.openInputStream(uri)?.use { inputStream ->
+				inputStream.readBytes()
+			}
+
+			metadata.value = metadata.value!!.copy(
+				artwork = byteArray
+			)
+		} catch (e: Exception) {
+			Log.e(LOG_TAG, "Failed to read bytes from uri=$uri", e)
+		}
+	}
+
+	@SuppressLint("ResourceType")
+	fun removeImageButton() {
+		if (metadata.value?.artwork != null) {
+			metadata.value = metadata.value!!.copy(
+				artwork = null
+			)
+		}
 	}
 }

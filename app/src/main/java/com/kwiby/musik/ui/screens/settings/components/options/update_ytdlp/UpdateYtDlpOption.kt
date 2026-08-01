@@ -71,6 +71,7 @@ fun UpdateYtDlpOption(
 			OptionButton(
 				text = stringResource(R.string.settings_update_ytdlp_option_stable),
 				modifier = Modifier.weight(1f),
+				startPadding = dimensionResource(R.dimen.zero),
 				enableRippleAnimation = true
 			) {
 				settingsViewModel.updateYtDlp(YoutubeDL.UpdateChannel.STABLE)
@@ -89,6 +90,7 @@ fun UpdateYtDlpOption(
 			OptionButton(
 				text = stringResource(R.string.settings_update_ytdlp_option_master),
 				modifier = Modifier.weight(1f),
+				endPadding = dimensionResource(R.dimen.zero),
 				enableRippleAnimation = true
 			) {
 				settingsViewModel.updateYtDlp(YoutubeDL.UpdateChannel.MASTER)

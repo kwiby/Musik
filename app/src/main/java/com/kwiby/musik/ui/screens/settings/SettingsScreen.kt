@@ -142,8 +142,6 @@ fun SettingsScreen(
 						UpdateYtDlpOption(settingsViewModel)
 						UpdateMusikOption()
 					}
-
-					Spacer(Modifier.height(dimensionResource(R.dimen.settings_options_bottom_padding)))
 				}
 			}
 		}

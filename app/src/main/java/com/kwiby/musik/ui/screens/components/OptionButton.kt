@@ -17,12 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import com.kwiby.musik.R
 
 @Composable
 fun OptionButton(
 	text: String,
 	modifier: Modifier = Modifier,
+	startPadding: Dp = dimensionResource(R.dimen.option_button_horizontal_padding),
+	endPadding: Dp = dimensionResource(R.dimen.option_button_horizontal_padding),
 	isSelected: Boolean = false,
 	enableRippleAnimation: Boolean = false,
 	onClick: () -> Unit = {}
@@ -32,15 +35,18 @@ fun OptionButton(
 	Surface(
 		modifier = modifier
 			.height(dimensionResource(R.dimen.option_button_height))
-			.padding(horizontal = dimensionResource(R.dimen.option_button_horizontal_padding))
-			.clip(MaterialTheme.shapes.medium)
+			.padding(
+				start = startPadding,
+				end = endPadding
+			)
+			.clip(MaterialTheme.shapes.small)
 			.clickable(
 				interactionSource = interactionSource,
 				indication = if (enableRippleAnimation) ripple() else null
 			) {
 				onClick()
 			},
-		shape = MaterialTheme.shapes.medium,
+		shape = MaterialTheme.shapes.small,
 		color = if (isSelected) {
 			MaterialTheme.colorScheme.outline
 		} else {

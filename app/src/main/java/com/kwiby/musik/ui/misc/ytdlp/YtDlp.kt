@@ -213,6 +213,7 @@ class YtDlp(
 		 * video was originally uploaded
 		 */
 		request.addOption("-f", "bestaudio/best")
+		request.addOption("--audio-quality", "0")
 		request.addOption("--extract-audio", "")
 		if (doConvertMp3) {
 			request.addOption("--audio-format", "mp3")

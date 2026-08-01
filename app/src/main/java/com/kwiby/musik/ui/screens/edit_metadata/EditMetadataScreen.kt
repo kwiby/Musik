@@ -20,6 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Restore
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -126,11 +127,22 @@ fun EditMetadataScreen(
 					)
 				}
 
-				CustomIconButton(
-					iconImageVector = Icons.Rounded.Save,
-					contentDescription = stringResource(R.string.edit_metadata_save),
-				) {
-					editMetadataViewModel.saveButton()
+				Row {
+					// --===--  Reset Button  --===--
+					CustomIconButton(
+						iconImageVector = Icons.Rounded.Restore,
+						contentDescription = stringResource(R.string.edit_metadata_reset),
+					) {
+						editMetadataViewModel.resetButton()
+					}
+
+					// --===--  Save Button  --===--
+					CustomIconButton(
+						iconImageVector = Icons.Rounded.Save,
+						contentDescription = stringResource(R.string.edit_metadata_save),
+					) {
+						editMetadataViewModel.saveButton()
+					}
 				}
 			}
 
@@ -158,18 +170,16 @@ fun EditMetadataScreen(
 						LoadingIndicator()
 					} else {
 						InfoOption(editMetadataViewModel)
-						ArtworkOption()
-						TitleOption()
-						ArtistOption()
-						AlbumOption()
-						AlbumArtistOption()
-						TrackNumberOption()
-						DiscNumberOption()
-						GenreOption()
-						YearOption()
+						ArtworkOption(editMetadataViewModel)
+						TitleOption(editMetadataViewModel)
+						ArtistOption(editMetadataViewModel)
+						AlbumOption(editMetadataViewModel)
+						AlbumArtistOption(editMetadataViewModel)
+						TrackNumberOption(editMetadataViewModel)
+						DiscNumberOption(editMetadataViewModel)
+						GenreOption(editMetadataViewModel)
+						YearOption(editMetadataViewModel)
 					}
-
-					Spacer(Modifier.height(dimensionResource(R.dimen.settings_options_bottom_padding)))
 				}
 			}
 		}

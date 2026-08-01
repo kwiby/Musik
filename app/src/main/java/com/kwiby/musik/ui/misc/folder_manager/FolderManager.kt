@@ -25,7 +25,6 @@ class FolderManager(
 			if (directoryUri != null) {
 				activity.lifecycleScope.launch {
 					val previousUriString = dataStoreManager.downloadLocation.first()
-
 					if (previousUriString.isNotEmpty()) {
 						val previousUri = previousUriString.toUri()
 
@@ -55,7 +54,6 @@ class FolderManager(
 		}
 
 		val uri = uriString.toUri()
-
 		return withContext(Dispatchers.IO) {
 			activity.contentResolver.persistedUriPermissions.any {
 				it.uri == uri && it.isReadPermission && it.isWritePermission
@@ -65,7 +63,6 @@ class FolderManager(
 
 	fun getDisplayPath(uri: Uri): String {
 		val docId = DocumentsContract.getTreeDocumentId(uri)
-
 		return "./" + docId.substringAfter(':', docId)
 	}
 
@@ -81,10 +78,4 @@ class FolderManager(
 			dataStoreManager.setDownloadLocation("")
 		}
 	}
-
-	/*
-	fun listFiles(uri: Uri): List<DocumentFile> {
-		return DocumentFile.fromTreeUri(activity, uri)?.listFiles()?.toList() ?: emptyList()
-	}
-	 */
 }

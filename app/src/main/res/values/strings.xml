@@ -123,6 +123,7 @@
     <!-- Edit Metadata Screen -->
     <string name="edit_metadata_screen_title" translatable="true">Edit Metadata</string>
     <string name="edit_metadata_save" translatable="true">Save</string>
+    <string name="edit_metadata_reset" translatable="true">Reset</string>
     <string name="edit_metadata_info" translatable="true">Info</string>
     <string name="edit_metadata_artwork" translatable="true">Artwork</string>
     <string name="edit_metadata_title" translatable="true">Title</string>
@@ -145,6 +146,21 @@
     <string name="edit_metadata_unknown_bit_rate" translatable="true">Unknown Bit Rate</string>
     <string name="edit_metadata_unknown_sample_rate" translatable="true">Unknown Sample Rate</string>
     <string name="edit_metadata_unknown_mime_type" translatable="true">Unknown Mime Type</string>
+
+    <string name="edit_metadata_placeholder_title" translatable="true">No title set</string>
+    <string name="edit_metadata_placeholder_artist" translatable="true">No artist set</string>
+    <string name="edit_metadata_placeholder_album" translatable="true">No album set</string>
+    <string name="edit_metadata_placeholder_album_artist" translatable="true">
+        No album artist set
+    </string>
+    <string name="edit_metadata_placeholder_track_number" translatable="true">
+        No track number set
+    </string>
+    <string name="edit_metadata_placeholder_disc_number" translatable="true">
+        No disc number set
+    </string>
+    <string name="edit_metadata_placeholder_genre" translatable="true">No genre set</string>
+    <string name="edit_metadata_placeholder_year" translatable="true">No year set</string>
 
     <!-- Statistics Tab -->
     <string name="refresh_stats_button" translatable="true">Refresh statistics</string>

@@ -1,58 +1,44 @@
-package com.kwiby.musik.ui.tabs.all_music.pages.add_yt_music.components
+package com.kwiby.musik.ui.screens.edit_metadata.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kwiby.musik.R
 import com.kwiby.musik.ui.components.customTextSelectionColours
-import com.kwiby.musik.ui.view_models.AddYtMusicViewModel
 
 @Composable
-fun YouTubeLinkField(
-	addYtMusicViewModel: AddYtMusicViewModel,
-	modifier: Modifier = Modifier
+fun MetadataField(
+	query: String,
+	onValueChange: (String) -> Unit,
+	placeholderText: String
 ) {
-	val searchQuery by addYtMusicViewModel.ytLink.collectAsStateWithLifecycle()
 	val focusManager = LocalFocusManager.current
 
 	CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColours()) {
 		TextField(
-			value = searchQuery,
-			onValueChange = { addYtMusicViewModel.onYouTubeLinkChange(it) },
+			value = query,
+			onValueChange = { onValueChange(it) },
 			placeholder = { Text(
-				text = stringResource(R.string.yt_link_field),
+				text = placeholderText,
 				style = MaterialTheme.typography.bodyLarge
 			) },
-			leadingIcon =
-				{
-					Icon(
-						Icons.Default.Link,
-						contentDescription = stringResource(R.string.yt_link_field)
-					)
-				},
 			singleLine = true,
-			shape = MaterialTheme.shapes.medium,
+			shape = MaterialTheme.shapes.small,
 			colors = TextFieldDefaults.colors(
 				focusedLeadingIconColor = MaterialTheme.colorScheme.onSecondary,
 				cursorColor = MaterialTheme.colorScheme.onSecondary,
-				focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-				unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+				focusedContainerColor = MaterialTheme.colorScheme.secondaryFixed,
+				unfocusedContainerColor = MaterialTheme.colorScheme.secondaryFixed,
 				focusedTextColor = MaterialTheme.colorScheme.onSecondary,
 				unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
 				focusedIndicatorColor = Color.Transparent,
@@ -64,7 +50,7 @@ fun YouTubeLinkField(
 					focusManager.clearFocus()
 				}
 			),
-			modifier = modifier
+			modifier = Modifier.fillMaxWidth()
 		)
 	}
 }
