@@ -2,15 +2,17 @@ package com.kwiby.musik.ui.components
 
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DragIndicator
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -81,42 +82,57 @@ fun MusicListItem(
 				}
 			}
 
-			ListItem(
-				modifier = Modifier.weight(1f),
-				colors = ListItemDefaults.colors(
-					containerColor = Color.Transparent
-				),
-				leadingContent = {
+			Row(
+				modifier = Modifier
+					.weight(1f)
+					.padding(
+						horizontal = dimensionResource(R.dimen.small_padding),
+						vertical = dimensionResource(R.dimen.small_padding)
+					),
+				horizontalArrangement = Arrangement.SpaceBetween,
+				verticalAlignment = Alignment.CenterVertically
+			) {
+				Row(
+					modifier = Modifier.weight(1f),
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					// --===--  Artwork  --===--
 					AlbumArtImage(musicDetails.albumArtUri)
-				},
-				headlineContent = {
-					Text(
-						text = musicDetails.title,
-						style = MaterialTheme.typography.bodyLarge,
-						color = MaterialTheme.colorScheme.onSecondary,
-						maxLines = 1,
-						overflow = TextOverflow.Ellipsis
-					)
-				},
-				supportingContent = {
-					Text(
-						text = musicDetails.artist,
-						style = MaterialTheme.typography.bodyMedium,
-						color = MaterialTheme.colorScheme.onSurfaceVariant,
-						maxLines = 1,
-						overflow = TextOverflow.Ellipsis
-					)
-				},
-				trailingContent = {
-					Text(
-						text = musicDetails.durationMs,
-						style = MaterialTheme.typography.bodyMedium,
-						color = MaterialTheme.colorScheme.onSecondary,
-						maxLines = 1,
-						overflow = TextOverflow.Ellipsis
-					)
+
+					Spacer(Modifier.width(dimensionResource(R.dimen.medium_padding)))
+
+					Column {
+						// --===--  Title  --===--
+						Text(
+							text = musicDetails.title,
+							style = MaterialTheme.typography.bodyLarge,
+							color = MaterialTheme.colorScheme.onSecondary,
+							maxLines = 1,
+							overflow = TextOverflow.Ellipsis
+						)
+
+						// --===--  Artist  --===--
+						Text(
+							text = musicDetails.artist,
+							style = MaterialTheme.typography.bodyMedium,
+							color = MaterialTheme.colorScheme.onSurfaceVariant,
+							maxLines = 1,
+							overflow = TextOverflow.Ellipsis
+						)
+					}
 				}
-			)
+
+				Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
+
+				// --===--  Duration  --===--
+				Text(
+					text = musicDetails.durationMs,
+					style = MaterialTheme.typography.bodyMedium,
+					color = MaterialTheme.colorScheme.onSecondary,
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis
+				)
+			}
 
 			if (isInEditMetadataMode) {
 				CustomIconButton (
