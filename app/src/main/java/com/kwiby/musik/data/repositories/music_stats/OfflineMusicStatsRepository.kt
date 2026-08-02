@@ -21,10 +21,10 @@ class OfflineMusicStatsRepository(
 	override suspend fun getStatsOrderedByListenTimeDESC(): List<MusicStats> =
 		musicStatsDao.getStatsOrderedByListenTimeDESC()
 	override suspend fun insertIfAbsent(stats: AudioFileStats) = musicStatsDao.insertIfAbsent(stats)
-	override suspend fun incrementPlayCount(id: Long) = musicStatsDao.incrementPlayCount(id)
-	override suspend fun logMusicSession(id: Long, listenTimeMs: Long) {
+	override suspend fun logPlayCount(id: Long) = musicStatsDao.logPlayCount(id)
+	override suspend fun logListenTime(id: Long, listenTimeMs: Long) {
 		try {
-			musicStatsDao.logMusicSession(id, listenTimeMs)
+			musicStatsDao.logListenTime(id, listenTimeMs)
 		} catch (_: SQLiteConstraintException) {
 			Log.w(LOG_TAG, "Skipped music session log for deleted track id=$id")
 		}

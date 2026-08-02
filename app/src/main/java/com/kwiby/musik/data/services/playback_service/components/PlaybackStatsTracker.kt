@@ -20,161 +20,139 @@ class PlaybackStatsTracker(
 	private val scope: CoroutineScope,
 	private val musicStatsRepo: OfflineMusicStatsRepository
 ) : Player.Listener {
-	private val flushDelay = 30_000.milliseconds
-	private val playCountThreshold = 5 // Seconds (converted to milliseconds later)
+	private val updateDelaySec = 30
+	private val playCountThresholdSec = 3
 
-	private var flushLoopJob: Job? = null
+	private var loopJob: Job? = null
+	private var updateJob: Job? = null
 	private var sessionTrackId: Long? = null
-	private var statsOwnerTrackId: Long? = null
-	private var sessionStartTimeMs: Long? = null
-	private var sessionTrackDurationMs: Long? = null
-
-	private var wasPlayCountLogged: Boolean = false
-	private var totalListenedMs: Long = 0L
+	private var sessionTotalDurationMs: Long? = null
+	private var sessionTotalListenTime: Long? = null
+	private var sessionLastUpdateTimeMs: Long? = null
+	private var wasSessionPlayCountLogged: Boolean = false
 
 
-	private fun currentTrackId(): Long? = player.currentMediaItem?.mediaId?.toLongOrNull()
+	private fun getCurTrackId(): Long? {
+		return player.currentMediaItem?.mediaId?.toLongOrNull()
+	}
 
-	private fun startFlushLoop() {
-		if (flushLoopJob?.isActive == true) {
+	private fun updateDB() {
+		val curSessionTrackId = sessionTrackId
+		if (curSessionTrackId == null) {
+			Log.e(LOG_TAG, "Cannot update the database, session track id is null (expected on app launch)")
+			return
+		}
+		if (sessionTotalDurationMs == null) {
+			Log.e(LOG_TAG, "Cannot update the database, session total duration is null")
+			return
+		}
+		if (sessionTotalListenTime == null) {
+			Log.e(LOG_TAG, "Cannot update the database, session total listen time is null")
+			return
+		}
+		if (sessionLastUpdateTimeMs == null) {
+			Log.e(LOG_TAG, "Cannot update the database, session start time is null")
+			return
+		}
+		if (player.currentMediaItem == null) {
+			Log.e(LOG_TAG, "Cannot update the database, current media item is null")
+			return
+		}
+		if (updateJob?.isActive == true) {
+			Log.w(LOG_TAG, "Cannot update the database, update job is active")
 			return
 		}
 
-		flushLoopJob = scope.launch {
+		val playCountThresholdMs = playCountThresholdSec * 1000L
+		val totalDuration = sessionTotalDurationMs!!
+		val curElapsedRealtime = SystemClock.elapsedRealtime()
+		val timeElapsedSinceLastUpdate = curElapsedRealtime - sessionLastUpdateTimeMs!!
+		sessionLastUpdateTimeMs = curElapsedRealtime
+		sessionTotalListenTime = sessionTotalListenTime!! + timeElapsedSinceLastUpdate
+		val totalListenTime = sessionTotalListenTime!!
+
+		updateJob = scope.launch(Dispatchers.IO) {
+			Log.d("debug", "Update job launched (wasSessionPlayCountLogged=$wasSessionPlayCountLogged - totalListenTime=$totalListenTime - playCountThresholdMs=$playCountThresholdMs - totalDuration=$totalDuration)")
+			if (!wasSessionPlayCountLogged && totalListenTime >= minOf(playCountThresholdMs, totalDuration)) {
+				Log.d("debug", "Incrementing play count")
+				wasSessionPlayCountLogged = true
+				musicStatsRepo.logPlayCount(curSessionTrackId)
+			}
+
+			musicStatsRepo.logListenTime(curSessionTrackId, timeElapsedSinceLastUpdate)
+		}
+	}
+
+	fun startSession() {
+		val curTrackId = getCurTrackId()
+		if (curTrackId == null) {
+			Log.e(LOG_TAG, "Current track id is null (no music is playing)")
+			return
+		}
+
+		stopSession()
+		sessionTrackId = curTrackId
+		sessionTotalDurationMs = player.duration
+		sessionTotalListenTime = 0L
+		sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
+		wasSessionPlayCountLogged = false
+
+		loopJob = scope.launch {
 			while (true) {
-				delay(flushDelay)
+				val updateDelayMs = (updateDelaySec * 1000).milliseconds
+				delay(updateDelayMs)
 
-				if (sessionStartTimeMs != null) {
-					val trackId = sessionTrackId
-
-					flush()
-					startAccumulating(trackId, false)
+				Log.d("debug", "Automatically updating database")
+				if (player.isPlaying) {
+					updateDB()
 				}
 			}
 		}
 	}
 
-	private fun stopFlushLoop() {
-		flushLoopJob?.cancel()
-		flushLoopJob = null
+	fun stopSession() {
+		loopJob?.cancel()
+		loopJob = null
+		updateJob?.cancel()
+		updateJob = null
 	}
 
-	private fun ensureStatsFor(trackId: Long?) {
-		if (trackId == null) {
-			return
-		}
+	fun reset() {
+		sessionTrackId = null
+		sessionTotalDurationMs = null
+		sessionTotalListenTime = null
+		sessionLastUpdateTimeMs = null
+		wasSessionPlayCountLogged = false
 
-		if (statsOwnerTrackId != trackId) {
-			totalListenedMs = 0L
-			wasPlayCountLogged = false
-			statsOwnerTrackId = trackId
-		}
-	}
-
-	private fun startAccumulating(trackId: Long?, doResetSession: Boolean) {
-		if (trackId == null) {
-			Log.w(LOG_TAG, "Cannot start listen time tracking, trackId is null")
-			return
-		}
-
-		if (doResetSession) {
-			totalListenedMs = 0L
-			wasPlayCountLogged = false
-		}
-
-		if (sessionTrackId != trackId) {
-			sessionTrackDurationMs = null
-		}
-
-		ensureStatsFor(trackId)
-		sessionTrackId = trackId
-		sessionStartTimeMs = SystemClock.elapsedRealtime()
-		player.duration.takeIf { it > 0 }?.let { sessionTrackDurationMs = it }
-
-		startFlushLoop()
-	}
-
-	private fun checkPlayCountThreshold(trackId: Long) {
-		if (wasPlayCountLogged) {
-			return
-		}
-
-		val duration = sessionTrackDurationMs
-		val thresholdMs = playCountThreshold * 1000L
-		val thresholdMet = if (duration != null && duration > 0) {
-			totalListenedMs >= minOf(thresholdMs, duration)
-		} else {
-			totalListenedMs >= thresholdMs
-		}
-
-		if (thresholdMet) {
-			wasPlayCountLogged = true
-			scope.launch(Dispatchers.IO) {
-				musicStatsRepo.incrementPlayCount(trackId)
-			}
-		}
-	}
-
-	fun flush() {
-		val trackId = sessionTrackId ?: return
-		val startTimeMs = sessionStartTimeMs ?: return
-
-		sessionStartTimeMs = null
-
-		val listenTimeMs = SystemClock.elapsedRealtime() - startTimeMs
-		if (listenTimeMs > 0) {
-			ensureStatsFor(trackId)
-			totalListenedMs += listenTimeMs
-			checkPlayCountThreshold(trackId)
-
-			scope.launch(Dispatchers.IO) {
-				musicStatsRepo.logMusicSession(trackId, listenTimeMs)
-			}
-		}
-	}
-
-	fun release() {
-		flush()
-		stopFlushLoop()
+		stopSession()
 	}
 
 
 	override fun onIsPlayingChanged(isPlaying: Boolean) {
 		if (isPlaying) {
-			startAccumulating(currentTrackId(), sessionTrackId != currentTrackId())
+			if (getCurTrackId() == sessionTrackId) {
+				Log.d("debug", "Media has played")
+				sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
+			} else {
+				Log.d("debug", "Session has started (sesh=$sessionTrackId - new=${getCurTrackId()})")
+				startSession()
+			}
 		} else {
-			flush()
-			stopFlushLoop()
+			Log.d("debug", "Media has paused (updating database)")
+			updateDB()
 		}
 	}
 
 	override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-		flush()
-
-		val newTrackId = mediaItem?.mediaId?.toLongOrNull()
-		ensureStatsFor(newTrackId)
-
-		if (player.isPlaying) {
-			startAccumulating(newTrackId, true)
-		} else {
-			stopFlushLoop()
-			sessionTrackId = newTrackId
-			sessionTrackDurationMs = player.duration.takeIf { it > 0 }
-		}
-	}
-
-	override fun onPlaybackStateChanged(playbackState: Int) {
-		if (playbackState == Player.STATE_READY
-			&& sessionTrackId != null
-			&& sessionTrackId == currentTrackId()
-			&& sessionTrackDurationMs == null
-		) {
-			player.duration.takeIf { it > 0 }?.let { sessionTrackDurationMs = it }
+		if (sessionTrackId != null) {
+			Log.d("debug", "Media has transitioned (updating database & starting session)")
+			updateDB()
+			startSession()
 		}
 	}
 
 	override fun onPlayerError(error: PlaybackException) {
-		flush()
-		stopFlushLoop()
+		Log.e(LOG_TAG, "$error")
+		stopSession()
 	}
 }

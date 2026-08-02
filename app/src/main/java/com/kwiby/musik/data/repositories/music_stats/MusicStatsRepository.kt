@@ -12,7 +12,7 @@ interface MusicStatsRepository {
 	suspend fun getStatsOrderedByPlayCountDESC(): List<MusicStats>
 	suspend fun getStatsOrderedByListenTimeDESC(): List<MusicStats>
 	suspend fun insertIfAbsent(stats: AudioFileStats)
-	suspend fun incrementPlayCount(id: Long)
-	suspend fun logMusicSession(id: Long, listenTimeMs: Long)
+	suspend fun logPlayCount(id: Long)
+	suspend fun logListenTime(id: Long, listenTimeMs: Long)
 	suspend fun deleteMultipleById(ids: Set<Long>)
 }

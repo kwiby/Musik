@@ -77,7 +77,13 @@ interface MusicStatsDao {
 	suspend fun addListenTime(id: Long, listenTimeMs: Long)
 
 	@Transaction
-	suspend fun logMusicSession(id: Long, listenTimeMs: Long) {
+	suspend fun logPlayCount(id: Long) {
+		insertIfAbsent(AudioFileStats(id))
+		incrementPlayCount(id)
+	}
+
+	@Transaction
+	suspend fun logListenTime(id: Long, listenTimeMs: Long) {
 		insertIfAbsent(AudioFileStats(id))
 		addListenTime(id, listenTimeMs)
 	}

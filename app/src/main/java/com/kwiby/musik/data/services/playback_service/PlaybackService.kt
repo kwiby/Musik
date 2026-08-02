@@ -66,7 +66,7 @@ class PlaybackService: MediaSessionService() {
 	}
 
 	override fun onDestroy() {
-		statsTracker.release()
+		statsTracker.reset()
 
 		mediaSession?.run {
 			if (player.isCommandAvailable(Player.COMMAND_STOP)) {
@@ -89,7 +89,7 @@ class PlaybackService: MediaSessionService() {
 			stopSelf()
 		}
 		 */
-		statsTracker.release()
+		statsTracker.reset()
 		stopSelf()
 
 		super.onTaskRemoved(rootIntent)
