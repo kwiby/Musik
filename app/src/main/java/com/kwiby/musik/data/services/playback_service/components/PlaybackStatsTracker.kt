@@ -11,6 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
 private const val LOG_TAG = "PlaybackStatsTracker"
@@ -22,6 +25,8 @@ class PlaybackStatsTracker(
 ) : Player.Listener {
 	private val updateDelaySec = 30
 	private val playCountThresholdSec = 3
+
+	private val sessionMutex = Mutex()
 
 	private var loopJob: Job? = null
 	private var updateJob: Job? = null
@@ -39,7 +44,7 @@ class PlaybackStatsTracker(
 	private fun updateDB() {
 		val curSessionTrackId = sessionTrackId
 		if (curSessionTrackId == null) {
-			Log.e(LOG_TAG, "Cannot update the database, session track id is null (expected on app launch)")
+			Log.e(LOG_TAG, "Cannot update the database, session track id is null")
 			return
 		}
 		if (sessionTotalDurationMs == null) {
@@ -70,17 +75,31 @@ class PlaybackStatsTracker(
 		sessionLastUpdateTimeMs = curElapsedRealtime
 		sessionTotalListenTime = sessionTotalListenTime!! + timeElapsedSinceLastUpdate
 		val totalListenTime = sessionTotalListenTime!!
-
-		updateJob = scope.launch(Dispatchers.IO) {
-			Log.d("debug", "Update job launched (wasSessionPlayCountLogged=$wasSessionPlayCountLogged - totalListenTime=$totalListenTime - playCountThresholdMs=$playCountThresholdMs - totalDuration=$totalDuration)")
-			if (!wasSessionPlayCountLogged && totalListenTime >= minOf(playCountThresholdMs, totalDuration)) {
-				Log.d("debug", "Incrementing play count")
-				wasSessionPlayCountLogged = true
-				musicStatsRepo.logPlayCount(curSessionTrackId)
-			}
-
-			musicStatsRepo.logListenTime(curSessionTrackId, timeElapsedSinceLastUpdate)
+		val doLogPlayCount = !wasSessionPlayCountLogged && totalListenTime >= minOf(playCountThresholdMs, totalDuration)
+		if (doLogPlayCount) {
+			wasSessionPlayCountLogged = true
 		}
+
+		updateJob = scope.launch {
+			withContext(Dispatchers.IO) {
+				Log.d("debug", "Update job launched (curSessionTrackId=$curSessionTrackId - wasSessionPlayCountLogged=$wasSessionPlayCountLogged - totalListenTime=$totalListenTime - playCountThresholdMs=$playCountThresholdMs - totalDuration=$totalDuration)")
+				try {
+					if (doLogPlayCount) {
+						Log.d("debug", "Incrementing play count")
+						musicStatsRepo.logPlayCount(curSessionTrackId)
+					}
+					musicStatsRepo.logListenTime(curSessionTrackId, timeElapsedSinceLastUpdate)
+					Log.d("debug", "DB write SUCCEEDED for $curSessionTrackId, delta=$timeElapsedSinceLastUpdate")
+				} catch (e: Exception) {
+					Log.e("debug", "DB write FAILED for $curSessionTrackId, delta=$timeElapsedSinceLastUpdate", e)
+				}
+			}
+		}
+	}
+
+	suspend fun flush() {
+		updateDB()
+		updateJob?.join()
 	}
 
 	fun startSession() {
@@ -102,8 +121,8 @@ class PlaybackStatsTracker(
 				val updateDelayMs = (updateDelaySec * 1000).milliseconds
 				delay(updateDelayMs)
 
-				Log.d("debug", "Automatically updating database")
 				if (player.isPlaying) {
+					Log.d("debug", "Automatically updating database")
 					updateDB()
 				}
 			}
@@ -135,7 +154,9 @@ class PlaybackStatsTracker(
 				sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
 			} else {
 				Log.d("debug", "Session has started (sesh=$sessionTrackId - new=${getCurTrackId()})")
-				startSession()
+				scope.launch {
+					sessionMutex.withLock { startSession() }
+				}
 			}
 		} else {
 			Log.d("debug", "Media has paused (updating database)")
@@ -144,10 +165,33 @@ class PlaybackStatsTracker(
 	}
 
 	override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+		if (mediaItem == null) {
+			Log.d("debug", "Media item is null, resetting session")
+			scope.launch {
+				flush()
+				reset()
+			}
+
+			return
+		}
+
 		if (sessionTrackId != null) {
 			Log.d("debug", "Media has transitioned (updating database & starting session)")
-			updateDB()
-			startSession()
+			scope.launch {
+				sessionMutex.withLock {
+					flush()
+					startSession()
+				}
+			}
+		}
+	}
+
+	override fun onPlaybackStateChanged(playbackState: Int) {
+		if (playbackState == Player.STATE_ENDED && sessionTrackId != null) {
+			Log.d("debug", "Playback state changed (updating database)")
+			scope.launch {
+				flush()
+			}
 		}
 	}
 

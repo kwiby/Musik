@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.runBlocking
 
 class PlaybackService: MediaSessionService() {
 	private var mediaSession: MediaSession? = null
@@ -66,6 +67,9 @@ class PlaybackService: MediaSessionService() {
 	}
 
 	override fun onDestroy() {
+		runBlocking {
+			statsTracker.flush()
+		}
 		statsTracker.reset()
 
 		mediaSession?.run {
@@ -89,6 +93,9 @@ class PlaybackService: MediaSessionService() {
 			stopSelf()
 		}
 		 */
+		runBlocking {
+			statsTracker.flush()
+		}
 		statsTracker.reset()
 		stopSelf()
 
