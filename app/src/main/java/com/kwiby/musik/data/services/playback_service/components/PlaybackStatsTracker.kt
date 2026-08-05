@@ -13,7 +13,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
 private const val LOG_TAG = "PlaybackStatsTracker"
@@ -80,19 +79,17 @@ class PlaybackStatsTracker(
 			wasSessionPlayCountLogged = true
 		}
 
-		updateJob = scope.launch {
-			withContext(Dispatchers.IO) {
-				Log.d("debug", "Update job launched (curSessionTrackId=$curSessionTrackId - wasSessionPlayCountLogged=$wasSessionPlayCountLogged - totalListenTime=$totalListenTime - playCountThresholdMs=$playCountThresholdMs - totalDuration=$totalDuration)")
-				try {
-					if (doLogPlayCount) {
-						Log.d("debug", "Incrementing play count")
-						musicStatsRepo.logPlayCount(curSessionTrackId)
-					}
-					musicStatsRepo.logListenTime(curSessionTrackId, timeElapsedSinceLastUpdate)
-					Log.d("debug", "DB write SUCCEEDED for $curSessionTrackId, delta=$timeElapsedSinceLastUpdate")
-				} catch (e: Exception) {
-					Log.e("debug", "DB write FAILED for $curSessionTrackId, delta=$timeElapsedSinceLastUpdate", e)
+		updateJob = scope.launch(Dispatchers.IO) {
+			Log.d("debug", "Update job launched (curSessionTrackId=$curSessionTrackId - wasSessionPlayCountLogged=$wasSessionPlayCountLogged - totalListenTime=$totalListenTime - playCountThresholdMs=$playCountThresholdMs - totalDuration=$totalDuration)")
+			try {
+				if (doLogPlayCount) {
+					Log.d("debug", "Incrementing play count")
+					musicStatsRepo.logPlayCount(curSessionTrackId)
 				}
+				musicStatsRepo.logListenTime(curSessionTrackId, timeElapsedSinceLastUpdate)
+				Log.d("debug", "DB write SUCCEEDED for $curSessionTrackId, delta=$timeElapsedSinceLastUpdate")
+			} catch (e: Exception) {
+				Log.e("debug", "DB write FAILED for $curSessionTrackId, delta=$timeElapsedSinceLastUpdate", e)
 			}
 		}
 	}
