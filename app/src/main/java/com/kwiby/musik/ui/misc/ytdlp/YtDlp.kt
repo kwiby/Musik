@@ -114,6 +114,47 @@ class YtDlp(
 
 		val albumArtUri = ContentUris.withAppendedId("content://media/external/audio/albumart".toUri(), albumId)
 		return Pair(audioId, albumArtUri)
+
+		/*
+		val docId = DocumentsContract.getDocumentId(documentUri)
+		val relativePath = docId.substringAfter(':')
+
+		var audioId = 0L
+		var albumId = 0L
+
+		val relativeDir = relativePath.substringBeforeLast('/', missingDelimiterValue = "")
+		val displayName = relativePath.substringAfterLast('/')
+		val relativePathForQuery = if (relativeDir.isEmpty()) "" else "$relativeDir/"
+		val filePath = "/storage/emulated/0/$relativePath"
+
+		suspendCancellableCoroutine { cont ->
+			MediaScannerConnection.scanFile(appContext, arrayOf(filePath), null) { _, _ ->
+				if (cont.isActive) {
+					cont.resume(Unit) { _, _, _ -> }
+				}
+			}
+		}
+
+		appContext.contentResolver.query(
+			MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+			arrayOf(MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ALBUM_ID),
+			"${MediaStore.Audio.Media.RELATIVE_PATH} = ? AND ${MediaStore.Audio.Media.DISPLAY_NAME} = ?",
+			arrayOf(relativePathForQuery, displayName),
+			null
+		)?.use { cursor ->
+			if (cursor.moveToFirst()) {
+				audioId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
+				albumId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID))
+			} else {
+				Log.e(LOG_TAG, "No audio row found for $relativePathForQuery$displayName")
+			}
+		}
+
+		val audioUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, audioId)
+		val albumArtUri = ContentUris.withAppendedId("content://media/external/audio/albumart".toUri(), albumId)
+
+		return Triple(audioId, audioUri, albumArtUri)
+		 */
 	}
 
 	private fun extractDownloadSpeed(line: String): String? {
@@ -187,7 +228,6 @@ class YtDlp(
 			return newFile.uri
 		} catch (e: Exception) {
 			Log.e(LOG_TAG, "Failed to move file", e)
-
 			return null
 		}
 	}
@@ -253,9 +293,7 @@ class YtDlp(
 				}
 
 				if (contentUri != null) {
-					val pair = getExtraDetails(contentUri, downloadedFile.name)
-					val id = pair.first
-					val albumArtUri = pair.second
+					val (id, albumArtUri) = getExtraDetails(contentUri, downloadedFile.name)
 
 					emitToast("Download completed")
 					return DownloadResult.Success(

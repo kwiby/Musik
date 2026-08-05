@@ -1,10 +1,10 @@
 package com.kwiby.musik.ui.view_models
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -39,16 +39,26 @@ class EditMetadataViewModel(
 	var yearQuery = mutableStateOf("")
 
 	private fun getFilePath(context: Context, uri: Uri): String? {
-		val projection = arrayOf(
-			MediaStore.Audio.Media.RELATIVE_PATH,
-			MediaStore.Audio.Media.DISPLAY_NAME
-		)
-		context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-			if (cursor.moveToFirst()) {
-				val relativePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.RELATIVE_PATH))
-				val fileName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME))
+		if (DocumentsContract.isDocumentUri(context, uri)) {
+			val docId = DocumentsContract.getDocumentId(uri)
+			val split = docId.split(":", limit = 2)
+			if (split.size != 2 || !"primary".equals(split[0], ignoreCase = true)) {
+				return null
+			}
 
-				return "$relativePath$fileName"
+			return split[1]
+		} else if ("media".equals(uri.authority, ignoreCase = true)) {
+			val projection = arrayOf(
+				MediaStore.Audio.Media.RELATIVE_PATH,
+				MediaStore.Audio.Media.DISPLAY_NAME
+			)
+			context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+				if (cursor.moveToFirst()) {
+					val relativePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.RELATIVE_PATH))
+					val fileName = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME))
+
+					return "$relativePath$fileName"
+				}
 			}
 		}
 
@@ -150,8 +160,27 @@ class EditMetadataViewModel(
 		yearQuery.value = defaultMetadata?.year ?: ""
 	}
 
-	fun saveButton() {
+	fun isBlankOrNumerical(str: String): Boolean {
+		val trimmedStr = str.trim()
+		return trimmedStr.isBlank() || (trimmedStr.toIntOrNull() != null && trimmedStr.toInt() >= 0)
+	}
 
+	fun isSavable(): Boolean {
+		return isBlankOrNumerical(trackNumberQuery.value)
+				&& isBlankOrNumerical(discNumberQuery.value)
+				&& isBlankOrNumerical(yearQuery.value)
+	}
+
+	fun saveButton(
+		navToMainScreen: () -> Unit
+	) {
+		if (!isSavable()) {
+			return
+		}
+
+
+
+		navToMainScreen()
 	}
 
 	// --===--  Artwork  --===--
@@ -169,7 +198,6 @@ class EditMetadataViewModel(
 		}
 	}
 
-	@SuppressLint("ResourceType")
 	fun removeImageButton() {
 		if (metadata.value?.artwork != null) {
 			metadata.value = metadata.value!!.copy(

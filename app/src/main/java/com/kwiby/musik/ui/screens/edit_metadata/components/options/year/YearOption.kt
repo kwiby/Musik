@@ -21,7 +21,8 @@ fun YearOption(
 	MetadataField(
 		query = editMetadataViewModel.yearQuery.value,
 		onValueChange = { editMetadataViewModel.yearQuery.value = it },
-		placeholderText = stringResource(R.string.edit_metadata_placeholder_year)
+		placeholderText = stringResource(R.string.edit_metadata_placeholder_year),
+		isBlankOrNumerical = editMetadataViewModel::isBlankOrNumerical
 	)
 
 	Spacer(Modifier.height(dimensionResource(R.dimen.screen_option_section_vertical_padding)))

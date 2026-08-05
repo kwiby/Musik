@@ -140,8 +140,13 @@ fun EditMetadataScreen(
 					CustomIconButton(
 						iconImageVector = Icons.Rounded.Save,
 						contentDescription = stringResource(R.string.edit_metadata_save),
+						colour = if (editMetadataViewModel.isSavable()) {
+							MaterialTheme.colorScheme.onSecondary
+						} else {
+							MaterialTheme.colorScheme.onSurface
+						}
 					) {
-						editMetadataViewModel.saveButton()
+						editMetadataViewModel.saveButton { navViewModel.navToScreen(Screen.Main) }
 					}
 				}
 			}

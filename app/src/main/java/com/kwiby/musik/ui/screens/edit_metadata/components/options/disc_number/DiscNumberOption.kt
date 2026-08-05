@@ -21,7 +21,8 @@ fun DiscNumberOption(
 	MetadataField(
 		query = editMetadataViewModel.discNumberQuery.value,
 		onValueChange = { editMetadataViewModel.discNumberQuery.value = it },
-		placeholderText = stringResource(R.string.edit_metadata_placeholder_disc_number)
+		placeholderText = stringResource(R.string.edit_metadata_placeholder_disc_number),
+		isBlankOrNumerical = editMetadataViewModel::isBlankOrNumerical
 	)
 
 	Spacer(Modifier.height(dimensionResource(R.dimen.screen_option_section_vertical_padding)))

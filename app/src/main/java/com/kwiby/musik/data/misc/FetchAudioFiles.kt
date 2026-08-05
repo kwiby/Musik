@@ -44,12 +44,12 @@ suspend fun fetchAudioFiles(context: Context): List<AudioFile> = withContext(Dis
 			val contentUri = ContentUris.withAppendedId(mediaUri, id)
 
 			audioFileList.add(AudioFile(
-				id,
-				contentUri.toString(),
-				albumArtUri.toString(),
-				title,
-				artist,
-				duration
+				id = id,
+				contentUri = contentUri.toString(),
+				albumArtUri = albumArtUri.toString(),
+				title = title,
+				artist = artist,
+				durationMs = duration
 			))
 		}
 	}

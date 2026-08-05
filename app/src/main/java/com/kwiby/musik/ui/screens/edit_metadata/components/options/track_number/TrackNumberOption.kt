@@ -21,7 +21,8 @@ fun TrackNumberOption(
 	MetadataField(
 		query = editMetadataViewModel.trackNumberQuery.value,
 		onValueChange = { editMetadataViewModel.trackNumberQuery.value = it },
-		placeholderText = stringResource(R.string.edit_metadata_placeholder_track_number)
+		placeholderText = stringResource(R.string.edit_metadata_placeholder_track_number),
+		isBlankOrNumerical = editMetadataViewModel::isBlankOrNumerical
 	)
 
 	Spacer(Modifier.height(dimensionResource(R.dimen.screen_option_section_vertical_padding)))

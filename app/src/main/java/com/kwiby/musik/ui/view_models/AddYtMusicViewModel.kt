@@ -134,7 +134,7 @@ class AddYtMusicViewModel(
 	}
 
 	fun checkValidLink(): Boolean {
-		return ytDlp.checkValidLink(_ytLink.value)
+		return ytDlp.checkValidLink(_ytLink.value.trim())
 	}
 
 	fun isProcessing(): Boolean {
@@ -144,7 +144,7 @@ class AddYtMusicViewModel(
 
 	fun startDownloadButton() {
 		if (!_ytLink.value.isBlank()) {
-			val link = _ytLink.value
+			val link = _ytLink.value.trim()
 			_uiState.value = DownloaderUiState.Loading
 
 			downloadJob = viewModelScope.launch {

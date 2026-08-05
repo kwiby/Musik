@@ -30,11 +30,13 @@ class AddMusicViewModel(
 	private val _audioFiles = MutableStateFlow<List<MusicDetails>>(emptyList())
 	val audioFiles: StateFlow<List<MusicDetails>> = searchQuery
 		.combine(_audioFiles) { query, files ->
-			if (query.isBlank()) {
+			val trimmedQuery = query.trim()
+
+			if (trimmedQuery.isBlank()) {
 				files
 			} else {
 				files.filter {
-					it.title.contains(query, ignoreCase = true)
+					it.title.contains(trimmedQuery, ignoreCase = true)
 				}
 			}
 		}

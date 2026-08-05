@@ -89,6 +89,7 @@
 
     <!-- Edit Metadata Screen -->
     <dimen name="edit_metadata_image_size">180dp</dimen>
+    <dimen name="edit_metadata_field_border_width">0.6dp</dimen>
 
     <!-- Add YouTube Music Page -->
     <dimen name="no_download_location_offset">75dp</dimen>
