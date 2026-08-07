@@ -89,7 +89,8 @@ fun MusikApp(
 						contentUri = curScreen.contentUri,
 						id = curScreen.id,
 						editMetadataViewModel = editMetadataViewModel,
-						navViewModel = navViewModel
+						navViewModel = navViewModel,
+						playbackViewModel = playbackViewModel
 					)
 				}
 			}

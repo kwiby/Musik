@@ -270,6 +270,25 @@ class PlaybackViewModel(
 			//isPlaying.value = false
 		}
 	}
+
+	fun refreshMediaItem(id: Long) {
+		val controller = mediaController ?: return
+		val index = (0 until controller.mediaItemCount).firstOrNull {
+			controller.getMediaItemAt(it).mediaId == id.toString()
+		} ?: return
+
+		val wasCurrent = controller.currentMediaItemIndex == index
+		val wasPlaying = controller.isPlaying
+		val item = controller.getMediaItemAt(index)
+
+		controller.removeMediaItem(index)
+		controller.addMediaItem(index, item)
+
+		if (wasCurrent) {
+			controller.seekTo(index, 0L)
+			if (wasPlaying) controller.play()
+		}
+	}
 	// ================================================================================================
 
 

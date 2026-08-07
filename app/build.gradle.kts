@@ -17,8 +17,8 @@ android {
         minSdk = 29
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 84
-        versionName = "1.10.11"
+        versionCode = 85
+        versionName = "1.10.12"
 
         ndk {
             abiFilters.add("x86")
@@ -67,6 +67,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.taglib)
+
     implementation(libs.library)
     implementation(libs.ffmpeg)
 

@@ -11,61 +11,63 @@ object ViewModelProvider {
 		// --===--  NavViewModel  --===--
 		initializer {
 			NavViewModel(
-				musikApplication().container.dataStoreManager
+				dataStoreManager = musikApplication().container.dataStoreManager
 			)
 		}
 
 		// --===--  PlayBackViewModel  --===--
 		initializer {
 			PlaybackViewModel(
-				musikApplication()
+				application = musikApplication()
 			)
 		}
 
 		// --===--  StatsViewModel  --===--
 		initializer {
 			StatsViewModel(
-				musikApplication().container.musicStatsRepo
+				musicStatsRepo = musikApplication().container.musicStatsRepo
 			)
 		}
 
 		// --===--  SettingsViewModel  --===--
 		initializer {
 			SettingsViewModel(
-				musikApplication().container.dataStoreManager,
-				musikApplication().container.ytDlp
+				dataStoreManager = musikApplication().container.dataStoreManager,
+				ytDlp = musikApplication().container.ytDlp
 			)
 		}
 
 		// --===--  EditMetadataViewModel  --===--
 		initializer {
 			EditMetadataViewModel(
-				musikApplication().container.musicListRepo
+				application = musikApplication(),
+				dataStoreManager = musikApplication().container.dataStoreManager,
+				musicListRepo = musikApplication().container.musicListRepo
 			)
 		}
 
 		// --===--  MusicListViewModel  --===--
 		initializer {
 			MusicListViewModel(
-				musikApplication().container.musicListRepo
+				musicListRepo = musikApplication().container.musicListRepo
 			)
 		}
 
 		// --===--  AddMusicViewModel  --===--
 		initializer {
 			AddMusicViewModel(
-				musikApplication(),
-				musikApplication().container.musicListRepo
+				application = musikApplication(),
+				musicListRepo = musikApplication().container.musicListRepo
 			)
 		}
 
 		// --===--  AddYtMusicViewModel  --===--
 		initializer {
 			AddYtMusicViewModel(
-				musikApplication(),
-				musikApplication().container.dataStoreManager,
-				musikApplication().container.ytDlp,
-				musikApplication().container.musicListRepo
+				application = musikApplication(),
+				dataStoreManager = musikApplication().container.dataStoreManager,
+				ytDlp = musikApplication ().container.ytDlp,
+				musicListRepo = musikApplication().container.musicListRepo
 			)
 		}
 	}

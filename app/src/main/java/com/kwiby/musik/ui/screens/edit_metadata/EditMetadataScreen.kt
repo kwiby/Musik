@@ -1,7 +1,11 @@
 package com.kwiby.musik.ui.screens.edit_metadata
 
+import android.app.Activity
 import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -33,13 +37,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.kwiby.musik.R
 import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.verticalScrollbar
+import com.kwiby.musik.ui.misc.folder_manager.LocalFolderManager
 import com.kwiby.musik.ui.screens.edit_metadata.components.options.album.AlbumOption
 import com.kwiby.musik.ui.screens.edit_metadata.components.options.album_artist.AlbumArtistOption
 import com.kwiby.musik.ui.screens.edit_metadata.components.options.artist.ArtistOption
@@ -52,24 +56,46 @@ import com.kwiby.musik.ui.screens.edit_metadata.components.options.track_number.
 import com.kwiby.musik.ui.screens.edit_metadata.components.options.year.YearOption
 import com.kwiby.musik.ui.view_models.EditMetadataViewModel
 import com.kwiby.musik.ui.view_models.NavViewModel
+import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.Screen
 
 @Composable
 fun EditMetadataScreen(
 	editMetadataViewModel: EditMetadataViewModel,
 	navViewModel: NavViewModel,
+	playbackViewModel: PlaybackViewModel,
 	contentUri: Uri,
 	id: Long
 ) {
 	val isLoading by editMetadataViewModel.isLoading
 
-	val context = LocalContext.current
+	val folderManager = LocalFolderManager.current
 	LaunchedEffect(Unit) {
-		editMetadataViewModel.setup(context, contentUri, id)
+		editMetadataViewModel.setup(contentUri, id)
 	}
 	DisposableEffect(Unit) {
 		onDispose {
 			editMetadataViewModel.onDispose()
+		}
+	}
+
+	val pendingWriteRequest by editMetadataViewModel.pendingWriteRequest
+	val writeRequestLauncher = rememberLauncherForActivityResult(
+		ActivityResultContracts.StartIntentSenderForResult()
+	) { result ->
+		if (result.resultCode == Activity.RESULT_OK) {
+			editMetadataViewModel.onWriteRequestGranted(
+				folderManager,
+				{ navViewModel.navToScreen(Screen.Main) },
+				playbackViewModel::refreshMediaItem
+			)
+		} else {
+			editMetadataViewModel.clearPendingWriteRequest()
+		}
+	}
+	LaunchedEffect(pendingWriteRequest) {
+		pendingWriteRequest?.let {
+			writeRequestLauncher.launch(IntentSenderRequest.Builder(it).build())
 		}
 	}
 
@@ -146,7 +172,11 @@ fun EditMetadataScreen(
 							MaterialTheme.colorScheme.onSurface
 						}
 					) {
-						editMetadataViewModel.saveButton { navViewModel.navToScreen(Screen.Main) }
+						editMetadataViewModel.saveButton(
+							folderManager,
+							{ navViewModel.navToScreen(Screen.Main) },
+							playbackViewModel::refreshMediaItem
+						)
 					}
 				}
 			}

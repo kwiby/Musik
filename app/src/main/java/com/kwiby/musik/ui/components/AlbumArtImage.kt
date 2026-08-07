@@ -55,7 +55,7 @@ fun AlbumArtImage(
 			contentDescription = stringResource(R.string.album_art),
 			contentScale = ContentScale.Crop,
 			placeholder = painterResource(R.drawable.musik_pixel_icon),
-			error = painterResource(R.drawable.musik_pixel_icon_red),
+			error = painterResource(R.drawable.musik_pixel_icon_white),
 			modifier = Modifier.fillMaxSize()
 		)
 	}

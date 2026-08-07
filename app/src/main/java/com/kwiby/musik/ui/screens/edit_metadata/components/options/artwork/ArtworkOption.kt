@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,8 +39,6 @@ private const val LOG_TAG = "ArtworkOption"
 fun ArtworkOption(
 	editMetadataViewModel: EditMetadataViewModel
 ) {
-	val metadata by editMetadataViewModel.metadata
-
 	val context = LocalContext.current
 	val density = LocalDensity.current
 	val size = dimensionResource(R.dimen.edit_metadata_image_size)
@@ -49,7 +46,7 @@ fun ArtworkOption(
 		size.roundToPx()
 	}
 	val request = ImageRequest.Builder(context)
-		.data(metadata?.artwork)
+		.data(editMetadataViewModel.artworkQuery.value)
 		.size(Size(sizePx, sizePx))
 		.crossfade(false)
 		.build()
@@ -81,7 +78,7 @@ fun ArtworkOption(
 				model = request,
 				contentDescription = stringResource(R.string.album_art),
 				contentScale = ContentScale.Crop,
-				error = painterResource(R.drawable.musik_pixel_icon_red),
+				error = painterResource(R.drawable.musik_pixel_icon_white),
 				modifier = Modifier.fillMaxSize()
 			)
 		}

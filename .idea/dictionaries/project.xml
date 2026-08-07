@@ -2,7 +2,9 @@
   <dictionary name="project">
     <words>
       <w>Musik</w>
+      <w>albumartist</w>
       <w>musiky</w>
+      <w>tracknumber</w>
       <w>ytdlp</w>
     </words>
   </dictionary>
