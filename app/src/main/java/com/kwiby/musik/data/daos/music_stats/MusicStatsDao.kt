@@ -28,7 +28,7 @@ interface MusicStatsDao {
 			music_list.id AS id,
 			music_stats.playCount AS playCount,
 			music_stats.totalListenTimeMs AS totalListenTimeMs,
-			music_list.albumArtUri AS albumArtUri,
+			music_list.contentUri AS contentUri,
 			music_list.title AS title,
 			music_list.artist AS artist
 		FROM music_list
@@ -48,7 +48,7 @@ interface MusicStatsDao {
 			music_list.id AS id,
 			music_stats.playCount AS playCount,
 			music_stats.totalListenTimeMs AS totalListenTimeMs,
-			music_list.albumArtUri AS albumArtUri,
+			music_list.contentUri AS contentUri,
 			music_list.title AS title,
 			music_list.artist AS artist
 		FROM music_list

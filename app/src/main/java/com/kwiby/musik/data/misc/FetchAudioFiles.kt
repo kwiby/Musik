@@ -3,7 +3,6 @@ package com.kwiby.musik.data.misc
 import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
-import androidx.core.net.toUri
 import com.kwiby.musik.data.data_classes.AudioFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,7 +26,6 @@ suspend fun fetchAudioFiles(context: Context): List<AudioFile> = withContext(Dis
 	val cursor = contentResolver.query(mediaUri, projection, selection, null, sortOrder)
 	cursor?.use {
 		val idColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
-		val albumIdColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
 		val titleColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
 		val artistColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
 		val durationColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
@@ -38,15 +36,11 @@ suspend fun fetchAudioFiles(context: Context): List<AudioFile> = withContext(Dis
 			val artist = it.getString(artistColumn) ?: "Unknown Artist"
 			val duration = it.getLong(durationColumn)
 
-			val albumArtUri = ContentUris.withAppendedId(
-				"content://media/external/audio/albumart".toUri(), it.getLong(albumIdColumn)
-			)
 			val contentUri = ContentUris.withAppendedId(mediaUri, id)
 
 			audioFileList.add(AudioFile(
 				id = id,
 				contentUri = contentUri.toString(),
-				albumArtUri = albumArtUri.toString(),
 				title = title,
 				artist = artist,
 				durationMs = duration

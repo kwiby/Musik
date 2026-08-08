@@ -84,7 +84,6 @@ class AddYtMusicViewModel(
 				addDownloadedMusic(
 					id = downloadResult.id,
 					contentUri = downloadResult.contentUri,
-					albumArtUri = downloadResult.albumArtUri,
 					title = downloadResult.title,
 					artist = downloadResult.artist,
 					durationMs = downloadResult.durationMs,
@@ -111,7 +110,6 @@ class AddYtMusicViewModel(
 	private fun addDownloadedMusic(
 		id: Long,
 		contentUri: Uri,
-		albumArtUri: Uri,
 		title: String,
 		artist: String,
 		durationMs: Long
@@ -121,7 +119,6 @@ class AddYtMusicViewModel(
 				AudioFile(
 					id = id,
 					contentUri = contentUri.toString(),
-					albumArtUri = albumArtUri.toString(),
 					title = title,
 					artist = artist,
 					durationMs = durationMs

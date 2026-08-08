@@ -35,7 +35,6 @@ class YtDlp(
 		data class Success(
 			val id: Long,
 			val contentUri: Uri,
-			val albumArtUri: Uri,
 			val title: String,
 			val artist: String,
 			val durationMs: Long,
@@ -87,7 +86,7 @@ class YtDlp(
 		Unit
 	}
 
-	private suspend fun getExtraDetails(treeUri: Uri, fileName: String): Pair<Long, Uri> {
+	private suspend fun getId(treeUri: Uri, fileName: String): Long {
 		val docId = DocumentsContract.getTreeDocumentId(treeUri)
 		val parts = docId.split(":")
 		val filePath = "/storage/emulated/0/${parts.getOrElse(1) { "" }}/$fileName"
@@ -97,10 +96,8 @@ class YtDlp(
 				cont.resume(uri) { _, _, _ -> /*onCancellation()*/ }
 			}
 		}
-
 		var audioId = 0L
-		var albumId = 0L
-
+		
 		appContext.contentResolver.query(
 			audioUri,
 			arrayOf(MediaStore.Audio.Media._ID, MediaStore.Audio.Media.ALBUM_ID),
@@ -108,12 +105,10 @@ class YtDlp(
 		)?.use { cursor ->
 			if (cursor.moveToFirst()) {
 				audioId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
-				albumId = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID))
 			}
 		}
-
-		val albumArtUri = ContentUris.withAppendedId("content://media/external/audio/albumart".toUri(), albumId)
-		return Pair(audioId, albumArtUri)
+		
+		return audioId
 
 		/*
 		val docId = DocumentsContract.getDocumentId(documentUri)
@@ -293,13 +288,15 @@ class YtDlp(
 				}
 
 				if (contentUri != null) {
-					val (id, albumArtUri) = getExtraDetails(contentUri, downloadedFile.name)
+					val id = getId(contentUri, downloadedFile.name)
+					val mediaStoreContentUri = ContentUris.withAppendedId(
+						MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id
+					)
 
 					emitToast("Download completed")
 					return DownloadResult.Success(
 						id = id,
-						contentUri = contentUri,
-						albumArtUri = albumArtUri,
+						contentUri = mediaStoreContentUri,
 						title = _videoInfo.value?.title ?: "Unknown Title",
 						artist = _videoInfo.value?.artist ?: "Unknown Artist",
 						durationMs = _videoInfo.value?.durationMs ?: 0L

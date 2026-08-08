@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.MediaMetadataRetriever
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
@@ -17,15 +16,16 @@ import androidx.core.graphics.scale
 import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.kwiby.musik.data.coil.ArtworkCacheKeys
 import com.kwiby.musik.data.data_classes.Metadata
 import com.kwiby.musik.data.datastore.DataStoreManager
 import com.kwiby.musik.data.repositories.music_list.MusicListRepository
 import com.kwiby.musik.ui.MusikApplication
 import com.kwiby.musik.ui.misc.folder_manager.FolderManager
+import com.kwiby.musik.ui.misc.scanFileAndAwait
 import com.kwiby.musik.ui.screens.edit_metadata.components.MetadataEditor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -61,18 +61,6 @@ class EditMetadataViewModel(
 	var discNumberQuery = mutableStateOf("")
 	var genreQuery = mutableStateOf("")
 	var yearQuery = mutableStateOf("")
-
-	private suspend fun scanFileAndAwait(context: Context, path: String) {
-		suspendCancellableCoroutine { cont ->
-			MediaScannerConnection.scanFile(context, arrayOf(path), null) { _, _ ->
-				if (cont.isActive) {
-					cont.resume(Unit) { _, _, _ ->
-						/* onCancellation() */
-					}
-				}
-			}
-		}
-	}
 
 	private fun getFilePath(context: Context, uri: Uri): String? {
 		if (DocumentsContract.isDocumentUri(context, uri)) {
@@ -268,7 +256,10 @@ class EditMetadataViewModel(
 					metadata.value?.filePath?.let { path ->
 						scanFileAndAwait(getApplication(), path)
 					}
+
 					id.value?.let { trackId ->
+						ArtworkCacheKeys.markEdited(trackId.toString())
+
 						withContext(Dispatchers.Main) {
 							refreshMediaItemFunc(trackId)
 						}

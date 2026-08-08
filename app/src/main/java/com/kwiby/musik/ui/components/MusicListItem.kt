@@ -97,7 +97,10 @@ fun MusicListItem(
 					verticalAlignment = Alignment.CenterVertically
 				) {
 					// --===--  Artwork  --===--
-					AlbumArtImage(musicDetails.albumArtUri)
+					AlbumArtImage(
+						contentUri = musicDetails.contentUri,
+						trackId = musicDetails.id.toString()
+					)
 
 					Spacer(Modifier.width(dimensionResource(R.dimen.medium_padding)))
 

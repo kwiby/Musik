@@ -103,14 +103,15 @@ fun PlayerBar(
 
 									// --===--  Music Image  --===--
 									Crossfade(
-										targetState = metadata.artworkUri.toString(),
+										targetState = curMusic.localConfiguration?.uri.toString(),
 										modifier = Modifier.sharedElementWithCallerManagedVisibility(
 											sharedContentState = rememberSharedContentState(key = "image"),
 											visible = isPlayerScreenClosed
 										)
-									) { artworkUri ->
+									) { contentUri ->
 										AlbumArtImage(
-											albumArtUri = artworkUri,
+											contentUri = contentUri,
+											trackId = curMusic.mediaId,
 											size = dimensionResource(R.dimen.player_bar_image_size),
 											shape = MaterialTheme.shapes.extraLarge
 										)

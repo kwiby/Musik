@@ -18,15 +18,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.core.net.toUri
+import coil3.SingletonImageLoader
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.size.Size
 import com.kwiby.musik.R
+import com.kwiby.musik.data.coil.ArtworkCacheKeys
 
 @Composable
 fun AlbumArtImage(
-	albumArtUri: String,
+	contentUri: String,
+	trackId: String,
 	size: Dp = dimensionResource(R.dimen.album_art_image_size),
 	shape: Shape = MaterialTheme.shapes.small
 ) {
@@ -35,14 +38,20 @@ fun AlbumArtImage(
 	val sizePx = with(density) {
 		size.roundToPx()
 	}
+	val editedAt = ArtworkCacheKeys.getTime(trackId)
 
-	val request = remember(albumArtUri) {
+	val imageLoader = remember { SingletonImageLoader.get(context) }
+
+	val request = remember(contentUri, editedAt) {
 		ImageRequest.Builder(context)
-			.data(albumArtUri.toUri())
+			.data(contentUri.toUri())
+			.memoryCacheKey("$trackId-$editedAt")
+			.diskCacheKey("$trackId-$editedAt")
 			.size(Size(sizePx, sizePx))
 			.crossfade(true)
 			.build()
 	}
+
 
 	Box(
 		modifier = Modifier
@@ -52,6 +61,7 @@ fun AlbumArtImage(
 	) {
 		AsyncImage(
 			model = request,
+			imageLoader = imageLoader,
 			contentDescription = stringResource(R.string.album_art),
 			contentScale = ContentScale.Crop,
 			placeholder = painterResource(R.drawable.musik_pixel_icon),

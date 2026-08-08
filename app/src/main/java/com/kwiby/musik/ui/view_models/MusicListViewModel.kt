@@ -229,27 +229,10 @@ class MusicListViewModel(
 }
 
 
-// MusicDetails --> MediaItem
-fun MusicDetails.toMediaItem(): MediaItem {
-	return MediaItem.Builder()
-		.setMediaId(id.toString())
-		.setUri(contentUri.toUri())
-		.setMediaMetadata(
-			MediaMetadata.Builder()
-				.setTitle(title)
-				.setArtist(artist)
-				.setDurationMs(durationMs.unformatDuration())
-				.setArtworkUri(albumArtUri.toUri())
-				.build()
-		).build()
-}
-
-
 // MusicDetails --> AudioFile
 fun MusicDetails.toAudioFile(): AudioFile = AudioFile(
 	id = id,
 	contentUri = contentUri,
-	albumArtUri = albumArtUri,
 	title = title,
 	artist = artist,
 	durationMs = durationMs.unformatDuration(),
@@ -260,9 +243,22 @@ fun MusicDetails.toAudioFile(): AudioFile = AudioFile(
 fun AudioFile.toMusicDetails(): MusicDetails = MusicDetails(
 	id = id,
 	contentUri = contentUri,
-	albumArtUri = albumArtUri,
 	title = title,
 	artist = artist,
 	durationMs = durationMs.formatDuration(),
 	orderPos = orderPos
 )
+
+// MusicDetails --> MediaItem
+fun MusicDetails.toMediaItem(): MediaItem {
+	return MediaItem.Builder()
+		.setMediaId(id.toString())
+		.setUri(contentUri.toUri())
+		.setMediaMetadata(
+			MediaMetadata.Builder()
+				.setTitle(title)
+				.setArtist(artist)
+				.setDurationMs(durationMs.unformatDuration())
+				.build()
+		).build()
+}

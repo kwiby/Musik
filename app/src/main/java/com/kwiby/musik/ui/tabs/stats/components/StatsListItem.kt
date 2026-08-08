@@ -36,7 +36,8 @@ fun StatsListItem(
 		) {
 			// --===--  Album Art  --===--
 			AlbumArtImage(
-				albumArtUri = musicDetails.albumArtUri,
+				contentUri = musicDetails.contentUri,
+				trackId = musicDetails.id.toString(),
 				size = dimensionResource(R.dimen.stats_list_item_image_size),
 				shape = MaterialTheme.shapes.extraSmall
 			)
