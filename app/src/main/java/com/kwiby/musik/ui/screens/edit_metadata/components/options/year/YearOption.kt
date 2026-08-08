@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import com.kwiby.musik.R
 import com.kwiby.musik.ui.screens.components.OptionHeader
 import com.kwiby.musik.ui.screens.edit_metadata.components.MetadataField
@@ -22,7 +23,7 @@ fun YearOption(
 		query = editMetadataViewModel.yearQuery.value,
 		onValueChange = { editMetadataViewModel.yearQuery.value = it },
 		placeholderText = stringResource(R.string.edit_metadata_placeholder_year),
-		isBlankOrNumerical = editMetadataViewModel::isBlankOrNumerical
+		keyboardType = KeyboardType.Number
 	)
 
 	Spacer(Modifier.height(dimensionResource(R.dimen.screen_option_section_vertical_padding)))

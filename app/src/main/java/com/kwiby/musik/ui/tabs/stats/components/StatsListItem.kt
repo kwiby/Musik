@@ -81,6 +81,8 @@ fun StatsListItem(
 				style = MaterialTheme.typography.bodyLarge.copy(
 					fontSize = 13.sp
 				),
+				maxLines = 1,
+				overflow = TextOverflow.Ellipsis,
 				textAlign = TextAlign.Center
 			)
 
@@ -94,6 +96,8 @@ fun StatsListItem(
 				style = MaterialTheme.typography.bodyLarge.copy(
 					fontSize = 13.sp
 				),
+				maxLines = 1,
+				overflow = TextOverflow.Ellipsis,
 				textAlign = TextAlign.Center
 			)
 		}

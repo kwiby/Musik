@@ -117,17 +117,17 @@ fun PlayerScreen(
 				// --===--  Music Details  --===--
 				// --===--  Music Image  --===--
 				Crossfade(
-					targetState = musicInfo.localConfiguration?.uri.toString(),
-					modifier = Modifier.sharedElementWithCallerManagedVisibility(
-						sharedContentState = rememberSharedContentState(key = "image"),
-						visible = isPlayerScreenOpen
-					)
+					targetState = musicInfo.localConfiguration?.uri.toString()
 				) { contentUri ->
 					AlbumArtImage(
 						contentUri = contentUri,
 						trackId = musicInfo.mediaId,
 						size = dimensionResource(R.dimen.player_screen_image_size),
-						shape = MaterialTheme.shapes.extraLarge
+						shape = MaterialTheme.shapes.extraLarge,
+						modifier = Modifier.sharedElementWithCallerManagedVisibility(
+							sharedContentState = rememberSharedContentState(key = "image"),
+							visible = isPlayerScreenOpen
+						)
 					)
 				}
 

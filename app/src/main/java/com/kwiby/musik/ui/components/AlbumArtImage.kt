@@ -30,13 +30,14 @@ import com.kwiby.musik.data.coil.ArtworkCacheKeys
 fun AlbumArtImage(
 	contentUri: String,
 	trackId: String,
+	modifier: Modifier = Modifier,
 	size: Dp = dimensionResource(R.dimen.album_art_image_size),
 	shape: Shape = MaterialTheme.shapes.small
 ) {
 	val context = LocalContext.current
 	val density = LocalDensity.current
-	val sizePx = with(density) {
-		size.roundToPx()
+	val maxSizePx = with(density) {
+		dimensionResource(R.dimen.player_screen_image_size).roundToPx()
 	}
 	val editedAt = ArtworkCacheKeys.getTime(trackId)
 
@@ -47,14 +48,14 @@ fun AlbumArtImage(
 			.data(contentUri.toUri())
 			.memoryCacheKey("$trackId-$editedAt")
 			.diskCacheKey("$trackId-$editedAt")
-			.size(Size(sizePx, sizePx))
+			.size(Size(maxSizePx, maxSizePx))
 			.crossfade(true)
 			.build()
 	}
 
 
 	Box(
-		modifier = Modifier
+		modifier = modifier
 			.size(size)
 			.clip(shape),
 		contentAlignment = Alignment.Center

@@ -43,7 +43,7 @@ fun StatsOverviewContainer(
 				text = valueText,
 				color = MaterialTheme.colorScheme.onSecondary,
 				style = MaterialTheme.typography.labelLarge.copy(
-					fontSize = 23.sp
+					fontSize = 21.sp
 				),
 				textAlign = TextAlign.Center
 			)

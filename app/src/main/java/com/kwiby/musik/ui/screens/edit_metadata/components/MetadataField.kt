@@ -1,7 +1,5 @@
 package com.kwiby.musik.ui.screens.edit_metadata.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,9 +13,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.input.ImeAction
-import com.kwiby.musik.R
+import androidx.compose.ui.text.input.KeyboardType
 import com.kwiby.musik.ui.components.customTextSelectionColours
 
 @Composable
@@ -25,7 +22,7 @@ fun MetadataField(
 	query: String,
 	onValueChange: (String) -> Unit,
 	placeholderText: String,
-	isBlankOrNumerical: (String) -> Boolean = { true }
+	keyboardType: KeyboardType = KeyboardType.Text
 ) {
 	val focusManager = LocalFocusManager.current
 
@@ -49,25 +46,16 @@ fun MetadataField(
 				focusedIndicatorColor = Color.Transparent,
 				unfocusedIndicatorColor = Color.Transparent
 			),
-			keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+			keyboardOptions = KeyboardOptions(
+				imeAction = ImeAction.Search,
+				keyboardType = keyboardType
+			),
 			keyboardActions = KeyboardActions(
 				onSearch = {
 					focusManager.clearFocus()
 				}
 			),
-			modifier = Modifier
-				.fillMaxWidth()
-				.border(
-					border = BorderStroke(
-						width = dimensionResource(R.dimen.edit_metadata_field_border_width),
-						color = if (isBlankOrNumerical(query)) {
-							MaterialTheme.colorScheme.onSurface
-						} else {
-							Color.Red
-						}
-					),
-					shape = MaterialTheme.shapes.small
-				)
+			modifier = Modifier.fillMaxWidth()
 		)
 	}
 }
