@@ -31,14 +31,12 @@ class MusikApplication : Application(), SingletonImageLoader.Factory {
 	}
 
 	override fun newImageLoader(context: PlatformContext): ImageLoader {
-		Log.d("debug", "Building custom ImageLoader")
 		val loader = ImageLoader.Builder(context)
 			.components {
 				add(ArtworkFetcher.Factory(context))
 			}
 			.build()
-		Log.d("debug", "Fetcher factories: ${loader.components.fetcherFactories}")
-		Log.d("debug", "ImageLoader built: $loader, components=${loader.components}")
+
 		return loader
 	}
 }

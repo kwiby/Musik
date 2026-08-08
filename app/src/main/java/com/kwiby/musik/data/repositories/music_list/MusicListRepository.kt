@@ -10,4 +10,6 @@ interface MusicListRepository {
 	suspend fun deleteMultipleAudioFilesById(ids: Set<Long>)
 	suspend fun insertMultipleAudioFiles(audioFiles: List<AudioFile>)
 	suspend fun insertAudioFile(audioFile: AudioFile)
+	suspend fun editTitle(id: Long, newTitle: String)
+	suspend fun editArtist(id: Long, newArtist: String)
 }

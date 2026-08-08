@@ -203,8 +203,12 @@ class EditMetadataViewModel(
 	fun saveButton(
 		folderManager: FolderManager,
 		navToMainScreen: () -> Unit,
-		refreshMediaItemFunc: (Long) -> Unit
+		refreshMediaItemFunc: (Long, String?, String?) -> Unit
 	) {
+		if (id.value == null) {
+			Log.e(LOG_TAG, "Id is null")
+			return
+		}
 		if (uri.value == null) {
 			Log.e(LOG_TAG, "Uri is null")
 			return
@@ -253,15 +257,26 @@ class EditMetadataViewModel(
 
 			when (result) {
 				is MetadataEditor.EditResult.Success -> {
-					metadata.value?.filePath?.let { path ->
-						scanFileAndAwait(getApplication(), path)
+					editedMetadata.filePath?.let { filePath ->
+						scanFileAndAwait(getApplication(), filePath)
+					}
+
+					editedMetadata.title?.let { title ->
+						musicListRepo.editTitle(id.value!!, title)
+					}
+					editedMetadata.artist?.let { artist ->
+						musicListRepo.editArtist(id.value!!, artist)
 					}
 
 					id.value?.let { trackId ->
 						ArtworkCacheKeys.markEdited(trackId.toString())
 
 						withContext(Dispatchers.Main) {
-							refreshMediaItemFunc(trackId)
+							refreshMediaItemFunc(
+								trackId,
+								editedMetadata.title,
+								editedMetadata.artist
+							)
 						}
 					}
 
@@ -282,7 +297,7 @@ class EditMetadataViewModel(
 	fun onWriteRequestGranted(
 		folderManager: FolderManager,
 		navToMainScreen: () -> Unit,
-		refreshMediaItemFunc: (Long) -> Unit
+		refreshMediaItemFunc: (Long, String?, String?) -> Unit
 	) {
 		pendingWriteRequest.value = null
 		saveButton(

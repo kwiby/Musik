@@ -26,10 +26,6 @@ class MetadataEditor(
 		data class NeedsFolderReselect(val msg: String): EditResult()
 		data class Error(val error: Throwable): EditResult()
 	}
-	sealed class PermissionCheckResult {
-		object Granted : PermissionCheckResult()
-		data class NeedsPermission(val intentSender: IntentSender) : PermissionCheckResult()
-	}
 
 	private fun getMimeTypeFromByteArray(byteArray: ByteArray): String {
 		return when {
@@ -83,24 +79,8 @@ class MetadataEditor(
 		metadata: Metadata,
 		wasArtworkChanged: Boolean
 	) {
-		val existing = context.contentResolver.openFileDescriptor(uri, "r")?.use { readPfd ->
-			val readFd = readPfd.detachFd()
-			TagLib.getMetadata(readFd)
-		} ?: throw IllegalStateException("Could not read metadata for uri=$uri")
-		val propertyMap = existing.propertyMap.toMutableMap()
-
-		metadata.title?.let { propertyMap["TITLE"] = arrayOf(it) }
-		metadata.artist?.let { propertyMap["ARTIST"] = arrayOf(it) }
-		metadata.album?.let { propertyMap["ALBUM"] = arrayOf(it) }
-		metadata.albumArtist?.let { propertyMap["ALBUMARTIST"] = arrayOf(it) }
-		metadata.trackNumber?.let { propertyMap["TRACKNUMBER"] = arrayOf(it) }
-		metadata.discNumber?.let { propertyMap["DISCNUMBER"] = arrayOf(it) }
-		metadata.genre?.let { propertyMap["GENRE"] = arrayOf(it) }
-		metadata.year?.let { propertyMap["YEAR"] = arrayOf(it) }
-
-		if (wasArtworkChanged) {
-			context.contentResolver.openFileDescriptor(uri, "rw")?.use { picPfd ->
-				val picFd = picPfd.detachFd()
+		context.contentResolver.openFileDescriptor(uri, "rw")?.use { pfd ->
+			if (wasArtworkChanged) {
 				val saved = if (metadata.artwork != null) {
 					val mimeType = getMimeTypeFromByteArray(metadata.artwork)
 					val picture = Picture(
@@ -110,20 +90,30 @@ class MetadataEditor(
 						mimeType = mimeType
 					)
 
-					TagLib.savePictures(picFd, arrayOf(picture))
+					TagLib.savePictures(pfd.dup().detachFd(), arrayOf(picture))
 				} else {
-					TagLib.savePictures(picFd, arrayOf())
+					TagLib.savePictures(pfd.dup().detachFd(), arrayOf())
 				}
 
 				if (!saved) {
 					Log.w(LOG_TAG, "TagLib failed to update picture (add or remove).")
 				}
 			}
-		}
 
-		context.contentResolver.openFileDescriptor(uri, "rw")?.use { propPfd ->
-			val propFd = propPfd.detachFd()
-			val saved = TagLib.savePropertyMap(propFd, HashMap(propertyMap))
+			val existing = TagLib.getMetadata(pfd.dup().detachFd())
+				?: throw IllegalStateException("Could not read metadata for uri=$uri")
+			val propertyMap = existing.propertyMap.toMutableMap()
+
+			metadata.title?.let { propertyMap["TITLE"] = arrayOf(it) }
+			metadata.artist?.let { propertyMap["ARTIST"] = arrayOf(it) }
+			metadata.album?.let { propertyMap["ALBUM"] = arrayOf(it) }
+			metadata.albumArtist?.let { propertyMap["ALBUMARTIST"] = arrayOf(it) }
+			metadata.trackNumber?.let { propertyMap["TRACKNUMBER"] = arrayOf(it) }
+			metadata.discNumber?.let { propertyMap["DISCNUMBER"] = arrayOf(it) }
+			metadata.genre?.let { propertyMap["GENRE"] = arrayOf(it) }
+			metadata.year?.let { propertyMap["YEAR"] = arrayOf(it) }
+
+			val saved = TagLib.savePropertyMap(pfd.dup().detachFd(), HashMap(propertyMap))
 
 			if (!saved) {
 				throw IllegalStateException("TagLib failed to save metadata for uri=$uri")
@@ -151,20 +141,14 @@ class MetadataEditor(
 		} catch (e: RecoverableSecurityException) {
 			val intentSender = e.userAction.actionIntent.intentSender
 
-			Log.w(LOG_TAG, "No permission for intentSender=$intentSender", e)
+			Log.w(LOG_TAG, "No permission for intentSender=$intentSender. " +
+					"\nThis is EXPECTED when editing metadata.\nIgnore this warning, and the" +
+					" above error (\"writing exception to parcel\"), ONLY if they were thrown" +
+					" after attempting to save metadata edits.")
 			EditResult.NeedsPermission(intentSender)
 		} catch (e: Exception) {
 			Log.e(LOG_TAG, "Error editing metadata", e)
 			EditResult.Error(e)
-		}
-	}
-
-	fun checkWritePermission(uri: Uri): PermissionCheckResult {
-		return try {
-			context.contentResolver.openFileDescriptor(uri, "rw")?.use { }
-			PermissionCheckResult.Granted
-		} catch (e: RecoverableSecurityException) {
-			PermissionCheckResult.NeedsPermission(e.userAction.actionIntent.intentSender)
 		}
 	}
 }

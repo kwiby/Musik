@@ -27,8 +27,6 @@ class ArtworkFetcher(
 	private val sizePx: Int
 ) : Fetcher {
 	override suspend fun fetch(): FetchResult? {
-		Log.d(LOG_TAG, "fetch() called for uri=$uri")
-
 		val bytes = try {
 			val retriever = MediaMetadataRetriever()
 			try {
@@ -46,7 +44,6 @@ class ArtworkFetcher(
 			Log.w(LOG_TAG, "No embedded picture for $uri")
 			return null
 		}
-		Log.d("debug", "Extracted embedded picture, size=${bytes.size}")
 
 		val bitmap = if (sizePx > 0) {
 			val options = BitmapFactory.Options().apply {
@@ -93,15 +90,12 @@ class ArtworkFetcher(
 
 	class Factory(private val context: Context) : Fetcher.Factory<coilUri> {
 		override fun create(data: coilUri, options: Options, imageLoader: ImageLoader): Fetcher? {
-			Log.d(LOG_TAG, "Factory.create called with data=$data, authority=${data.authority}")
-
 			if (data.authority != "media" || !data.toString().contains("/audio/media/")) {
 				return null
 			}
 
 			val netUri = data.toString().toUri()
 			val sizePx = options.size.width.pxOrElse { 512 }
-			Log.d(LOG_TAG, "URI matched, creating fetcher with sizePx=$sizePx")
 
 			return ArtworkFetcher(context, netUri, sizePx)
 		}

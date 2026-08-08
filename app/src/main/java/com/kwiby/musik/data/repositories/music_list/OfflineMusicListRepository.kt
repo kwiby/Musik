@@ -16,4 +16,8 @@ class OfflineMusicListRepository(
 	override suspend fun insertMultipleAudioFiles(audioFiles: List<AudioFile>) =
 		musicListDao.insertMultiple(audioFiles)
 	override suspend fun insertAudioFile(audioFile: AudioFile) = musicListDao.insert(audioFile)
+	override suspend fun editTitle(id: Long, newTitle: String) =
+		musicListDao.editTitle(id, newTitle)
+	override suspend fun editArtist(id: Long, newArtist: String) =
+		musicListDao.editArtist(id, newArtist)
 }

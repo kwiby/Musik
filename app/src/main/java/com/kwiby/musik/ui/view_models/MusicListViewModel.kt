@@ -37,8 +37,11 @@ class MusicListViewModel(
 		data class Success(val musicList: List<MusicDetails>): MusicUiState
 	}
 
-	val queueSyncEvent: StateFlow<List<MusicDetails>?> = _queue
-		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+	val queueSyncEvent: StateFlow<List<MusicDetails>?> = _queue.stateIn(
+		viewModelScope,
+		SharingStarted.WhileSubscribed(5_000),
+		null
+	)
 
 
 	private val _selectedIds = MutableStateFlow<Set<Long>>(emptySet())
@@ -66,18 +69,24 @@ class MusicListViewModel(
 		}
 
 		val newMusicDetails = repoList.map { it.toMusicDetails() }
-		val newIds = newMusicDetails.map { it.id }.toSet()
+		val newById = newMusicDetails.associateBy { it.id }
+		val newIds = newById.keys
 		val curIds = currentQueue.map { it.id }.toSet()
 
 		if (newIds != curIds) {
-			val keptSongs = currentQueue.filter { it.id in newIds }
+			val keptSongs = currentQueue.mapNotNull { newById[it.id] }
 			val addedSongs = newMusicDetails.filter { it.id !in curIds }
 			val updatedQueue = keptSongs + addedSongs
 			_queue.value = updatedQueue
 
 			return@combine MusicUiState.Success(updatedQueue)
 		} else {
-			return@combine MusicUiState.Success(currentQueue)
+			val refreshedQueue = currentQueue.map { newById[it.id] ?: it }
+			if (refreshedQueue != currentQueue) {
+				_queue.value = refreshedQueue
+			}
+
+			return@combine MusicUiState.Success(refreshedQueue)
 		}
 	}.flowOn(Dispatchers.Default).stateIn(
 		scope = viewModelScope,
@@ -229,16 +238,6 @@ class MusicListViewModel(
 }
 
 
-// MusicDetails --> AudioFile
-fun MusicDetails.toAudioFile(): AudioFile = AudioFile(
-	id = id,
-	contentUri = contentUri,
-	title = title,
-	artist = artist,
-	durationMs = durationMs.unformatDuration(),
-	orderPos = orderPos
-)
-
 // AudioFile --> MusicDetails
 fun AudioFile.toMusicDetails(): MusicDetails = MusicDetails(
 	id = id,
@@ -246,6 +245,16 @@ fun AudioFile.toMusicDetails(): MusicDetails = MusicDetails(
 	title = title,
 	artist = artist,
 	durationMs = durationMs.formatDuration(),
+	orderPos = orderPos
+)
+
+// MusicDetails --> AudioFile
+fun MusicDetails.toAudioFile(): AudioFile = AudioFile(
+	id = id,
+	contentUri = contentUri,
+	title = title,
+	artist = artist,
+	durationMs = durationMs.unformatDuration(),
 	orderPos = orderPos
 )
 

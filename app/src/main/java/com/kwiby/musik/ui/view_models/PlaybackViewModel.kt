@@ -271,7 +271,7 @@ class PlaybackViewModel(
 		}
 	}
 
-	fun refreshMediaItem(id: Long) {
+	fun refreshMediaItem(id: Long, newTitle: String?, newArtist: String?) {
 		val controller = mediaController ?: return
 		val index = (0 until controller.mediaItemCount).firstOrNull {
 			controller.getMediaItemAt(it).mediaId == id.toString()
@@ -279,10 +279,17 @@ class PlaybackViewModel(
 
 		val wasCurrent = controller.currentMediaItemIndex == index
 		val wasPlaying = controller.isPlaying
-		val item = controller.getMediaItemAt(index)
+		val oldItem = controller.getMediaItemAt(index)
+
+		val updatedMetadata = oldItem.mediaMetadata.buildUpon().apply {
+			newTitle?.let { setTitle(it) }
+			newArtist?.let { setArtist(it) }
+		}.build()
+
+		val updatedItem = oldItem.buildUpon().setMediaMetadata(updatedMetadata).build()
 
 		controller.removeMediaItem(index)
-		controller.addMediaItem(index, item)
+		controller.addMediaItem(index, updatedItem)
 
 		if (wasCurrent) {
 			controller.seekTo(index, 0L)

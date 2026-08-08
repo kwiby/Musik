@@ -54,4 +54,10 @@ interface MusicListDao {
 
 	@Update
 	suspend fun update(audioFile: AudioFile)
+
+	@Query("UPDATE music_list SET title = :newTitle WHERE id = :id")
+	suspend fun editTitle(id: Long, newTitle: String)
+
+	@Query("UPDATE music_list SET artist = :newArtist WHERE id = :id")
+	suspend fun editArtist(id: Long, newArtist: String)
 }
