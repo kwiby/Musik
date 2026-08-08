@@ -1,8 +1,7 @@
-package com.kwiby.musik.ui.components
+package com.kwiby.musik.ui.floating_ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -40,6 +39,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.kwiby.musik.R
+import com.kwiby.musik.ui.components.AlbumArtImage
+import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.Screen
@@ -99,25 +100,21 @@ fun PlayerBar(
 									verticalAlignment = Alignment.CenterVertically,
 									modifier = Modifier.weight(1f)
 								) {
-									Spacer(modifier = Modifier.width(dimensionResource(R.dimen.player_bar_image_left_padding)))
+									Spacer(Modifier.width(dimensionResource(R.dimen.player_bar_image_left_padding)))
 
 									// --===--  Music Image  --===--
-									Crossfade(
-										targetState = curMusic.localConfiguration?.uri.toString(),
+									AlbumArtImage(
+										contentUri = curMusic.localConfiguration?.uri.toString(),
+										trackId = curMusic.mediaId,
+										size = dimensionResource(R.dimen.player_bar_image_size),
+										shape = MaterialTheme.shapes.extraLarge,
 										modifier = Modifier.sharedElementWithCallerManagedVisibility(
 											sharedContentState = rememberSharedContentState(key = "image"),
 											visible = isPlayerScreenClosed
 										)
-									) { contentUri ->
-										AlbumArtImage(
-											contentUri = contentUri,
-											trackId = curMusic.mediaId,
-											size = dimensionResource(R.dimen.player_bar_image_size),
-											shape = MaterialTheme.shapes.extraLarge
-										)
-									}
+									)
 
-									Spacer(modifier = Modifier.width(dimensionResource(R.dimen.player_bar_image_right_padding)))
+									Spacer(Modifier.width(dimensionResource(R.dimen.player_bar_image_right_padding)))
 
 									// --===--  Music Info  --===--
 									Column(
@@ -146,7 +143,7 @@ fun PlayerBar(
 											)
 										}
 
-										Spacer(modifier = Modifier.height(dimensionResource(R.dimen.xx_small_padding)))
+										Spacer(Modifier.height(dimensionResource(R.dimen.xx_small_padding)))
 
 										// --===--  Music Artist  --===--
 										AnimatedContent(
@@ -228,7 +225,7 @@ fun PlayerBar(
 										playbackViewModel.skipNext()
 									}
 
-									Spacer(modifier = Modifier.width(dimensionResource(R.dimen.small_padding)))
+									Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
 								}
 							}
 						}

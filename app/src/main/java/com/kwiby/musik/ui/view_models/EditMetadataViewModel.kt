@@ -24,6 +24,7 @@ import com.kwiby.musik.ui.MusikApplication
 import com.kwiby.musik.ui.misc.folder_manager.FolderManager
 import com.kwiby.musik.ui.misc.scanFileAndAwait
 import com.kwiby.musik.ui.screens.edit_metadata.components.MetadataEditor
+import com.kyant.taglib.TagLib
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -104,6 +105,18 @@ class EditMetadataViewModel(
 		return null
 	}
 
+	private fun getTagLibYear(context: Context, contentUri: Uri): String? {
+		return try {
+			context.contentResolver.openFileDescriptor(contentUri, "r")?.use { pfd ->
+				val metadata = TagLib.getMetadata(pfd.dup().detachFd())
+				metadata?.propertyMap?.get("YEAR")?.firstOrNull()
+			}
+		} catch (e: Exception) {
+			Log.e(LOG_TAG, "Failed to read year via TagLib for contentUri=$contentUri", e)
+			null
+		}
+	}
+
 	private fun getMetadata(context: Context, contentUri: Uri): Metadata? {
 		val retriever = MediaMetadataRetriever()
 		try {
@@ -127,7 +140,8 @@ class EditMetadataViewModel(
 				trackNumber = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER),
 				discNumber = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER),
 				genre = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE),
-				year = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR)
+				year = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE)
+					?: getTagLibYear(context, contentUri)
 			)
 		} catch (e: Exception) {
 			Log.e(LOG_TAG, "Failed to retrieve metadata for contentUri=$contentUri", e)
@@ -189,17 +203,6 @@ class EditMetadataViewModel(
 		wasArtworkChanged.value = false
 	}
 
-	fun isBlankOrNumerical(str: String): Boolean {
-		val trimmedStr = str.trim()
-		return trimmedStr.isBlank() || (trimmedStr.toIntOrNull() != null && trimmedStr.toInt() >= 0)
-	}
-
-	fun isSavable(): Boolean {
-		return isBlankOrNumerical(trackNumberQuery.value)
-				&& isBlankOrNumerical(discNumberQuery.value)
-				&& isBlankOrNumerical(yearQuery.value)
-	}
-
 	fun saveButton(
 		folderManager: FolderManager,
 		navToMainScreen: () -> Unit,
@@ -215,9 +218,6 @@ class EditMetadataViewModel(
 		}
 		if (metadata.value == null) {
 			Log.e(LOG_TAG, "Metadata is null")
-			return
-		}
-		if (!isSavable()) {
 			return
 		}
 

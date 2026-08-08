@@ -146,18 +146,28 @@ class PlaybackStatsTracker(
 
 	override fun onIsPlayingChanged(isPlaying: Boolean) {
 		if (isPlaying) {
-			if (getCurTrackId() == sessionTrackId) {
-				Log.d("debug", "Media has played")
-				sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
-			} else {
-				Log.d("debug", "Session has started (sesh=$sessionTrackId - new=${getCurTrackId()})")
-				scope.launch {
-					sessionMutex.withLock { startSession() }
+			scope.launch {
+				sessionMutex.withLock {
+					if (getCurTrackId() == sessionTrackId) {
+						Log.d("debug", "Media has played")
+						sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
+					} else {
+						Log.d("debug", "Session has started (sesh=$sessionTrackId - new=${getCurTrackId()})")
+						scope.launch {
+							sessionMutex.withLock {
+								startSession()
+							}
+						}
+					}
 				}
 			}
 		} else {
 			Log.d("debug", "Media has paused (updating database)")
-			updateDB()
+			scope.launch {
+				sessionMutex.withLock {
+					updateDB()
+				}
+			}
 		}
 	}
 
@@ -165,18 +175,27 @@ class PlaybackStatsTracker(
 		if (mediaItem == null) {
 			Log.d("debug", "Media item is null, resetting session")
 			scope.launch {
-				flush()
-				reset()
+				sessionMutex.withLock {
+					flush()
+					reset()
+				}
 			}
 
 			return
 		}
 
+		/*
 		if (sessionTrackId != null) {
 			Log.d("debug", "Media has transitioned (updating database & starting session)")
-			scope.launch {
-				sessionMutex.withLock {
-					flush()
+
+		}
+		 */
+
+		scope.launch {
+			sessionMutex.withLock {
+				flush()
+				reset()
+				if (player.isPlaying) {
 					startSession()
 				}
 			}
@@ -187,7 +206,9 @@ class PlaybackStatsTracker(
 		if (playbackState == Player.STATE_ENDED && sessionTrackId != null) {
 			Log.d("debug", "Playback state changed (updating database)")
 			scope.launch {
-				flush()
+				sessionMutex.withLock {
+					flush()
+				}
 			}
 		}
 	}

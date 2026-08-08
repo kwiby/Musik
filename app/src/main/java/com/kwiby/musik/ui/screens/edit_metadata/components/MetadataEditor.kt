@@ -114,7 +114,6 @@ class MetadataEditor(
 			metadata.year?.let { propertyMap["YEAR"] = arrayOf(it) }
 
 			val saved = TagLib.savePropertyMap(pfd.dup().detachFd(), HashMap(propertyMap))
-
 			if (!saved) {
 				throw IllegalStateException("TagLib failed to save metadata for uri=$uri")
 			}

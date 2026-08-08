@@ -63,7 +63,7 @@ fun MusikApp(
 			AnimatedContent(
 				targetState = navViewModel.curScreen,
 				transitionSpec = {
-					if (navViewModel.curScreen == Screen.Player) {
+					if (initialState == Screen.Player || targetState == Screen.Player) {
 						fadeIn() togetherWith fadeOut()
 					} else {
 						EnterTransition.None togetherWith ExitTransition.None

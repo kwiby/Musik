@@ -2,9 +2,8 @@ package com.kwiby.musik.data.coil
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.MediaMetadataRetriever
 import android.util.Log
+import android.util.Size
 import androidx.core.net.toUri
 import coil3.ImageLoader
 import coil3.decode.DataSource
@@ -26,8 +25,49 @@ class ArtworkFetcher(
 	private val uri: netUri,
 	private val sizePx: Int
 ) : Fetcher {
+	/*private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+		val height = options.outHeight
+		val width = options.outWidth
+		var inSampleSize = 1
+
+		if (height > reqHeight || width > reqWidth) {
+			val halfHeight = height / 2
+			val halfWidth = width / 2
+
+			while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+				inSampleSize *= 2
+			}
+		}
+		return inSampleSize
+	}*/
+
 	override suspend fun fetch(): FetchResult? {
-		val bytes = try {
+		val bitmap = try {
+			context.contentResolver.loadThumbnail(
+				uri,
+				Size(sizePx, sizePx),
+				null
+			)
+		} catch (_: Exception) {
+			Log.w(LOG_TAG, "loadThumbnail() failed for uri=$uri")
+			return null
+		}
+
+		val buffer = Buffer()
+		buffer.outputStream().use { outputStream ->
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+		}
+		bitmap.recycle()
+
+		return SourceFetchResult(
+			source = ImageSource(
+				source = buffer,
+				fileSystem = FileSystem.SYSTEM
+			),
+			mimeType = "image/jpeg",
+			dataSource = DataSource.DISK
+		)
+		/*val bytes = try {
 			val retriever = MediaMetadataRetriever()
 			try {
 				retriever.setDataSource(context, uri)
@@ -69,23 +109,7 @@ class ArtworkFetcher(
 			),
 			mimeType = "image/jpeg",
 			dataSource = DataSource.DISK
-		)
-	}
-
-	private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
-		val height = options.outHeight
-		val width = options.outWidth
-		var inSampleSize = 1
-
-		if (height > reqHeight || width > reqWidth) {
-			val halfHeight = height / 2
-			val halfWidth = width / 2
-
-			while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
-				inSampleSize *= 2
-			}
-		}
-		return inSampleSize
+		)*/
 	}
 
 	class Factory(private val context: Context) : Fetcher.Factory<coilUri> {
