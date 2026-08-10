@@ -64,6 +64,7 @@ class PlaybackStatsTracker(
 		}
 		if (updateJob?.isActive == true) {
 			Log.w(LOG_TAG, "Cannot update the database, update job is active")
+			sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
 			return
 		}
 
@@ -81,6 +82,7 @@ class PlaybackStatsTracker(
 
 		updateJob = scope.launch(Dispatchers.IO) {
 			Log.d("debug", "Update job launched (curSessionTrackId=$curSessionTrackId - wasSessionPlayCountLogged=$wasSessionPlayCountLogged - totalListenTime=$totalListenTime - playCountThresholdMs=$playCountThresholdMs - totalDuration=$totalDuration)")
+
 			try {
 				if (doLogPlayCount) {
 					Log.d("debug", "Incrementing play count")
@@ -94,12 +96,34 @@ class PlaybackStatsTracker(
 		}
 	}
 
-	suspend fun flush() {
+	private fun resetInternal() {
+		sessionTrackId = null
+		sessionTotalDurationMs = null
+		sessionTotalListenTime = null
+		sessionLastUpdateTimeMs = null
+		wasSessionPlayCountLogged = false
+
+		stopSession()
+	}
+
+	private suspend fun flushInternal() {
 		updateDB()
 		updateJob?.join()
 	}
 
-	fun startSession() {
+	suspend fun reset() {
+		sessionMutex.withLock {
+			resetInternal()
+		}
+	}
+
+	suspend fun flush() {
+		sessionMutex.withLock {
+			flushInternal()
+		}
+	}
+
+	private fun startSessionInternal() {
 		val curTrackId = getCurTrackId()
 		if (curTrackId == null) {
 			Log.e(LOG_TAG, "Current track id is null (no music is playing)")
@@ -120,27 +144,29 @@ class PlaybackStatsTracker(
 
 				if (player.isPlaying) {
 					Log.d("debug", "Automatically updating database")
-					updateDB()
+					sessionMutex.withLock {
+						updateDB()
+					}
 				}
 			}
 		}
 	}
+
+	/*
+	fun startSession() {
+		scope.launch {
+			sessionMutex.withLock {
+				startSessionInternal()
+			}
+		}
+	}
+	 */
 
 	fun stopSession() {
 		loopJob?.cancel()
 		loopJob = null
 		updateJob?.cancel()
 		updateJob = null
-	}
-
-	fun reset() {
-		sessionTrackId = null
-		sessionTotalDurationMs = null
-		sessionTotalListenTime = null
-		sessionLastUpdateTimeMs = null
-		wasSessionPlayCountLogged = false
-
-		stopSession()
 	}
 
 
@@ -153,11 +179,7 @@ class PlaybackStatsTracker(
 						sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
 					} else {
 						Log.d("debug", "Session has started (sesh=$sessionTrackId - new=${getCurTrackId()})")
-						scope.launch {
-							sessionMutex.withLock {
-								startSession()
-							}
-						}
+						startSessionInternal()
 					}
 				}
 			}
@@ -176,8 +198,8 @@ class PlaybackStatsTracker(
 			Log.d("debug", "Media item is null, resetting session")
 			scope.launch {
 				sessionMutex.withLock {
-					flush()
-					reset()
+					flushInternal()
+					resetInternal()
 				}
 			}
 
@@ -193,10 +215,11 @@ class PlaybackStatsTracker(
 
 		scope.launch {
 			sessionMutex.withLock {
-				flush()
-				reset()
+				flushInternal()
+				resetInternal()
+
 				if (player.isPlaying) {
-					startSession()
+					startSessionInternal()
 				}
 			}
 		}
@@ -207,7 +230,7 @@ class PlaybackStatsTracker(
 			Log.d("debug", "Playback state changed (updating database)")
 			scope.launch {
 				sessionMutex.withLock {
-					flush()
+					flushInternal()
 				}
 			}
 		}

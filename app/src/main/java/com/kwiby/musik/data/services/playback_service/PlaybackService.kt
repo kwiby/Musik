@@ -73,8 +73,8 @@ class PlaybackService: MediaSessionService() {
 			withTimeoutOrNull(1000.milliseconds) {
 				statsTracker.flush()
 			}
+			statsTracker.reset()
 		}
-		statsTracker.reset()
 
 		mediaSession?.run {
 			if (player.isCommandAvailable(Player.COMMAND_STOP)) {
@@ -101,8 +101,8 @@ class PlaybackService: MediaSessionService() {
 			withTimeoutOrNull(1000.milliseconds) {
 				statsTracker.flush()
 			}
+			statsTracker.reset()
 		}
-		statsTracker.reset()
 		stopSelf()
 
 		super.onTaskRemoved(rootIntent)
