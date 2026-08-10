@@ -48,7 +48,7 @@ class YtDlp(
 	private var isCancelled = true
 
 	private val linkCheckRegex = Regex(
-		"""^(https?://)?(www\.|m\.)?(youtube\.com/watch\?v=|youtu\.be/)[a-zA-Z0-9_-]{11}(&\S*)?(\?\S*)?$"""
+		"""^(https?://)?(www\.|m\.|music\.)?(youtube\.com/watch\?v=|youtu\.be/)[a-zA-Z0-9_-]{11}(&\S*)?(\?\S*)?$"""
 	)
 	private val downloadSpeedRegex = Regex(
 		"""at\s+([\d.]+\s*\w+/s)"""
