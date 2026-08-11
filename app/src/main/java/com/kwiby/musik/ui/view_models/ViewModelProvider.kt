@@ -22,27 +22,11 @@ object ViewModelProvider {
 			)
 		}
 
-		// --===--  StatsViewModel  --===--
-		initializer {
-			StatsViewModel(
-				musicStatsRepo = musikApplication().container.musicStatsRepo
-			)
-		}
-
 		// --===--  SettingsViewModel  --===--
 		initializer {
 			SettingsViewModel(
 				dataStoreManager = musikApplication().container.dataStoreManager,
 				ytDlp = musikApplication().container.ytDlp
-			)
-		}
-
-		// --===--  EditMetadataViewModel  --===--
-		initializer {
-			EditMetadataViewModel(
-				application = musikApplication(),
-				dataStoreManager = musikApplication().container.dataStoreManager,
-				musicListRepo = musikApplication().container.musicListRepo
 			)
 		}
 
@@ -68,6 +52,29 @@ object ViewModelProvider {
 				dataStoreManager = musikApplication().container.dataStoreManager,
 				ytDlp = musikApplication ().container.ytDlp,
 				musicListRepo = musikApplication().container.musicListRepo
+			)
+		}
+
+		// --===--  EditMetadataViewModel  --===--
+		initializer {
+			EditMetadataViewModel(
+				application = musikApplication(),
+				dataStoreManager = musikApplication().container.dataStoreManager,
+				musicListRepo = musikApplication().container.musicListRepo
+			)
+		}
+
+		// --===--  StatsViewModel  --===--
+		initializer {
+			StatsViewModel(
+				musicStatsRepo = musikApplication().container.musicStatsRepo
+			)
+		}
+
+		// --===--  PlaylistsViewModel  --===--
+		initializer {
+			PlaylistsViewModel(
+				playlistsRepo = musikApplication().container.playlistsRepo
 			)
 		}
 	}

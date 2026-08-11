@@ -35,6 +35,8 @@ import com.kwiby.musik.ui.tabs.stats.StatsTab
 import com.kwiby.musik.ui.view_models.MusicListViewModel
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
+import com.kwiby.musik.ui.view_models.PlaylistsViewModel
+import com.kwiby.musik.ui.view_models.StatsViewModel
 import com.kwiby.musik.ui.view_models.Tab
 import com.kwiby.musik.ui.view_models.ViewModelProvider
 import com.kwiby.musik.ui.view_models.toMediaItem
@@ -46,12 +48,14 @@ fun MainContainer(
 	navViewModel: NavViewModel,
 	playbackViewModel: PlaybackViewModel,
 	modifier: Modifier = Modifier,
-	musicListViewModel: MusicListViewModel = viewModel(factory = ViewModelProvider.Factory)
+	musicListViewModel: MusicListViewModel = viewModel(factory = ViewModelProvider.Factory),
+	playlistsViewModel: PlaylistsViewModel = viewModel(factory = ViewModelProvider.Factory),
+	statsViewModel: StatsViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
-	val isInMoveMode by musicListViewModel.isInMoveMode.collectAsStateWithLifecycle()
+	val isInMusicMoveMode by musicListViewModel.isInMoveMode.collectAsStateWithLifecycle()
 	val queueSyncEvent by musicListViewModel.queueSyncEvent.collectAsStateWithLifecycle()
 	LaunchedEffect(queueSyncEvent) {
-		if (!isInMoveMode) {
+		if (!isInMusicMoveMode) {
 			queueSyncEvent?.let { q ->
 				playbackViewModel.setQueue(q.map { it.toMediaItem() })
 			}
@@ -88,8 +92,12 @@ fun MainContainer(
 							musicListViewModel,
 							navViewModel
 						)
-						Tab.PLAYLISTS -> PlaylistsTab()
-						Tab.STATS -> StatsTab()
+						Tab.PLAYLISTS -> PlaylistsTab(
+							playlistsViewModel
+						)
+						Tab.STATS -> StatsTab(
+							statsViewModel
+						)
 					}
 				} else {
 					// --===--  No Permissions Msg  --===--

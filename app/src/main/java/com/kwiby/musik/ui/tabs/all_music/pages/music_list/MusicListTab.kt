@@ -19,9 +19,9 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DeleteOutline
-import androidx.compose.material.icons.rounded.EditNote
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.SmartDisplay
-import androidx.compose.material.icons.rounded.UnfoldMore
+import androidx.compose.material.icons.rounded.SwapVert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -117,7 +117,7 @@ fun MusicListScreen(
 					}
 				} else {
 					CustomIconButton(
-						iconImageVector = Icons.Rounded.EditNote,
+						iconImageVector = Icons.Rounded.Edit,
 						contentDescription = stringResource(R.string.enter_edit_metadata_mode_button)
 					) {
 						musicListViewModel.enterEditMetadataModeButton()
@@ -145,7 +145,7 @@ fun MusicListScreen(
 				} else {
 					// ---===---  Enter Move Mode Button  ---===---
 					CustomIconButton(
-						iconImageVector = Icons.Rounded.UnfoldMore,
+						iconImageVector = Icons.Rounded.SwapVert,
 						contentDescription = stringResource(R.string.enter_move_mode_button)
 					) {
 						musicListViewModel.enterMoveModeButton()
@@ -193,11 +193,11 @@ fun MusicListScreen(
 					musicListViewModel.addMusicButton { onAddMusic() }
 				}
 
-				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
+				Spacer(Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 			}
 		}
 
-		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.buttons_vertical_padding)))
+		Spacer(Modifier.height(dimensionResource(R.dimen.buttons_vertical_padding)))
 
 		when(val state = queueState) {
 			is MusicListViewModel.MusicUiState.Loading -> {

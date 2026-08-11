@@ -37,7 +37,7 @@ fun AllMusicTab(
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally
 	) {
-		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.tabs_buttons_padding)))
+		Spacer(Modifier.height(dimensionResource(R.dimen.tabs_buttons_padding)))
 
 		if (isAddingMusic) {
 			addMusicViewModel.resetMusicAdding()

@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kwiby.musik.R
 import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.components.LoadingIndicator
@@ -38,11 +37,10 @@ import com.kwiby.musik.ui.tabs.stats.components.StatsListItem
 import com.kwiby.musik.ui.tabs.stats.components.StatsOverviewContainer
 import com.kwiby.musik.ui.tabs.stats.components.info.NoMusicStatsMsg
 import com.kwiby.musik.ui.view_models.StatsViewModel
-import com.kwiby.musik.ui.view_models.ViewModelProvider
 
 @Composable
 fun StatsTab(
-	statsViewModel: StatsViewModel = viewModel(factory = ViewModelProvider.Factory)
+	statsViewModel: StatsViewModel
 ) {
 	val lazyListState = rememberLazyListState()
 	val isLoading = statsViewModel.isLoading

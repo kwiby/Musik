@@ -172,6 +172,10 @@
     <string name="stats_sorting_by_text" translatable="true">Sorting by:</string>
     <string name="stats_sorting_by_content_desc" translatable="true">Change sorting rule</string>
 
+    <!-- Playlists Tab -->
+    <string name="move_playlists_content_desc">Move playlists</string>
+    <string name="add_playlist_content_desc">Add playlist</string>
+
     <!-- Crash Screen -->
     <string name="crash_title">A CRASH HAS OCCURRED</string>
     <string name="copy_crash_log">Copy Crash Log</string>
