@@ -49,7 +49,11 @@ class MusicListViewModel(
 
 	val isInSelectionMode: StateFlow<Boolean> = _selectedIds
 		.map { it.isNotEmpty() }
-		.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+		.stateIn(
+			viewModelScope,
+			SharingStarted.WhileSubscribed(5_000),
+			false
+		)
 
 	private val _isInMoveMode = MutableStateFlow(false)
 	val isInMoveMode: StateFlow<Boolean> = _isInMoveMode.asStateFlow()

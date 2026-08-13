@@ -63,6 +63,7 @@ fun MusicListScreen(
 	val selectedIds by musicListViewModel.selectedIds.collectAsStateWithLifecycle()
 	val isInMoveMode by musicListViewModel.isInMoveMode.collectAsStateWithLifecycle()
 	val isInSelectionMode by musicListViewModel.isInSelectionMode.collectAsStateWithLifecycle()
+	val isInEditMetadataMode by musicListViewModel.isInEditMetadataMode
 
 	val scope = rememberCoroutineScope()
 
@@ -84,7 +85,7 @@ fun MusicListScreen(
 			musicListViewModel.resetMusicList()
 		}
 	}
-	BackHandler(isInSelectionMode || isInMoveMode || musicListViewModel.isInEditMetadataMode.value) {
+	BackHandler(isInSelectionMode || isInMoveMode || isInEditMetadataMode) {
 		musicListViewModel.handleBack()
 	}
 	LaunchedEffect(isInMoveMode) {
@@ -108,7 +109,7 @@ fun MusicListScreen(
 				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 
 				// ---===---  Edit Metadata Button  ---===---
-				if (musicListViewModel.isInEditMetadataMode.value) {
+				if (isInEditMetadataMode) {
 					CustomIconButton(
 						iconImageVector = Icons.Rounded.Close,
 						contentDescription = stringResource(R.string.exit_edit_metadata_mode_button)
@@ -133,8 +134,8 @@ fun MusicListScreen(
 					) {
 						localOrder?.let { musicListViewModel.setQueueOrder(it) }
 						musicListViewModel.confirmMoveButton(playbackViewModel)
-						localOrder = null
 					}
+
 					// ---===---  Exit Move Mode Button  ---===---
 					CustomIconButton(
 						iconImageVector = Icons.Rounded.Close,
@@ -243,7 +244,7 @@ fun MusicListScreen(
 								} },
 								onLongClick = { musicListViewModel.handleHold(music.id) },
 								isInMoveMode = isInMoveMode,
-								isInEditMetadataMode = musicListViewModel.isInEditMetadataMode.value,
+								isInEditMetadataMode = isInEditMetadataMode,
 								onEditMetadataButton = {
 									musicListViewModel.editMetadataButton(
 										navViewModel,

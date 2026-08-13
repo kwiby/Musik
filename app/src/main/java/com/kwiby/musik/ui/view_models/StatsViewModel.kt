@@ -48,11 +48,11 @@ class StatsViewModel(
 	}
 
 	fun refreshButton() {
-		resetStatsTab()
+		setupStatsTab()
 		refreshTrigger = !refreshTrigger
 	}
 
-	fun resetStatsTab() {
+	fun setupStatsTab() {
 		viewModelScope.launch {
 			isLoading = true
 

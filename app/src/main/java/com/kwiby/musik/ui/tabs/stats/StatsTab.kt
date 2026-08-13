@@ -46,7 +46,7 @@ fun StatsTab(
 	val isLoading = statsViewModel.isLoading
 
 	LaunchedEffect(Unit) {
-		statsViewModel.resetStatsTab()
+		statsViewModel.setupStatsTab()
 	}
 	LaunchedEffect(statsViewModel.selectedOrderRule, statsViewModel.refreshTrigger) {
 		if (lazyListState.firstVisibleItemIndex != 0) {
@@ -117,8 +117,8 @@ fun StatsTab(
 		Crossfade(
 			targetState = isLoading,
 			label = "stats_loading"
-		) { doLoading ->
-			if (doLoading) {
+		) { loading ->
+			if (loading) {
 				LoadingIndicator()
 			} else {
 				Column {

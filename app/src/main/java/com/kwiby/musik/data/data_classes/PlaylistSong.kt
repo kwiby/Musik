@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 
 @Entity(
-	tableName = "playlist_entries",
+	tableName = "playlist_songs",
 	primaryKeys = ["playlistId", "songId"],
 	foreignKeys = [
 		ForeignKey(
@@ -23,7 +23,7 @@ import androidx.room.Index
 	],
 	indices = [Index("playlistId"), Index("songId")]
 )
-data class PlaylistEntry(
+data class PlaylistSong(
 	val playlistId: Long,
 	val songId: Long,
 	val orderPos: Int = 0

@@ -10,14 +10,14 @@ import com.kwiby.musik.data.daos.playlists.PlaylistDao
 import com.kwiby.musik.data.data_classes.AudioFile
 import com.kwiby.musik.data.data_classes.AudioFileStats
 import com.kwiby.musik.data.data_classes.Playlist
-import com.kwiby.musik.data.data_classes.PlaylistEntry
+import com.kwiby.musik.data.data_classes.PlaylistSong
 
 @Database(
 	entities = [
 		AudioFile::class,
 		AudioFileStats::class,
 		Playlist::class,
-		PlaylistEntry::class
+		PlaylistSong::class
     ],
 	version = 1, // EXAMPLE MIGRATION -> Make sure to bump this value up for each db migration
 	exportSchema = false

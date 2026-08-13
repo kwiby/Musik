@@ -175,6 +175,14 @@
     <!-- Playlists Tab -->
     <string name="move_playlists_content_desc">Move playlists</string>
     <string name="add_playlist_content_desc">Add playlist</string>
+    <string name="no_playlists_msg">No playlists added</string>
+    <string name="move_playlists">Move playlists</string>
+    <string name="edit_playlist_button">Edit playlist</string>
+    <string name="remove_playlists_button">Remove playlists</string>
+    <string name="add_a_playlist">Add a playlist</string>
+    <string name="playlist_query_placeholder">Set a playlist name</string>
+    <string name="cancel_playlist_creation">Cancel</string>
+    <string name="confirm_playlist_creation">Confirm</string>
 
     <!-- Crash Screen -->
     <string name="crash_title">A CRASH HAS OCCURRED</string>

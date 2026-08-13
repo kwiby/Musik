@@ -10,7 +10,7 @@ data class PlaylistDetails(
 		parentColumn = "id", // Playlist's primary key
 		entityColumn = "id", // AudioFile's primary key
 		associateBy = Junction(
-			value = PlaylistEntry::class,
+			value = PlaylistSong::class,
 			parentColumn = "playlistId",
 			entityColumn = "songId"
 		)

@@ -2,19 +2,16 @@ package com.kwiby.musik.data.repositories.playlists
 
 import com.kwiby.musik.data.data_classes.AudioFile
 import com.kwiby.musik.data.data_classes.Playlist
-import com.kwiby.musik.data.data_classes.PlaylistDetails
+import com.kwiby.musik.data.data_classes.PlaylistWithSongCount
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsRepository {
-	suspend fun createPlaylist(playlist: Playlist): Long
-	suspend fun deletePlaylist(playlist: Playlist)
-	fun getAllPlaylists(): Flow<List<Playlist>>
+	fun getAllPlaylistsWithSongCounts(): Flow<List<PlaylistWithSongCount>>
+	fun getAllSongsInPlaylist(playlistId: Long): Flow<List<AudioFile>>
+	suspend fun createPlaylist(name: String)
+	suspend fun deletePlaylists(playlists: List<Playlist>)
 	suspend fun reorderPlaylists(newOrder: List<Playlist>)
-	fun getPlaylistDetails(playlistId: Long): Flow<PlaylistDetails>
-	fun getAllPlaylistDetails(): Flow<List<PlaylistDetails>>
-	suspend fun getPlaylistEntryCount(playlistId: Long): Int
-	fun getOrderedSongsInPlaylist(playlistId: Long): Flow<List<AudioFile>>
 	suspend fun addSongToPlaylist(playlistId: Long, songId: Long)
 	suspend fun removeSongFromPlaylist(playlistId: Long, songId: Long)
-	suspend fun reorderPlaylistEntries(playlistId: Long, newSongOrder: List<Long>)
+	suspend fun reorderSongsInPlaylist(playlistId: Long, newSongOrder: List<Long>)
 }

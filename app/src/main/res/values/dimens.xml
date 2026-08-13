@@ -125,4 +125,10 @@
     <dimen name="stats_play_count_width">50dp</dimen>
     <dimen name="stats_listen_time_width">70dp</dimen>
     <dimen name="stats_sort_by_button_left_padding">20dp</dimen>
+
+    <!-- Playlists Tab -->
+    <dimen name="add_playlist_dialog_width">250dp</dimen>
+    <dimen name="add_playlist_dialog_height">100dp</dimen>
+    <dimen name="playlist_divider_horizontal_padding">20dp</dimen>
+    <dimen name="playlist_list_item_height">45dp</dimen>
 </resources>

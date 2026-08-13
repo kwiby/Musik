@@ -1,7 +1,6 @@
 package com.kwiby.musik.ui.screens.edit_metadata.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.kwiby.musik.ui.components.customTextSelectionColours
@@ -24,16 +22,17 @@ fun MetadataField(
 	placeholderText: String,
 	keyboardType: KeyboardType = KeyboardType.Text
 ) {
-	val focusManager = LocalFocusManager.current
-
 	CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColours()) {
 		TextField(
 			value = query,
 			onValueChange = { onValueChange(it) },
-			placeholder = { Text(
-				text = placeholderText,
-				style = MaterialTheme.typography.bodyLarge
-			) },
+			textStyle = MaterialTheme.typography.bodyLarge,
+			placeholder = {
+				Text(
+					text = placeholderText,
+					style = MaterialTheme.typography.bodyLarge
+				)
+			},
 			singleLine = true,
 			shape = MaterialTheme.shapes.small,
 			colors = TextFieldDefaults.colors(
@@ -47,13 +46,8 @@ fun MetadataField(
 				unfocusedIndicatorColor = Color.Transparent
 			),
 			keyboardOptions = KeyboardOptions(
-				imeAction = ImeAction.Search,
+				imeAction = ImeAction.Done,
 				keyboardType = keyboardType
-			),
-			keyboardActions = KeyboardActions(
-				onSearch = {
-					focusManager.clearFocus()
-				}
 			),
 			modifier = Modifier.fillMaxWidth()
 		)
