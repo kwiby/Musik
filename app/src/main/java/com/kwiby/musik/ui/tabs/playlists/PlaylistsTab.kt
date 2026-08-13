@@ -1,5 +1,6 @@
 package com.kwiby.musik.ui.tabs.playlists
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -87,6 +88,9 @@ fun PlaylistsTab(
 		if (!isInMoveMode) {
 			localOrder = null
 		}
+	}
+	BackHandler(isInSelectionMode || isInMoveMode || isInEditPlaylistMode) {
+		playlistsViewModel.handleBack()
 	}
 
 

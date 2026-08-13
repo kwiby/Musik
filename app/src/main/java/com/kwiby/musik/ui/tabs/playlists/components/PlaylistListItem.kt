@@ -95,6 +95,7 @@ fun PlaylistListItem(
 				// --===-- Playlist Name --===--
 				Text(
 					text = playlistWithSongCount.playlist.name,
+					modifier = Modifier.weight(1f),
 					style = MaterialTheme.typography.bodyLarge,
 					color = MaterialTheme.colorScheme.onSecondary,
 					maxLines = 1,
@@ -103,7 +104,8 @@ fun PlaylistListItem(
 
 				// --===--  Playlist Song Count  --===--
 				Text(
-					text = "${playlistWithSongCount.songCount} songs",
+					text = "${playlistWithSongCount.songCount} " +
+							stringResource(R.string.playlist_song_count_text),
 					style = MaterialTheme.typography.bodyMedium,
 					color = MaterialTheme.colorScheme.onSurfaceVariant,
 					maxLines = 1,

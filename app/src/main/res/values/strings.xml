@@ -179,10 +179,11 @@
     <string name="move_playlists">Move playlists</string>
     <string name="edit_playlist_button">Edit playlist</string>
     <string name="remove_playlists_button">Remove playlists</string>
-    <string name="add_a_playlist">Add a playlist</string>
+    <string name="add_a_playlist">Create a playlist</string>
     <string name="playlist_query_placeholder">Set a playlist name</string>
     <string name="cancel_playlist_creation">Cancel</string>
     <string name="confirm_playlist_creation">Confirm</string>
+    <string name="playlist_song_count_text">songs</string>
 
     <!-- Crash Screen -->
     <string name="crash_title">A CRASH HAS OCCURRED</string>

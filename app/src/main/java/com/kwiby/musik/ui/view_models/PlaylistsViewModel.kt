@@ -89,6 +89,10 @@ class PlaylistsViewModel(
 		disableAllModes()
 	}
 
+	fun handleBack() {
+		disableAllModes()
+	}
+
 	fun handlePlaylistTap(playlist: Playlist) {
 		if (isInPlaylistSelectionMode) {
 			updateSelectedPlaylists(playlist)
