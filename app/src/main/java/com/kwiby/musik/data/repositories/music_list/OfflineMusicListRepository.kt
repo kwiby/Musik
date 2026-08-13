@@ -11,7 +11,7 @@ class OfflineMusicListRepository(
 	override suspend fun getAudioFileCount(): Int = musicListDao.getCount()
 	override suspend fun updateMultipleOrderPos(orderedIds: List<Long>) =
 		musicListDao.updateMultipleOrderPos(orderedIds)
-	override suspend fun deleteMultipleAudioFilesById(ids: Set<Long>) =
+	override suspend fun deleteMultipleAudioFilesById(ids: List<Long>) =
 		musicListDao.deleteMultipleById(ids)
 	override suspend fun insertMultipleAudioFiles(audioFiles: List<AudioFile>) =
 		musicListDao.insertMultiple(audioFiles)

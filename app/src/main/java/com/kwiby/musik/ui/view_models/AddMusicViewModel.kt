@@ -48,8 +48,8 @@ class AddMusicViewModel(
 	private val _isLoading = MutableStateFlow(false)
 	val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-	private val _selectedIds = MutableStateFlow<Set<Long>>(emptySet())
-	val selectedIds: StateFlow<Set<Long>> = _selectedIds.asStateFlow()
+	private val _selectedIds = MutableStateFlow<List<Long>>(emptyList())
+	val selectedIds: StateFlow<List<Long>> = _selectedIds.asStateFlow()
 
 	var refreshTrigger by mutableStateOf(false)
 		private set
@@ -60,7 +60,7 @@ class AddMusicViewModel(
 	}
 
 	private fun clearSelection() {
-		_selectedIds.value = emptySet()
+		_selectedIds.value = emptyList()
 	}
 
 	private var loadJob: Job? = null
@@ -82,7 +82,9 @@ class AddMusicViewModel(
 	}
 
 	suspend fun addSelectedMusic() {
-		val selectedMusic = _audioFiles.value.filter { it.id in _selectedIds.value }
+		val musicByIdMap = _audioFiles.value.associateBy { it.id }
+		val selectedMusic = _selectedIds.value.mapNotNull { musicByIdMap[it] }
+
 		withContext(Dispatchers.IO) {
 			val curCount = musicListRepo.getAudioFileCount()
 			musicListRepo.insertMultipleAudioFiles(

@@ -35,7 +35,7 @@ interface MusicListDao {
 	}
 
 	@Query("DELETE FROM music_list WHERE id IN (:ids)")
-	suspend fun deleteMultipleById(ids: Set<Long>)
+	suspend fun deleteMultipleById(ids: List<Long>)
 
 	@Insert(onConflict = OnConflictStrategy.IGNORE)
 	suspend fun insertMultiple(audioFiles: List<AudioFile>)

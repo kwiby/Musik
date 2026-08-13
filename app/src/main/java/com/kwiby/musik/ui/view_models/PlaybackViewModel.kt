@@ -50,7 +50,7 @@ class PlaybackViewModel(
 
 	val currentPos = mutableLongStateOf(0L)
 
-	var onDeadTrackDetected: (suspend (Set<Long>) -> Unit)? = null
+	var onDeadTrackDetected: (suspend (List<Long>) -> Unit)? = null
 	// ================================================================================================
 
 
@@ -131,7 +131,7 @@ class PlaybackViewModel(
 				// Remove the dead track from the db
 				failedId?.let { id ->
 					viewModelScope.launch {
-						onDeadTrackDetected?.invoke(setOf(id))
+						onDeadTrackDetected?.invoke(listOf(id))
 					}
 				}
 
@@ -253,7 +253,7 @@ class PlaybackViewModel(
 		}*/
 	}
 
-	fun removeFromQueue(ids: Set<Long>) {
+	fun removeFromQueue(ids: List<Long>) {
 		val controller = mediaController ?: return
 
 		val indicesToRemove = (0 until controller.mediaItemCount).filter {

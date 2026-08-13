@@ -7,7 +7,7 @@ interface MusicListRepository {
 	fun getAllAudioFilesStream(): Flow<List<AudioFile>>
 	suspend fun getAudioFileCount(): Int
 	suspend fun updateMultipleOrderPos(orderedIds: List<Long>)
-	suspend fun deleteMultipleAudioFilesById(ids: Set<Long>)
+	suspend fun deleteMultipleAudioFilesById(ids: List<Long>)
 	suspend fun insertMultipleAudioFiles(audioFiles: List<AudioFile>)
 	suspend fun insertAudioFile(audioFile: AudioFile)
 	suspend fun editTitle(id: Long, newTitle: String)

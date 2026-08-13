@@ -44,8 +44,8 @@ class MusicListViewModel(
 	)
 
 
-	private val _selectedIds = MutableStateFlow<Set<Long>>(emptySet())
-	val selectedIds: StateFlow<Set<Long>> = _selectedIds.asStateFlow()
+	private val _selectedIds = MutableStateFlow<List<Long>>(emptyList())
+	val selectedIds: StateFlow<List<Long>> = _selectedIds.asStateFlow()
 
 	val isInSelectionMode: StateFlow<Boolean> = _selectedIds
 		.map { it.isNotEmpty() }
@@ -100,7 +100,7 @@ class MusicListViewModel(
 
 
 	private fun clearSelection() {
-		_selectedIds.value = emptySet()
+		_selectedIds.value = emptyList()
 	}
 
 	private fun setMoveMode(bool: Boolean) {
@@ -141,7 +141,7 @@ class MusicListViewModel(
 		resetMusicList()
 	}
 
-	suspend fun deleteTracksByIds(ids: Set<Long>) {
+	suspend fun deleteTracksByIds(ids: List<Long>) {
 		withContext(Dispatchers.IO) {
 			musicListRepo.deleteMultipleAudioFilesById(ids)
 		}
