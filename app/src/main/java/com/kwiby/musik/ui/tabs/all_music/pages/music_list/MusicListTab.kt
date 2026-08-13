@@ -94,7 +94,6 @@ fun MusicListScreen(
 		}
 	}
 
-
 	Column(
 		verticalArrangement = Arrangement.Top,
 		horizontalAlignment = Alignment.CenterHorizontally

@@ -40,7 +40,6 @@ fun AllMusicTab(
 		Spacer(Modifier.height(dimensionResource(R.dimen.tabs_buttons_padding)))
 
 		if (isAddingMusic) {
-			addMusicViewModel.resetMusicAdding()
 			AddMusicPage(
 				addMusicViewModel
 			) { isAddingMusic = false }
@@ -49,7 +48,6 @@ fun AllMusicTab(
 				addYtMusicViewModel
 			) { isAddingYtMusic = false }
 		} else {
-			musicListViewModel.resetMusicList()
 			MusicListScreen(
 				musicListViewModel,
 				playbackViewModel,
