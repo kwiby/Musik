@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,15 +33,12 @@ fun UpdateYtDlpOption(
 		// --===--  Current Version  --===--
 		Row {
 			Text(
-				text = stringResource(R.string.settings_update_ytdlp_option_cur_version),
+				text = stringResource(R.string.settings_update_ytdlp_option_cur_version) + " ",
 				color = MaterialTheme.colorScheme.onSecondary,
 				style = MaterialTheme.typography.labelLarge.copy(
 					fontWeight = FontWeight.W400
 				)
 			)
-
-			Spacer(Modifier.width(dimensionResource(R.dimen.x_small_padding)))
-
 			Text(
 				text = if (ytDlpVersion == "UNKNOWN") {
 					dataStoreYtDlpVersion ?: "UNKNOWN"

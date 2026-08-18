@@ -12,16 +12,22 @@ private const val LOG_TAG = "OfflineMusicStatsRepository"
 class OfflineMusicStatsRepository(
 	private val musicStatsDao: MusicStatsDao
 ) : MusicStatsRepository {
-	override fun getStatsByIdStream(id: Long): Flow<AudioFileStats> = musicStatsDao.observeStatsById(id)
-	override suspend fun getStatsById(id: Long): AudioFileStats = musicStatsDao.getStatsById(id)
-	override suspend fun getOverallPlayCount(): Long? = musicStatsDao.getOverallPlayCount()
-	override suspend fun getOverallListenTime(): Long? = musicStatsDao.getOverallListenTime()
+	override fun getStatsByIdStream(id: Long): Flow<AudioFileStats> =
+		musicStatsDao.observeStatsById(id)
+	override suspend fun getStatsById(id: Long): AudioFileStats =
+		musicStatsDao.getStatsById(id)
+	override suspend fun getOverallPlayCount(): Long? =
+		musicStatsDao.getOverallPlayCount()
+	override suspend fun getOverallListenTime(): Long? =
+		musicStatsDao.getOverallListenTime()
 	override suspend fun getStatsOrderedByPlayCountDESC(): List<MusicStats> =
 		musicStatsDao.getStatsOrderedByPlayCountDESC()
 	override suspend fun getStatsOrderedByListenTimeDESC(): List<MusicStats> =
 		musicStatsDao.getStatsOrderedByListenTimeDESC()
-	override suspend fun insertIfAbsent(stats: AudioFileStats) = musicStatsDao.insertIfAbsent(stats)
-	override suspend fun logPlayCount(id: Long) = musicStatsDao.logPlayCount(id)
+	override suspend fun insertIfAbsent(stats: AudioFileStats) =
+		musicStatsDao.insertIfAbsent(stats)
+	override suspend fun logPlayCount(id: Long) =
+		musicStatsDao.logPlayCount(id)
 	override suspend fun logListenTime(id: Long, listenTimeMs: Long) {
 		try {
 			musicStatsDao.logListenTime(id, listenTimeMs)
@@ -29,5 +35,6 @@ class OfflineMusicStatsRepository(
 			Log.w(LOG_TAG, "Skipped music session log for deleted track id=$id")
 		}
 	}
-	override suspend fun deleteMultipleById(ids: Set<Long>) = musicStatsDao.deleteMultipleById(ids)
+	override suspend fun deleteMultipleById(ids: Set<Long>) =
+		musicStatsDao.deleteMultipleById(ids)
 }

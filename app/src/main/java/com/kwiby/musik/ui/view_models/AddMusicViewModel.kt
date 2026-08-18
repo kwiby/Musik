@@ -64,7 +64,7 @@ class AddMusicViewModel(
 	}
 
 	private var loadJob: Job? = null
-	private fun loadAudioFiles() {
+	fun loadAudioFiles() {
 		loadJob?.cancel()
 		_isLoading.value = true
 
@@ -129,6 +129,5 @@ class AddMusicViewModel(
 	fun resetMusicAdding() {
 		clearSelection()
 		clearSearchQuery()
-		loadAudioFiles()
 	}
 }

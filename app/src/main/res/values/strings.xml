@@ -174,16 +174,25 @@
 
     <!-- Playlists Tab -->
     <string name="move_playlists_content_desc">Move playlists</string>
+    <string name="edit_playlist_content_desc">Edit/rename playlist</string>
     <string name="add_playlist_content_desc">Add playlist</string>
     <string name="no_playlists_msg">No playlists added</string>
     <string name="move_playlists">Move playlists</string>
     <string name="edit_playlist_button">Edit playlist</string>
     <string name="remove_playlists_button">Remove playlists</string>
     <string name="add_a_playlist">Create a playlist</string>
+    <string name="rename_the_playlist">Rename the playlist</string>
     <string name="playlist_query_placeholder">Set a playlist name</string>
-    <string name="cancel_playlist_creation">Cancel</string>
-    <string name="confirm_playlist_creation">Confirm</string>
-    <string name="playlist_song_count_text">songs</string>
+    <string name="playlist_dialog_cancel">Cancel</string>
+    <string name="playlist_dialog_confirm">Confirm</string>
+    <string name="playlist_song_count_text">song</string>
+    <string name="playlist_songs_count_text">songs</string>
+    <string name="no_playlist_music_msg">No songs added to playlist</string>
+    <string name="unknown_playlist">Unknown playlist</string>
+    <string name="add_songs">Add songs</string>
+    <string name="no_music_in_all_music_tab_msg">No music added in \"All Music\" tab</string>
+    <string name="add_selected_to_playlists">Add selected songs to playlists</string>
+    <string name="no_playlist_to_add_to_msg">No playlists to add to</string>
 
     <!-- Crash Screen -->
     <string name="crash_title">A CRASH HAS OCCURRED</string>

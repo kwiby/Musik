@@ -2,7 +2,7 @@ package com.kwiby.musik.ui.tabs.playlists.components.info
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +17,7 @@ fun NoPlaylistsMsg() {
 	Column(
 		verticalArrangement = Arrangement.Top,
 		horizontalAlignment = Alignment.CenterHorizontally,
-		modifier = Modifier.offset(y = dimensionResource(R.dimen.no_music_added_offset))
+		modifier = Modifier.padding(vertical = dimensionResource(R.dimen.info_msg_vertical_padding))
 	) {
 		Text(
 			text = stringResource(R.string.no_playlists_msg),

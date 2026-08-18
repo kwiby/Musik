@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.kwiby.musik.R
@@ -38,7 +37,6 @@ import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.PlaylistsViewModel
 import com.kwiby.musik.ui.view_models.StatsViewModel
 import com.kwiby.musik.ui.view_models.Tab
-import com.kwiby.musik.ui.view_models.ViewModelProvider
 import com.kwiby.musik.ui.view_models.toMediaItem
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -48,9 +46,9 @@ fun MainContainer(
 	navViewModel: NavViewModel,
 	playbackViewModel: PlaybackViewModel,
 	modifier: Modifier = Modifier,
-	musicListViewModel: MusicListViewModel = viewModel(factory = ViewModelProvider.Factory),
-	playlistsViewModel: PlaylistsViewModel = viewModel(factory = ViewModelProvider.Factory),
-	statsViewModel: StatsViewModel = viewModel(factory = ViewModelProvider.Factory)
+	musicListViewModel: MusicListViewModel,
+	playlistsViewModel: PlaylistsViewModel,
+	statsViewModel: StatsViewModel
 ) {
 	val isInMusicMoveMode by musicListViewModel.isInMoveMode.collectAsStateWithLifecycle()
 	val queueSyncEvent by musicListViewModel.queueSyncEvent.collectAsStateWithLifecycle()
@@ -64,6 +62,7 @@ fun MainContainer(
 	LaunchedEffect(musicListViewModel, playbackViewModel) {
 		playbackViewModel.onDeadTrackDetected = { ids ->
 			musicListViewModel.deleteTracksByIds(ids)
+			//TODO: Add 'playlistsViewModel.deleteTracksByIds(ids)'
 		}
 	}
 
@@ -90,10 +89,13 @@ fun MainContainer(
 						Tab.ALL_MUSIC -> AllMusicTab(
 							playbackViewModel,
 							musicListViewModel,
-							navViewModel
+							navViewModel,
+							playlistsViewModel
 						)
 						Tab.PLAYLISTS -> PlaylistsTab(
-							playlistsViewModel
+							playlistsViewModel,
+							playbackViewModel,
+							navViewModel
 						)
 						Tab.STATS -> StatsTab(
 							statsViewModel

@@ -14,19 +14,20 @@ import com.kwiby.musik.R
 
 @Composable
 fun LoadingIndicator(
+	modifier: Modifier = Modifier,
 	includeDefaultHeight: Boolean = true,
 	fillMaxSize: Boolean = true
 ) {
 	if (includeDefaultHeight) {
-		Spacer(modifier = Modifier.height(dimensionResource(R.dimen.x_large_padding)))
+		Spacer(Modifier.height(dimensionResource(R.dimen.x_large_padding)))
 	}
 
 	Box(
 		contentAlignment = Alignment.TopCenter,
 		modifier = if (fillMaxSize) {
-			Modifier.fillMaxSize()
+			modifier.fillMaxSize()
 		} else {
-			Modifier
+			modifier
 		}
 	) {
 		CircularProgressIndicator(color = MaterialTheme.colorScheme.onSecondary)

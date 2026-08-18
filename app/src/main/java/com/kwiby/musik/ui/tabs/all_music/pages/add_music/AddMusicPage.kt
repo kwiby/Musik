@@ -65,6 +65,7 @@ fun AddMusicPage(
 		}
 	}
 
+
 	Column(
 		verticalArrangement = Arrangement.Top,
 		horizontalAlignment = Alignment.CenterHorizontally
@@ -75,7 +76,7 @@ fun AddMusicPage(
 		) {
 			// ---===---  Back Button  ---===---
 			Row {
-				Spacer(modifier = Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
+				Spacer(Modifier.width(dimensionResource(R.dimen.buttons_horizontal_padding)))
 
 				CustomIconButton(
 					iconImageVector = Icons.AutoMirrored.Rounded.ArrowBack,

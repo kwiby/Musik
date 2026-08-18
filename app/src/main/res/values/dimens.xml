@@ -32,7 +32,7 @@
     <dimen name="tabs_buttons_padding">25dp</dimen>
     <dimen name="buttons_horizontal_padding">12dp</dimen>
     <dimen name="buttons_vertical_padding">10dp</dimen>
-    <dimen name="no_music_added_offset">75dp</dimen>
+    <dimen name="info_msg_vertical_padding">75dp</dimen>
     <dimen name="horizontal_divider_thickness">0.7dp</dimen>
     <dimen name="horizontal_divider_padding">20dp</dimen>
     <dimen name="vertical_divider_padding">3dp</dimen>
@@ -131,4 +131,5 @@
     <dimen name="add_playlist_dialog_height">100dp</dimen>
     <dimen name="playlist_divider_horizontal_padding">20dp</dimen>
     <dimen name="playlist_list_item_height">45dp</dimen>
+    <dimen name="add_song_dialog_outer_vertical_padding">100dp</dimen>
 </resources>

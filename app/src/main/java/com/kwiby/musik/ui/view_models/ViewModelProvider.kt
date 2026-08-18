@@ -74,7 +74,8 @@ object ViewModelProvider {
 		// --===--  PlaylistsViewModel  --===--
 		initializer {
 			PlaylistsViewModel(
-				playlistsRepo = musikApplication().container.playlistsRepo
+				playlistsRepo = musikApplication().container.playlistsRepo,
+				musicListRepo = musikApplication().container.musicListRepo
 			)
 		}
 	}

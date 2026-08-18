@@ -1,4 +1,4 @@
-package com.kwiby.musik.ui.floating_ui
+package com.kwiby.musik.ui.floating_ui.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,8 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -44,8 +46,8 @@ fun AddPlaylistDialog(
 	onDismiss: () -> Unit
 ) {
 	val focusRequester = remember { FocusRequester() }
-	val query = remember { mutableStateOf("") }
-	val isQueryNotBlank = query.value.isNotBlank()
+	var query by remember { mutableStateOf("") }
+	val isQueryNotBlank = query.isNotBlank()
 
 	LaunchedEffect(Unit) {
 		focusRequester.requestFocus()
@@ -59,7 +61,7 @@ fun AddPlaylistDialog(
 		}
 
 		Surface(
-			shape = MaterialTheme.shapes.small,
+			shape = MaterialTheme.shapes.medium,
 			color = MaterialTheme.colorScheme.secondary,
 			shadowElevation = dimensionResource(R.dimen.x_small_padding)
 		) {
@@ -80,8 +82,8 @@ fun AddPlaylistDialog(
 
 				CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColours()) {
 					TextField(
-						value = query.value,
-						onValueChange = { query.value = it },
+						value = query,
+						onValueChange = { query = it },
 						textStyle = MaterialTheme.typography.bodyLarge,
 						placeholder = {
 							Text(
@@ -124,7 +126,7 @@ fun AddPlaylistDialog(
 						shape = MaterialTheme.shapes.large
 					) {
 						Text(
-							text = stringResource(R.string.cancel_playlist_creation),
+							text = stringResource(R.string.playlist_dialog_cancel),
 							color = MaterialTheme.colorScheme.outline,
 							style = MaterialTheme.typography.bodyLarge
 						)
@@ -133,7 +135,7 @@ fun AddPlaylistDialog(
 					TextButton(
 						onClick = {
 							if (isQueryNotBlank) {
-								playlistsViewModel.addPlaylistButton(query.value)
+								playlistsViewModel.addPlaylistButton(query)
 								onDismiss()
 							}
 						},
@@ -141,7 +143,7 @@ fun AddPlaylistDialog(
 						shape = MaterialTheme.shapes.large
 					) {
 						Text(
-							text = stringResource(R.string.confirm_playlist_creation),
+							text = stringResource(R.string.playlist_dialog_confirm),
 							color = if (isQueryNotBlank) {
 								MaterialTheme.colorScheme.outline
 							} else {

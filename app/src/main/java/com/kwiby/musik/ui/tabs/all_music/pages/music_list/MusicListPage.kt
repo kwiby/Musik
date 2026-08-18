@@ -44,19 +44,22 @@ import com.kwiby.musik.ui.components.ListDivider
 import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.MusicListItem
 import com.kwiby.musik.ui.components.lazyVerticalScrollbar
+import com.kwiby.musik.ui.floating_ui.dialogs.add_to_playlist_dialog.AddToPlaylistDialog
 import com.kwiby.musik.ui.tabs.all_music.components.info.NoMusicMsg
 import com.kwiby.musik.ui.view_models.MusicListViewModel
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
+import com.kwiby.musik.ui.view_models.PlaylistsViewModel
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
-fun MusicListScreen(
+fun MusicListPage(
 	musicListViewModel: MusicListViewModel,
 	playbackViewModel: PlaybackViewModel,
 	navViewModel: NavViewModel,
+	playlistsViewModel: PlaylistsViewModel,
 	onAddMusic: () -> Unit,
 	onAddYtMusic: () -> Unit
 ) {
@@ -80,6 +83,8 @@ fun MusicListScreen(
 		localOrder = list
 	}
 
+	val isAddingToPlaylist by musicListViewModel.isAddingToPlaylist
+
 	DisposableEffect(Unit) {
 		onDispose {
 			musicListViewModel.resetMusicList()
@@ -91,6 +96,14 @@ fun MusicListScreen(
 	LaunchedEffect(isInMoveMode) {
 		if (!isInMoveMode) {
 			localOrder = null
+		}
+	}
+
+
+	// --===-- Add to Playlist Dialog --===--
+	if (isAddingToPlaylist) {
+		AddToPlaylistDialog(playlistsViewModel, musicListViewModel) {
+			musicListViewModel.setIsAddingToPlaylist(false)
 		}
 	}
 
@@ -131,8 +144,16 @@ fun MusicListScreen(
 						iconImageVector = Icons.Rounded.Check,
 						contentDescription = stringResource(R.string.confirm_move_button)
 					) {
-						localOrder?.let { musicListViewModel.setQueueOrder(it) }
-						musicListViewModel.confirmMoveButton(playbackViewModel)
+						localOrder?.let {
+							musicListViewModel.setQueueOrder(it) 
+						}
+
+						scope.launch {
+							musicListViewModel.confirmMoveButton(playbackViewModel)
+							if (lazyListState.firstVisibleItemIndex != 0) {
+								lazyListState.scrollToItem(0)
+							}
+						}
 					}
 
 					// ---===---  Exit Move Mode Button  ---===---
@@ -238,10 +259,14 @@ fun MusicListScreen(
 							MusicListItem(
 								musicDetails = music,
 								isSelected = music.id in selectedIds,
-								onClick = { musicListViewModel.handleTap(music.id) {
-									playbackViewModel.start(music.id)
-								} },
-								onLongClick = { musicListViewModel.handleHold(music.id) },
+								onClick = {
+									musicListViewModel.handleTap(music.id) {
+										playbackViewModel.start(music.id)
+									}
+							    },
+								onLongClick = {
+									musicListViewModel.handleHold(music.id)
+							    },
 								isInMoveMode = isInMoveMode,
 								isInEditMetadataMode = isInEditMetadataMode,
 								onEditMetadataButton = {

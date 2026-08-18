@@ -1,4 +1,4 @@
-package com.kwiby.musik.ui.tabs.all_music.components.info
+package com.kwiby.musik.ui.tabs.playlists.components.info
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,14 +13,14 @@ import androidx.compose.ui.res.stringResource
 import com.kwiby.musik.R
 
 @Composable
-fun NoMusicMsg() {
+fun NoPlaylistMusicMsg() {
 	Column(
 		verticalArrangement = Arrangement.Top,
 		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = Modifier.padding(vertical = dimensionResource(R.dimen.info_msg_vertical_padding))
 	) {
 		Text(
-			text = stringResource(R.string.no_music_msg),
+			text = stringResource(R.string.no_playlist_music_msg),
 			style = MaterialTheme.typography.titleSmall,
 			color = MaterialTheme.colorScheme.onSecondary
 		)

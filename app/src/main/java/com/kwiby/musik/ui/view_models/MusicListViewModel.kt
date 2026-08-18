@@ -43,7 +43,6 @@ class MusicListViewModel(
 		null
 	)
 
-
 	private val _selectedIds = MutableStateFlow<List<Long>>(emptyList())
 	val selectedIds: StateFlow<List<Long>> = _selectedIds.asStateFlow()
 
@@ -97,6 +96,12 @@ class MusicListViewModel(
 		started = SharingStarted.WhileSubscribed(5_000),
 		initialValue = MusicUiState.Loading
 	)
+
+	var isAddingToPlaylist = mutableStateOf(false)
+		private set
+	fun setIsAddingToPlaylist(newBool: Boolean) {
+		isAddingToPlaylist.value = newBool
+	}
 
 
 	private fun clearSelection() {
@@ -213,7 +218,8 @@ class MusicListViewModel(
 	}
 
 	fun addToPlaylistButton() {
-		resetMusicList()
+		//resetMusicList()
+		setIsAddingToPlaylist(true)
 	}
 
 	fun addMusicButton(onAddMusicButtonClick: () -> Unit) {
@@ -231,6 +237,8 @@ class MusicListViewModel(
 	}
 
 	fun resetMusicList() {
+		isAddingToPlaylist.value = false
+
 		clearSelection()
 		setEditMetadataMode(false)
 

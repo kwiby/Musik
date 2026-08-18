@@ -1,4 +1,4 @@
-package com.kwiby.musik.data.databases
+package com.kwiby.musik.data.databases.migrations
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase

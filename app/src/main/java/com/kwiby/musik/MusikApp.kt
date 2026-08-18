@@ -25,10 +25,13 @@ import com.kwiby.musik.ui.screens.edit_metadata.EditMetadataScreen
 import com.kwiby.musik.ui.screens.player.PlayerScreen
 import com.kwiby.musik.ui.screens.settings.SettingsScreen
 import com.kwiby.musik.ui.view_models.EditMetadataViewModel
+import com.kwiby.musik.ui.view_models.MusicListViewModel
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
+import com.kwiby.musik.ui.view_models.PlaylistsViewModel
 import com.kwiby.musik.ui.view_models.Screen
 import com.kwiby.musik.ui.view_models.SettingsViewModel
+import com.kwiby.musik.ui.view_models.StatsViewModel
 import com.kwiby.musik.ui.view_models.ViewModelProvider
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -37,7 +40,10 @@ fun MusikApp(
 	navViewModel: NavViewModel = viewModel(factory = ViewModelProvider.Factory),
 	settingsViewModel: SettingsViewModel = viewModel(factory = ViewModelProvider.Factory),
 	playbackViewModel: PlaybackViewModel = viewModel(factory = ViewModelProvider.Factory),
-	editMetadataViewModel: EditMetadataViewModel = viewModel(factory = ViewModelProvider.Factory)
+	editMetadataViewModel: EditMetadataViewModel = viewModel(factory = ViewModelProvider.Factory),
+	musicListViewModel: MusicListViewModel = viewModel(factory = ViewModelProvider.Factory),
+	playlistsViewModel: PlaylistsViewModel = viewModel(factory = ViewModelProvider.Factory),
+	statsViewModel: StatsViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
 	val permissionStatus = rememberPermissionHandler()
 	if (!permissionStatus.status.isGranted) {
@@ -55,6 +61,9 @@ fun MusikApp(
 					sharedTransitionScope = this@SharedTransitionLayout,
 					navViewModel = navViewModel,
 					playbackViewModel = playbackViewModel,
+					musicListViewModel = musicListViewModel,
+					playlistsViewModel = playlistsViewModel,
+					statsViewModel = statsViewModel,
 					modifier = Modifier.padding(innerPadding)
 				)
 			}

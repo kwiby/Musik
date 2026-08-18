@@ -20,10 +20,10 @@ interface PlaylistDao {
 	suspend fun insertPlaylist(playlist: Playlist)
 
 	@Insert(onConflict = OnConflictStrategy.IGNORE)
-	suspend fun insertPlaylistSong(playlistEntry: PlaylistSong)
+	suspend fun insertPlaylistSongs(playlistEntries: List<PlaylistSong>)
 
-	@Query("DELETE FROM playlist_songs WHERE playlistId = :playlistId AND songId = :songId")
-	suspend fun deletePlaylistSong(playlistId: Long, songId: Long)
+	@Query("DELETE FROM playlist_songs WHERE playlistId = :playlistId AND songId IN (:songIds)")
+	suspend fun deletePlaylistSongs(playlistId: Long, songIds: List<Long>)
 
 	@Update
 	suspend fun updatePlaylists(playlists: List<Playlist>)
@@ -48,6 +48,9 @@ interface PlaylistDao {
 
 
 	// --===-- Public Playlist Functions --===--
+	@Query("UPDATE playlists SET name = :newName WHERE id = :playlistId")
+	suspend fun renamePlaylist(playlistId: Long, newName: String)
+
 	@Transaction
 	suspend fun createPlaylist(name: String) {
 		val nextPos = getPlaylistCount()
@@ -88,20 +91,48 @@ interface PlaylistDao {
 
 	// --===-- Public Song Functions --===--
 	@Transaction
-	suspend fun addSongToPlaylist(playlistId: Long, songId: Long) {
-		val nextPos = getPlaylistSongCount(playlistId)
-		insertPlaylistSong(
+	suspend fun addSongsToPlaylist(playlistId: Long, songIds: List<Long>) {
+		val startPos = getPlaylistSongCount(playlistId)
+		val entries = songIds.mapIndexed { index, songId ->
 			PlaylistSong(
 				playlistId = playlistId,
 				songId = songId,
-				orderPos = nextPos
+				orderPos = startPos + index
 			)
-		)
+		}
+		insertPlaylistSongs(entries)
+
+		val remaining = getPlaylistSongs(playlistId)
+		val reindexed = remaining.mapIndexed { index, entry ->
+			entry.copy(orderPos = index)
+		}
+		updatePlaylistSongs(reindexed)
 	}
 
 	@Transaction
-	suspend fun removeSongFromPlaylist(playlistId: Long, songId: Long) {
-		deletePlaylistSong(playlistId, songId)
+	suspend fun addSongsToPlaylists(playlistIds: List<Long>, songIds: List<Long>) {
+		for (playlistId in playlistIds) {
+			val startPos = getPlaylistSongCount(playlistId)
+			val entries = songIds.mapIndexed { index, songId ->
+				PlaylistSong(
+					playlistId = playlistId,
+					songId = songId,
+					orderPos = startPos + index
+				)
+			}
+			insertPlaylistSongs(entries)
+
+			val remaining = getPlaylistSongs(playlistId)
+			val reindexed = remaining.mapIndexed { index, entry ->
+				entry.copy(orderPos = index)
+			}
+			updatePlaylistSongs(reindexed)
+		}
+	}
+
+	@Transaction
+	suspend fun removeSongsFromPlaylist(playlistId: Long, songIds: List<Long>) {
+		deletePlaylistSongs(playlistId, songIds)
 		val remaining = getPlaylistSongs(playlistId)
 		val reindexed = remaining.mapIndexed { index, entry ->
 			entry.copy(orderPos = index)

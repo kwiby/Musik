@@ -15,12 +15,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kwiby.musik.R
 import com.kwiby.musik.ui.tabs.all_music.pages.add_music.AddMusicPage
 import com.kwiby.musik.ui.tabs.all_music.pages.add_yt_music.AddYtMusicPage
-import com.kwiby.musik.ui.tabs.all_music.pages.music_list.MusicListScreen
+import com.kwiby.musik.ui.tabs.all_music.pages.music_list.MusicListPage
 import com.kwiby.musik.ui.view_models.AddMusicViewModel
 import com.kwiby.musik.ui.view_models.AddYtMusicViewModel
 import com.kwiby.musik.ui.view_models.MusicListViewModel
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
+import com.kwiby.musik.ui.view_models.PlaylistsViewModel
 import com.kwiby.musik.ui.view_models.ViewModelProvider
 
 @Composable
@@ -28,6 +29,7 @@ fun AllMusicTab(
 	playbackViewModel: PlaybackViewModel,
 	musicListViewModel: MusicListViewModel,
 	navViewModel: NavViewModel,
+	playlistsViewModel: PlaylistsViewModel,
 	addMusicViewModel: AddMusicViewModel = viewModel(factory = ViewModelProvider.Factory),
 	addYtMusicViewModel: AddYtMusicViewModel = viewModel(factory = ViewModelProvider.Factory)
 ) {
@@ -40,6 +42,7 @@ fun AllMusicTab(
 		Spacer(Modifier.height(dimensionResource(R.dimen.tabs_buttons_padding)))
 
 		if (isAddingMusic) {
+			addMusicViewModel.loadAudioFiles()
 			AddMusicPage(
 				addMusicViewModel
 			) { isAddingMusic = false }
@@ -48,10 +51,11 @@ fun AllMusicTab(
 				addYtMusicViewModel
 			) { isAddingYtMusic = false }
 		} else {
-			MusicListScreen(
+			MusicListPage(
 				musicListViewModel,
 				playbackViewModel,
 				navViewModel,
+				playlistsViewModel,
 				{ isAddingMusic = true },
 				{ isAddingYtMusic = true }
 			)

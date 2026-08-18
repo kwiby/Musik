@@ -1,57 +1,92 @@
 package com.kwiby.musik.ui.view_models
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kwiby.musik.data.data_classes.AudioFile
+import com.kwiby.musik.data.data_classes.MusicDetails
 import com.kwiby.musik.data.data_classes.Playlist
 import com.kwiby.musik.data.data_classes.PlaylistWithSongCount
+import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
 import com.kwiby.musik.data.repositories.playlists.OfflinePlaylistsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+private const val LOG_TAG = "PlaylistsViewModel"
+
 class PlaylistsViewModel(
-	private val playlistsRepo: OfflinePlaylistsRepository
+	private val playlistsRepo: OfflinePlaylistsRepository,
+	private val musicListRepo: OfflineMusicListRepository
 ) : ViewModel() {
-	var isLoading = mutableStateOf(true)
+	var isLoadingPlaylists = mutableStateOf(true)
+		private set
+	var isLoadingSongs = mutableStateOf(true)
+		private set
+	var isLoadingAllMusic = mutableStateOf(true)
 		private set
 
 	val playlists: StateFlow<List<PlaylistWithSongCount>> =
 		playlistsRepo.getAllPlaylistsWithSongCounts()
-			.onEach { isLoading.value = false }
+			.onEach { isLoadingPlaylists.value = false }
 			.stateIn(
 				scope = viewModelScope,
 				started = SharingStarted.WhileSubscribed(5_000),
 				initialValue = emptyList()
 			)
-	var songs = mutableStateOf<List<AudioFile>?>(null)
+
+	var openedPlaylistId = mutableStateOf<Long?>(null)
 		private set
+	val openedPlaylist: StateFlow<PlaylistWithSongCount?> =
+		combine(playlists, snapshotFlow { openedPlaylistId.value }) { list, id ->
+			id?.let { playlistId -> list.find { it.playlist.id == playlistId } }
+		}.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.WhileSubscribed(5_000),
+			initialValue = null
+		)
+	var songs: StateFlow<List<MusicDetails>>? = null
+		private set
+	val allMusic: StateFlow<List<MusicDetails>> =
+		musicListRepo.getAllAudioFilesStream()
+			.map { list -> list.map { it.toMusicDetails() } }
+			.onEach { isLoadingAllMusic.value = false }
+			.stateIn(
+				scope = viewModelScope,
+				started = SharingStarted.WhileSubscribed(5_000),
+				initialValue = emptyList()
+			)
 
 	var isAddingPlaylist = mutableStateOf(false)
+		private set
+	var isAddingSongs = mutableStateOf(false)
 		private set
 
 	var selectedPlaylists = mutableStateOf<List<Playlist>>(emptyList())
 		private set
-	var selectedSongs = mutableStateOf<List<AudioFile>>(emptyList())
+	var selectedSongIds = mutableStateOf<List<Long>>(emptyList())
 		private set
 
 	val isInPlaylistSelectionMode: Boolean
 		get() = selectedPlaylists.value.isNotEmpty()
-	var isInMoveMode = mutableStateOf(false)
+	val isInSongSelectionMode: Boolean
+		get() = selectedSongIds.value.isNotEmpty()
+	var isInPlaylistMoveMode = mutableStateOf(false)
+		private set
+	var isInSongMoveMode = mutableStateOf(false)
 		private set
 	var isInEditPlaylistMode = mutableStateOf(false)
 		private set
+	var isInEditMetadataMode = mutableStateOf(false)
+		private set
 
-
-	private fun disableAllModes() {
-		selectedPlaylists.value = emptyList()
-		isInMoveMode.value = false
-		isInEditPlaylistMode.value = false
-	}
 
 	private fun updateSelectedPlaylists(playlist: Playlist) {
 		selectedPlaylists.value = if (playlist in selectedPlaylists.value) {
@@ -61,9 +96,54 @@ class PlaylistsViewModel(
 		}
 	}
 
-	fun changeMoveMode(newBool: Boolean) {
+	private fun updateSelectedSongIds(songId: Long) {
+		selectedSongIds.value = if (songId in selectedSongIds.value) {
+			selectedSongIds.value - songId
+		} else {
+			selectedSongIds.value + songId
+		}
+	}
+
+	private fun setEditMetadataMode(bool: Boolean) {
+		isInEditMetadataMode.value = bool
+	}
+
+	private fun openPlaylist(playlistId: Long) {
+		isLoadingSongs.value = true
+
+		openedPlaylistId.value = playlistId
+		songs = playlistsRepo.getAllSongsInPlaylist(playlistId)
+			.map { list -> list.map { it.toMusicDetails() } }
+			.onEach { isLoadingSongs.value = false }
+			.stateIn(
+				scope = viewModelScope,
+				started = SharingStarted.WhileSubscribed(5_000),
+				initialValue = emptyList()
+			)
+	}
+
+	fun disableAllModes() {
+		selectedPlaylists.value = emptyList()
+		selectedSongIds.value = emptyList()
+		isInPlaylistMoveMode.value = false
+		isInSongMoveMode.value = false
+		isInEditPlaylistMode.value = false
+		isInEditMetadataMode.value = false
+	}
+
+	fun closePlaylist() {
+		openedPlaylistId.value = null
+		songs = null
+	}
+
+	fun setPlaylistMoveMode(newBool: Boolean) {
 		disableAllModes()
-		isInMoveMode.value = newBool
+		isInPlaylistMoveMode.value = newBool
+	}
+
+	fun setSongMoveMode(newBool: Boolean) {
+		disableAllModes()
+		isInSongMoveMode.value = newBool
 	}
 
 	fun toggleEditPlaylistMode() {
@@ -72,13 +152,23 @@ class PlaylistsViewModel(
 		isInEditPlaylistMode.value = !curModeBool
 	}
 
-	fun changeIsAddingPlaylist(newBool: Boolean) {
+	fun setIsAddingPlaylist(newBool: Boolean) {
 		isAddingPlaylist.value = newBool
 	}
 
+	fun setIsAddingSongs(newBool: Boolean) {
+		isAddingSongs.value = newBool
+	}
+
 	fun addPlaylistButton(name: String) {
-		viewModelScope.launch(Dispatchers.IO) {
+		viewModelScope.launch {
 			playlistsRepo.createPlaylist(name.trim())
+		}
+	}
+
+	fun renamePlaylistButton(playlistId: Long, newName: String) {
+		viewModelScope.launch {
+			playlistsRepo.renamePlaylist(playlistId, newName.trim())
 		}
 	}
 
@@ -97,7 +187,7 @@ class PlaylistsViewModel(
 		if (isInPlaylistSelectionMode) {
 			updateSelectedPlaylists(playlist)
 		} else {
-			/* onOpenPlaylist() */
+			openPlaylist(playlist.id)
 		}
 	}
 
@@ -111,10 +201,84 @@ class PlaylistsViewModel(
 		}
 	}
 
-	fun reset() {
-		songs.value = null
+	fun reorderSongsInPlaylist(newIdOrder: List<Long>) {
+		if (openedPlaylist.value == null) {
+			Log.e(LOG_TAG, "The opened playlist is null")
+			return
+		}
+
+		viewModelScope.launch {
+			playlistsRepo.reorderSongsInPlaylist(openedPlaylist.value!!.playlist.id, newIdOrder)
+		}
+	}
+
+	fun handleSongTap(id: Long, onPlayMusic: () -> Unit) {
+		if (isInSongSelectionMode) {
+			updateSelectedSongIds(id)
+		} else {
+			onPlayMusic()
+		}
+	}
+
+	fun handleSongHold(id: Long) {
+		updateSelectedSongIds(id)
+	}
+
+	fun enterEditMetadataModeButton() {
+		disableAllModes()
+		setEditMetadataMode(true)
+	}
+
+	fun exitEditMetadataModeButton() {
+		setEditMetadataMode(false)
+	}
+
+	fun editMetadataButton(navViewModel: NavViewModel, contentUri: Uri, id: Long) {
+		navViewModel.navToScreen(Screen.EditMetadata(contentUri, id))
+	}
+
+	fun confirmSongMoveButton(playbackViewModel: PlaybackViewModel) {
+		if (openedPlaylist.value == null || songs == null) {
+			Log.e(LOG_TAG, "Opened playlist and/or songs is null")
+			return
+		}
+		val queue = songs!!.value
+
+		playbackViewModel.setQueue(queue.map { it.toMediaItem() })
+
+		setSongMoveMode(false)
+
+		viewModelScope.launch(Dispatchers.IO) {
+			musicListRepo.updateMultipleOrderPos(queue.map { it.id })
+		}
+	}
+
+	fun addSongsToPlaylist(playlistId: Long, songIds: List<Long>) {
+		viewModelScope.launch {
+			playlistsRepo.addSongsToPlaylist(playlistId, songIds)
+		}
+	}
+
+	fun addSongsToPlaylists(playlistIds: List<Long>, songIds: List<Long>) {
+		viewModelScope.launch {
+			playlistsRepo.addSongsToPlaylists(playlistIds, songIds)
+		}
+	}
+
+	fun removeSongsFromPlaylist(playlistId: Long, songs: List<Long>) {
+		viewModelScope.launch {
+			playlistsRepo.removeSongsFromPlaylist(playlistId, songs)
+		}
+	}
+
+	fun resetPlaylists() {
 		disableAllModes()
 		selectedPlaylists.value = emptyList()
-		selectedSongs.value = emptyList()
+	}
+
+	fun resetSongs() {
+		openedPlaylistId.value = null
+		songs = null
+		selectedSongIds.value = emptyList()
 	}
 }

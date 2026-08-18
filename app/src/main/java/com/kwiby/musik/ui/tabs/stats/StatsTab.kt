@@ -82,15 +82,12 @@ fun StatsTab(
 				Spacer(Modifier.width(dimensionResource(R.dimen.x_small_padding)))
 
 				Text(
-					text = stringResource(R.string.stats_sorting_by_text),
+					text = stringResource(R.string.stats_sorting_by_text) + " ",
 					color = MaterialTheme.colorScheme.onSecondary,
 					style = MaterialTheme.typography.labelLarge.copy(
 						fontWeight = FontWeight.W400
 					)
 				)
-
-				Spacer(Modifier.width(dimensionResource(R.dimen.x_small_padding)))
-
 				Text(
 					text = statsViewModel.selectedOrderRule,
 					color = MaterialTheme.colorScheme.onSecondary,
