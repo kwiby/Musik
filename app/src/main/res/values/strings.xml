@@ -189,7 +189,7 @@
     <string name="playlist_songs_count_text">songs</string>
     <string name="no_playlist_music_msg">No songs added to playlist</string>
     <string name="unknown_playlist">Unknown playlist</string>
-    <string name="add_songs">Add songs</string>
+    <string name="add_songs">Add songs to playlist</string>
     <string name="no_music_in_all_music_tab_msg">No music added in \"All Music\" tab</string>
     <string name="add_selected_to_playlists">Add selected songs to playlists</string>
     <string name="no_playlist_to_add_to_msg">No playlists to add to</string>

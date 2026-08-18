@@ -253,7 +253,7 @@ class YtDlp(
 		if (doConvertMp3) {
 			request.addOption("--audio-format", "mp3")
 		}
-		request.addOption("--parse-metadata", "%(title)s:%(meta_album)s")
+		//request.addOption("--parse-metadata", "%(title)s:%(meta_album)s")
 		request.addOption("--add-metadata")
 		request.addOption("--no-mtime")
 		request.addOption("--embed-thumbnail")

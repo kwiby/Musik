@@ -137,8 +137,7 @@ fun AddToPlaylistDialog(
 										if (item != allPlaylists.lastOrNull()) {
 											ListDivider(
 												widthFraction = 1f,
-												horizontalPadding =
-													dimensionResource(R.dimen.playlist_divider_horizontal_padding)
+												horizontalPadding = dimensionResource(R.dimen.x_small_padding)
 											)
 										}
 									}

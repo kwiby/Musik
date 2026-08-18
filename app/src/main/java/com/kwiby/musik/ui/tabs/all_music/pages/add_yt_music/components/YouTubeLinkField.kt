@@ -58,7 +58,7 @@ fun YouTubeLinkField(
 				focusedIndicatorColor = Color.Transparent,
 				unfocusedIndicatorColor = Color.Transparent
 			),
-			keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+			keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
 			keyboardActions = KeyboardActions(
 				onSearch = {
 					focusManager.clearFocus()
