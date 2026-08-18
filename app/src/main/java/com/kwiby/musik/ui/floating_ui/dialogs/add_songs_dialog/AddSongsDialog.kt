@@ -40,7 +40,9 @@ import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.lazyVerticalScrollbar
 import com.kwiby.musik.ui.floating_ui.dialogs.add_songs_dialog.components.info.NoMusicInAllMusicTabMsg
 import com.kwiby.musik.ui.tabs.playlists.components.AddableSongListItem
+import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.PlaylistsViewModel
+import com.kwiby.musik.ui.view_models.toMediaItem
 
 private const val LOG_TAG = "AddSongDialog"
 
@@ -48,9 +50,11 @@ private const val LOG_TAG = "AddSongDialog"
 @Composable
 fun AddSongsDialog(
 	playlistsViewModel: PlaylistsViewModel,
+	playbackViewModel: PlaybackViewModel,
 	onDismiss: () -> Unit
 ) {
-	if (playlistsViewModel.openedPlaylistId.value == null) {
+	val openedPlaylistId by playlistsViewModel.openedPlaylistId
+	if (openedPlaylistId == null) {
 		Log.e(LOG_TAG, "Opened playlist id is null")
 		return
 	}
@@ -175,6 +179,17 @@ fun AddSongsDialog(
 							onClick = {
 								if (isSelectedSongIdsNotEmpty) {
 									playlistsViewModel.addSongsToPlaylist(
+										{ newQueueItems ->
+											playbackViewModel.setQueue(
+												items = newQueueItems.map { it.toMediaItem() },
+												queueSource = PlaybackViewModel.QueueSource(
+													playbackSource = PlaybackViewModel.PlaybackSource.PLAYLIST,
+													sourceId = openedPlaylistId!!
+												),
+												isStarting = false,
+												isReordering = true
+											)
+										},
 										playlistsViewModel.openedPlaylistId.value!!,
 										selectedSongIds
 									)

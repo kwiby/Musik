@@ -11,7 +11,6 @@ import com.kwiby.musik.data.data_classes.Playlist
 import com.kwiby.musik.data.data_classes.PlaylistWithSongCount
 import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
 import com.kwiby.musik.data.repositories.playlists.OfflinePlaylistsRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -24,7 +23,7 @@ private const val LOG_TAG = "PlaylistsViewModel"
 
 class PlaylistsViewModel(
 	private val playlistsRepo: OfflinePlaylistsRepository,
-	private val musicListRepo: OfflineMusicListRepository
+	musicListRepo: OfflineMusicListRepository
 ) : ViewModel() {
 	var isLoadingPlaylists = mutableStateOf(true)
 		private set
@@ -237,23 +236,40 @@ class PlaylistsViewModel(
 		navViewModel.navToScreen(Screen.EditMetadata(contentUri, id))
 	}
 
-	fun confirmSongMoveButton(playbackViewModel: PlaybackViewModel) {
+	fun confirmSongMoveButton(
+		playbackViewModel: PlaybackViewModel,
+		localOrder: List<MusicDetails>
+	) {
 		if (openedPlaylist.value == null || songs == null) {
 			Log.e(LOG_TAG, "Opened playlist and/or songs is null")
 			return
 		}
-		val queue = songs!!.value
 
-		playbackViewModel.setQueue(queue.map { it.toMediaItem() })
-
-		setSongMoveMode(false)
-
-		viewModelScope.launch(Dispatchers.IO) {
-			musicListRepo.updateMultipleOrderPos(queue.map { it.id })
-		}
+		playbackViewModel.setQueue(
+			items = localOrder.map { it.toMediaItem() },
+			queueSource = PlaybackViewModel.QueueSource(
+				playbackSource = PlaybackViewModel.PlaybackSource.PLAYLIST,
+				sourceId = openedPlaylistId.value!!
+			),
+			isStarting = false,
+			isReordering = true
+		)
 	}
 
-	fun addSongsToPlaylist(playlistId: Long, songIds: List<Long>) {
+	fun addSongsToPlaylist(
+		setQueueFunc: (List<MusicDetails>) -> Unit,
+		playlistId: Long,
+		songIds: List<Long>
+	) {
+		val currentSongs = songs?.value ?: emptyList()
+		val currentIds = currentSongs.map { it.id }.toSet()
+		val allMusicById = allMusic.value.associateBy { it.id }
+		val addedSongs = songIds
+			.filter { it !in currentIds }
+			.mapNotNull { allMusicById[it] }
+		val newQueueItems = currentSongs + addedSongs
+		setQueueFunc(newQueueItems)
+
 		viewModelScope.launch {
 			playlistsRepo.addSongsToPlaylist(playlistId, songIds)
 		}
@@ -265,7 +281,12 @@ class PlaylistsViewModel(
 		}
 	}
 
-	fun removeSongsFromPlaylist(playlistId: Long, songs: List<Long>) {
+	fun removeSongsFromPlaylist(
+		removeFromQueueFunc: (List<Long>) -> Unit,
+		playlistId: Long,
+		songs: List<Long>
+	) {
+		removeFromQueueFunc(songs)
 		viewModelScope.launch {
 			playlistsRepo.removeSongsFromPlaylist(playlistId, songs)
 		}

@@ -198,13 +198,18 @@ class PlaybackViewModel(
 
 	// ================================================================================================
 	// --===--  Player Queue Controls  --===--
-	fun setQueue(items: List<MediaItem>) {
-		val controller = mediaController
-		if (controller == null) {
-			pendingQueue = items
-			return
-		}
+	enum class PlaybackSource {
+		MUSIC_LIST,
+		PLAYLIST
+	}
+	data class QueueSource(
+		val playbackSource: PlaybackSource,
+		val sourceId: Long
+	)
+	private var activeQueueSource: QueueSource? = null
+	private var pendingQueueSource: QueueSource? = null
 
+	private fun reorderQueue(controller: MediaController, items: List<MediaItem>) {
 		val currentIds = (0 until controller.mediaItemCount).map {
 			controller.getMediaItemAt(it).mediaId
 		}
@@ -253,6 +258,44 @@ class PlaybackViewModel(
 		}*/
 	}
 
+	fun setQueue(
+		items: List<MediaItem>,
+		queueSource: QueueSource,
+		isStarting: Boolean,
+		isReordering: Boolean,
+		startPlayId: Long? = null
+	) {
+		if (isStarting && queueSource == activeQueueSource) return
+		if (isReordering && queueSource != activeQueueSource) return
+
+		val controller = mediaController
+		if (controller == null) {
+			pendingQueue = items
+			pendingQueueSource = queueSource
+			pendingPlayId = startPlayId
+
+			return
+		}
+
+		Log.d("debug", "queueSource=$queueSource  |  activeQueueSource=$activeQueueSource")
+		if (queueSource != activeQueueSource) {
+			Log.d("debug", "replacing")
+			activeQueueSource = queueSource
+			controller.setMediaItems(items, true)
+			controller.prepare()
+			startPlayId?.let {
+				start(
+					id = it,
+					items = items,
+					queueSource = queueSource
+				)
+			}
+		} else {
+			Log.d("debug", "reordering")
+			reorderQueue(controller, items)
+		}
+	}
+
 	fun removeFromQueue(ids: List<Long>) {
 		val controller = mediaController ?: return
 
@@ -268,6 +311,11 @@ class PlaybackViewModel(
 		if (currentlyPlayingRemoved) {
 			controller.pause()
 			//isPlaying.value = false
+		}
+
+		if (controller.mediaItemCount == 0) {
+			currentTrack.value = null
+			activeQueueSource = null
 		}
 	}
 
@@ -314,7 +362,18 @@ class PlaybackViewModel(
 		hasNext.value = mediaController?.hasNextMediaItem() ?: false
 	}
 
-	fun start(id: Long) {
+	fun start(
+		id: Long,
+		items: List<MediaItem>,
+		queueSource: QueueSource
+	) {
+		setQueue(
+			items = items,
+			queueSource = queueSource,
+			isStarting = true,
+			isReordering = false
+		)
+
 		val controller = mediaController
 
 		if (controller != null) {
@@ -430,8 +489,20 @@ class PlaybackViewModel(
 				observePlayer()
 
 				pendingQueue?.let { queue ->
+					val pendingQueueSource = pendingQueueSource
+
 					pendingQueue = null
-					setQueue(queue)
+					this.pendingQueueSource = null
+
+					if (pendingQueueSource != null) {
+						setQueue(
+							items = queue,
+							queueSource = pendingQueueSource,
+							isStarting = false,
+							isReordering = false,
+							startPlayId = pendingPlayId
+						)
+					}
 				}
 
 				if (player.mediaItemCount == 0) {

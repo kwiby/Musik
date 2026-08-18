@@ -50,6 +50,7 @@ import com.kwiby.musik.ui.view_models.MusicListViewModel
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.PlaylistsViewModel
+import com.kwiby.musik.ui.view_models.toMediaItem
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -255,7 +256,14 @@ fun MusicListPage(
 								isSelected = music.id in selectedIds,
 								onClick = {
 									musicListViewModel.handleTap(music.id) {
-										playbackViewModel.start(music.id)
+										playbackViewModel.start(
+											id = music.id,
+											items = displayList.map { it.toMediaItem() },
+											queueSource = PlaybackViewModel.QueueSource(
+												playbackSource = PlaybackViewModel.PlaybackSource.MUSIC_LIST,
+												sourceId = 0L // Music list source does not need unique source ids
+											)
+										)
 									}
 							    },
 								onLongClick = {

@@ -55,7 +55,15 @@ fun MainContainer(
 	LaunchedEffect(queueSyncEvent) {
 		if (!isInMusicMoveMode) {
 			queueSyncEvent?.let { q ->
-				playbackViewModel.setQueue(q.map { it.toMediaItem() })
+				playbackViewModel.setQueue(
+					items = q.map { it.toMediaItem() },
+					queueSource = PlaybackViewModel.QueueSource(
+						playbackSource = PlaybackViewModel.PlaybackSource.MUSIC_LIST,
+						sourceId = 0L // Music list source does not need unique source ids
+					),
+					isStarting = false,
+					isReordering = true
+				)
 			}
 		}
 	}

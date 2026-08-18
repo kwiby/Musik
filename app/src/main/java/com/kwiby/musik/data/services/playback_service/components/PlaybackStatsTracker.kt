@@ -81,17 +81,13 @@ class PlaybackStatsTracker(
 		}
 
 		updateJob = scope.launch(Dispatchers.IO) {
-			Log.d("debug", "Update job launched (curSessionTrackId=$curSessionTrackId - wasSessionPlayCountLogged=$wasSessionPlayCountLogged - totalListenTime=$totalListenTime - playCountThresholdMs=$playCountThresholdMs - totalDuration=$totalDuration)")
-
 			try {
 				if (doLogPlayCount) {
-					Log.d("debug", "Incrementing play count")
 					musicStatsRepo.logPlayCount(curSessionTrackId)
 				}
 				musicStatsRepo.logListenTime(curSessionTrackId, timeElapsedSinceLastUpdate)
-				Log.d("debug", "DB write SUCCEEDED for $curSessionTrackId, delta=$timeElapsedSinceLastUpdate")
 			} catch (e: Exception) {
-				Log.e("debug", "DB write FAILED for $curSessionTrackId, delta=$timeElapsedSinceLastUpdate", e)
+				Log.e(LOG_TAG, "DB write FAILED for $curSessionTrackId, delta=$timeElapsedSinceLastUpdate", e)
 			}
 		}
 	}
@@ -143,7 +139,6 @@ class PlaybackStatsTracker(
 				delay(updateDelayMs)
 
 				if (player.isPlaying) {
-					Log.d("debug", "Automatically updating database")
 					sessionMutex.withLock {
 						updateDB()
 					}
@@ -175,16 +170,13 @@ class PlaybackStatsTracker(
 			scope.launch {
 				sessionMutex.withLock {
 					if (getCurTrackId() == sessionTrackId) {
-						Log.d("debug", "Media has played")
 						sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
 					} else {
-						Log.d("debug", "Session has started (sesh=$sessionTrackId - new=${getCurTrackId()})")
 						startSessionInternal()
 					}
 				}
 			}
 		} else {
-			Log.d("debug", "Media has paused (updating database)")
 			scope.launch {
 				sessionMutex.withLock {
 					updateDB()
@@ -195,7 +187,6 @@ class PlaybackStatsTracker(
 
 	override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 		if (mediaItem == null) {
-			Log.d("debug", "Media item is null, resetting session")
 			scope.launch {
 				sessionMutex.withLock {
 					flushInternal()
@@ -205,13 +196,6 @@ class PlaybackStatsTracker(
 
 			return
 		}
-
-		/*
-		if (sessionTrackId != null) {
-			Log.d("debug", "Media has transitioned (updating database & starting session)")
-
-		}
-		 */
 
 		scope.launch {
 			sessionMutex.withLock {
@@ -227,7 +211,6 @@ class PlaybackStatsTracker(
 
 	override fun onPlaybackStateChanged(playbackState: Int) {
 		if (playbackState == Player.STATE_ENDED && sessionTrackId != null) {
-			Log.d("debug", "Playback state changed (updating database)")
 			scope.launch {
 				sessionMutex.withLock {
 					flushInternal()

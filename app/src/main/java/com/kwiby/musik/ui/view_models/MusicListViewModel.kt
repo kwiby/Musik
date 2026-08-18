@@ -179,7 +179,15 @@ class MusicListViewModel(
 
 		val queue = _queue.value
 
-		playbackViewModel.setQueue(queue.map { it.toMediaItem() })
+		playbackViewModel.setQueue(
+			items = queue.map { it.toMediaItem() },
+			queueSource = PlaybackViewModel.QueueSource(
+				playbackSource = PlaybackViewModel.PlaybackSource.MUSIC_LIST,
+				sourceId = 0L // Music list source does not need unique source ids
+			),
+			isStarting = false,
+			isReordering = true
+		)
 		_queueBeforeMove = emptyList()
 
 		setMoveMode(false)

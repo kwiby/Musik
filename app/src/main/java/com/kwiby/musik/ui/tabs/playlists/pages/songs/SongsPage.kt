@@ -32,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +55,8 @@ import com.kwiby.musik.ui.tabs.playlists.components.info.NoPlaylistMusicMsg
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.PlaylistsViewModel
+import com.kwiby.musik.ui.view_models.toMediaItem
+import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -68,10 +71,11 @@ fun SongsPage(
 ) {
 	val isLoading by playlistsViewModel.isLoadingSongs
 
+	val openedPlaylistId by playlistsViewModel.openedPlaylistId
 	val openedPlaylist by playlistsViewModel.openedPlaylist.collectAsStateWithLifecycle()
 	val songsState = playlistsViewModel.songs?.collectAsStateWithLifecycle()
-	if (openedPlaylist == null || songsState == null) {
-		Log.e(LOG_TAG, "The opened playlist and/or songs state is null")
+	if (openedPlaylistId == null || openedPlaylist == null || songsState == null) {
+		Log.e(LOG_TAG, "The opened playlist id, opened playlist, and/or songs state is null")
 		return
 	}
 
@@ -82,6 +86,7 @@ fun SongsPage(
 	var localOrder by remember { mutableStateOf<List<MusicDetails>?>(null) }
 	val currentSongs = localOrder ?: songs
 	val lazyListState = rememberLazyListState()
+	val scope = rememberCoroutineScope()
 	val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
 		localOrder = (localOrder ?: songs).toMutableList().apply {
 			add(to.index, removeAt(from.index))
@@ -222,14 +227,19 @@ fun SongsPage(
 							iconImageVector = Icons.Rounded.Check,
 							contentDescription = stringResource(R.string.confirm_move_button)
 						) {
-							localOrder?.let { newOrder ->
-								playlistsViewModel.reorderSongsInPlaylist(newOrder.map { it.id })
-								/*
-								localOrder?.let { musicListViewModel.setQueueOrder(it) }
-								musicListViewModel.confirmMoveButton(playbackViewModel)
-								 */
+							scope.launch {
+								localOrder?.let { newOrder ->
+									playlistsViewModel.reorderSongsInPlaylist(
+										newOrder.map { it.id }
+									)
+									playlistsViewModel.confirmSongMoveButton(
+										playbackViewModel,
+										newOrder
+									)
+								}
+
+								playlistsViewModel.setSongMoveMode(false)
 							}
-							playlistsViewModel.setSongMoveMode(false)
 						}
 
 						// ---===---  Exit Move Mode Button  ---===---
@@ -256,6 +266,7 @@ fun SongsPage(
 							contentDescription = stringResource(R.string.remove_music_button)
 						) {
 							playlistsViewModel.removeSongsFromPlaylist(
+								playbackViewModel::removeFromQueue,
 								openedPlaylist!!.playlist.id,
 								selectedSongIds
 							)
@@ -306,7 +317,14 @@ fun SongsPage(
 									isSelected = item.id in selectedSongIds,
 									onClick = {
 										playlistsViewModel.handleSongTap(item.id) {
-											playbackViewModel.start(item.id)
+											playbackViewModel.start(
+												id = item.id,
+												items = currentSongs.map { it.toMediaItem() },
+												queueSource = PlaybackViewModel.QueueSource(
+													playbackSource = PlaybackViewModel.PlaybackSource.PLAYLIST,
+													sourceId = openedPlaylistId!!
+												)
+											)
 										}
 									},
 									onLongClick = {
