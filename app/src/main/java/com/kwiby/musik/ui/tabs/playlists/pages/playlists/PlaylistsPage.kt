@@ -136,10 +136,6 @@ fun PlaylistsPage(
 								playlistsViewModel.reorderPlaylists(newOrder.map { it.playlist })
 							}
 							playlistsViewModel.setPlaylistMoveMode(false)
-
-							if (lazyListState.firstVisibleItemIndex != 0) {
-								lazyListState.scrollToItem(0)
-							}
 						}
 					}
 

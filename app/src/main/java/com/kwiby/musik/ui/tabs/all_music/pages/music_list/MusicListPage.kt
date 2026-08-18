@@ -147,13 +147,7 @@ fun MusicListPage(
 						localOrder?.let {
 							musicListViewModel.setQueueOrder(it) 
 						}
-
-						scope.launch {
-							musicListViewModel.confirmMoveButton(playbackViewModel)
-							if (lazyListState.firstVisibleItemIndex != 0) {
-								lazyListState.scrollToItem(0)
-							}
-						}
+						musicListViewModel.confirmMoveButton(playbackViewModel)
 					}
 
 					// ---===---  Exit Move Mode Button  ---===---
