@@ -266,7 +266,7 @@ class PlaybackViewModel(
 		startPlayId: Long? = null
 	) {
 		if (isStarting && queueSource == activeQueueSource) return
-		if (isReordering && queueSource != activeQueueSource) return
+		if (isReordering && queueSource != activeQueueSource && activeQueueSource != null) return
 
 		val controller = mediaController
 		if (controller == null) {

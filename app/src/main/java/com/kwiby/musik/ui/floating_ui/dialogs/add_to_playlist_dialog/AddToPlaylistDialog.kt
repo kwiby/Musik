@@ -47,7 +47,8 @@ import com.kwiby.musik.ui.view_models.PlaylistsViewModel
 fun AddToPlaylistDialog(
 	playlistsViewModel: PlaylistsViewModel,
 	musicListViewModel: MusicListViewModel,
-	onDismiss: () -> Unit
+	onDismiss: () -> Unit,
+	onConfirm: () -> Unit
 ) {
 	val allPlaylists by playlistsViewModel.playlists.collectAsStateWithLifecycle()
 	val selectedPlaylistsWithSongCounts = remember { mutableStateListOf<PlaylistWithSongCount>() }
@@ -171,6 +172,7 @@ fun AddToPlaylistDialog(
 										},
 										selectedSongIds
 									)
+									onConfirm()
 									onDismiss()
 								}
 							},

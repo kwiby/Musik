@@ -17,8 +17,8 @@ android {
         minSdk = 29
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 100
-        versionName = "1.10.27"
+        versionCode = 101
+        versionName = "1.11.0"
 
         ndk {
             abiFilters.add("x86")
@@ -30,7 +30,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         base.archivesName.set(
-            "Musik_v$versionName.$versionCode-alpha"
+            "musik_v$versionName.$versionCode-alpha"
         )
     }
 

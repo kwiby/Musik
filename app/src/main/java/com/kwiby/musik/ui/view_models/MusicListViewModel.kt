@@ -104,7 +104,7 @@ class MusicListViewModel(
 	}
 
 
-	private fun clearSelection() {
+	fun clearSelection() {
 		_selectedIds.value = emptyList()
 	}
 

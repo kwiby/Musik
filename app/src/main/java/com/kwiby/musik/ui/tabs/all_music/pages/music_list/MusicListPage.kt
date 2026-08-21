@@ -103,9 +103,12 @@ fun MusicListPage(
 
 	// --===-- Add to Playlist Dialog --===--
 	if (isAddingToPlaylist) {
-		AddToPlaylistDialog(playlistsViewModel, musicListViewModel) {
-			musicListViewModel.setIsAddingToPlaylist(false)
-		}
+		AddToPlaylistDialog(
+			playlistsViewModel = playlistsViewModel,
+			musicListViewModel = musicListViewModel,
+			onDismiss = { musicListViewModel.setIsAddingToPlaylist(false) },
+			onConfirm = { musicListViewModel.clearSelection() }
+		)
 	}
 
 	Column(

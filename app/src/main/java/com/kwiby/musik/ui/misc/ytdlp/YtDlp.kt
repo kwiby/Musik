@@ -255,6 +255,7 @@ class YtDlp(
 		}
 		//request.addOption("--parse-metadata", "%(title)s:%(meta_album)s")
 		request.addOption("--add-metadata")
+		request.addOption("--no-playlist")
 		request.addOption("--no-mtime")
 		request.addOption("--embed-thumbnail")
 		request.addOption("-o", "${tempDir.absolutePath}/%(title)s.%(ext)s")
