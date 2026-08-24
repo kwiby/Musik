@@ -1,5 +1,12 @@
 <div align="center">
 
-<a href="#readme">
-  <img src="https://github.com/kwiby/Musik/blob/main/images/musik_pixel_icon.png" alt="Musik" width="200">
-</a>
+<!-- Banner and Title/Description -->
+[![YT-DLP](https://raw.githubusercontent.com/kwiby/Musik/refs/heads/main/images/banner.png)](#readme)
+# Musik
+### An Android music player featuring YouTube audio downloading, metadata editing, and more!
+
+[![GitHub Release](https://img.shields.io/github/v/release/kwiby/Musik?style=for-the-badge&label=latest%20release&labelColor=%233a3a3a&color=%236e76f0)](https://github.com/kwiby/Musik/releases/latest)
+&nbsp;
+[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/kwiby/Musik/total?style=for-the-badge&label=Total%20Downloads&labelColor=%233a3a3a&color=%2358b074)](https://github.com/kwiby/Musik/releases)
+&nbsp;
+[![GitHub License](https://img.shields.io/github/license/kwiby/Musik?style=for-the-badge&labelColor=%233a3a3a&color=%23b05858)](https://github.com/kwiby/Musik/blob/main/LICENSE)
