@@ -3,8 +3,8 @@ package com.kwiby.musik.data.repositories.music_stats
 import android.database.sqlite.SQLiteConstraintException
 import android.util.Log
 import com.kwiby.musik.data.daos.music_stats.MusicStatsDao
-import com.kwiby.musik.data.data_classes.AudioFileStats
-import com.kwiby.musik.data.data_classes.MusicStats
+import com.kwiby.musik.data.data_classes.audio_file.AudioFileStats
+import com.kwiby.musik.data.data_classes.music.MusicStats
 import kotlinx.coroutines.flow.Flow
 
 private const val LOG_TAG = "OfflineMusicStatsRepository"

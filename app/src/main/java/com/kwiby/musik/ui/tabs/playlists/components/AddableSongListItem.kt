@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.kwiby.musik.R
-import com.kwiby.musik.data.data_classes.MusicDetails
+import com.kwiby.musik.data.data_classes.music.MusicDetails
 import com.kwiby.musik.ui.components.AlbumArtImage
 
 @Composable

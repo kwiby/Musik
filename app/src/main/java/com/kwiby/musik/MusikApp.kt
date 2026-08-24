@@ -32,12 +32,14 @@ import com.kwiby.musik.ui.view_models.PlaylistsViewModel
 import com.kwiby.musik.ui.view_models.Screen
 import com.kwiby.musik.ui.view_models.SettingsViewModel
 import com.kwiby.musik.ui.view_models.StatsViewModel
+import com.kwiby.musik.ui.view_models.UpdateViewModel
 import com.kwiby.musik.ui.view_models.ViewModelProvider
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MusikApp(
-	navViewModel: NavViewModel = viewModel(factory = ViewModelProvider.Factory),
+	updateViewModel: UpdateViewModel,
+	navViewModel: NavViewModel,
 	settingsViewModel: SettingsViewModel = viewModel(factory = ViewModelProvider.Factory),
 	playbackViewModel: PlaybackViewModel = viewModel(factory = ViewModelProvider.Factory),
 	editMetadataViewModel: EditMetadataViewModel = viewModel(factory = ViewModelProvider.Factory),
@@ -87,7 +89,8 @@ fun MusikApp(
 					}
 					Screen.Settings -> SettingsScreen(
 						settingsViewModel = settingsViewModel,
-						navViewModel = navViewModel
+						navViewModel = navViewModel,
+						updateViewModel = updateViewModel
 					)
 					Screen.Player -> PlayerScreen(
 						sharedTransitionScope = this@SharedTransitionLayout,

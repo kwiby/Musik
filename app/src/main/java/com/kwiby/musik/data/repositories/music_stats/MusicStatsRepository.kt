@@ -1,7 +1,7 @@
 package com.kwiby.musik.data.repositories.music_stats
 
-import com.kwiby.musik.data.data_classes.AudioFileStats
-import com.kwiby.musik.data.data_classes.MusicStats
+import com.kwiby.musik.data.data_classes.audio_file.AudioFileStats
+import com.kwiby.musik.data.data_classes.music.MusicStats
 import kotlinx.coroutines.flow.Flow
 
 interface MusicStatsRepository {

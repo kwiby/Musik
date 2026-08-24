@@ -1,8 +1,8 @@
 package com.kwiby.musik.data.repositories.playlists
 
-import com.kwiby.musik.data.data_classes.AudioFile
-import com.kwiby.musik.data.data_classes.Playlist
-import com.kwiby.musik.data.data_classes.PlaylistWithSongCount
+import com.kwiby.musik.data.data_classes.audio_file.AudioFile
+import com.kwiby.musik.data.data_classes.playlist.Playlist
+import com.kwiby.musik.data.data_classes.playlist.PlaylistWithSongCount
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsRepository {

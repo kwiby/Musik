@@ -1,6 +1,6 @@
 package com.kwiby.musik.data.repositories.music_list
 
-import com.kwiby.musik.data.data_classes.AudioFile
+import com.kwiby.musik.data.data_classes.audio_file.AudioFile
 import kotlinx.coroutines.flow.Flow
 
 interface MusicListRepository {

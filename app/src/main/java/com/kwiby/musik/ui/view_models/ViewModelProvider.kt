@@ -8,6 +8,15 @@ import com.kwiby.musik.ui.MusikApplication
 
 object ViewModelProvider {
 	val Factory = viewModelFactory {
+		// --===-- UpdateViewModel --==--
+		initializer {
+			UpdateViewModel(
+				application = musikApplication(),
+				updateChecker = musikApplication().container.updateChecker,
+				apkInstaller = musikApplication().container.apkInstaller
+			)
+		}
+
 		// --===--  NavViewModel  --===--
 		initializer {
 			NavViewModel(

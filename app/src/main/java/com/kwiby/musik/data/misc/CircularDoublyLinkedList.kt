@@ -1,7 +1,7 @@
 package com.kwiby.musik.data.misc
 
 import android.util.Log
-import com.kwiby.musik.data.data_classes.MusicDetails
+import com.kwiby.musik.data.data_classes.music.MusicDetails
 
 class CircularDoublyLinkedList {
 	class Node(val musicDetails: MusicDetails) {

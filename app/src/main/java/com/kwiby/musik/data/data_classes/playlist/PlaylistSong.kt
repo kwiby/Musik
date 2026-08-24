@@ -1,8 +1,9 @@
-package com.kwiby.musik.data.data_classes
+package com.kwiby.musik.data.data_classes.playlist
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import com.kwiby.musik.data.data_classes.audio_file.AudioFile
 
 @Entity(
 	tableName = "playlist_songs",

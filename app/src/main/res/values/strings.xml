@@ -103,7 +103,7 @@
         Enabling this will lengthen the overall download time
     </string>
 
-    <string name="settings_update_ytdlp_option_cur_version">Current version:</string>
+    <string name="settings_update_option_cur_version">Current version:</string>
     <string name="settings_update_ytdlp_option_stable">Stable</string>
     <string name="settings_update_ytdlp_option_nightly">Nightly</string>
     <string name="settings_update_ytdlp_option_master">Master</string>
@@ -119,6 +119,16 @@
         \n\n
         \"Master\" provides the latest fixes and features, but may be prone to bugs or regressions.
     </string>
+
+    <string name="update_app_option_check">Check for updates</string>
+    <string name="update_app_option_github">Visit GitHub page</string>
+    <string name="update_available">Update available</string>
+    <string name="update_dialog_later">Later</string>
+    <string name="update_dialog_update">Update</string>
+    <string name="settings_update_option_latest_version">Latest version:</string>
+    <string name="update_downloading">Downloading…</string>
+    <string name="app_already_up_to_date">Musik is already up to date</string>
+    <string name="checking_for_updates">Checking for updates</string>
 
     <!-- Edit Metadata Screen -->
     <string name="edit_metadata_screen_title" translatable="true">Edit Metadata</string>

@@ -277,9 +277,7 @@ class PlaybackViewModel(
 			return
 		}
 
-		Log.d("debug", "queueSource=$queueSource  |  activeQueueSource=$activeQueueSource")
 		if (queueSource != activeQueueSource) {
-			Log.d("debug", "replacing")
 			activeQueueSource = queueSource
 			controller.setMediaItems(items, true)
 			controller.prepare()
@@ -291,7 +289,6 @@ class PlaybackViewModel(
 				)
 			}
 		} else {
-			Log.d("debug", "reordering")
 			reorderQueue(controller, items)
 		}
 	}

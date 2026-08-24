@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.kwiby.musik.data.data_classes.Playlist
+import com.kwiby.musik.data.data_classes.playlist.Playlist
 import com.kwiby.musik.ui.floating_ui.dialogs.AddPlaylistDialog
 import com.kwiby.musik.ui.floating_ui.dialogs.RenamePlaylistDialog
 import com.kwiby.musik.ui.floating_ui.dialogs.add_songs_dialog.AddSongsDialog

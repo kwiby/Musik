@@ -6,6 +6,8 @@ import com.kwiby.musik.data.datastore.DataStoreManager
 import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
 import com.kwiby.musik.data.repositories.music_stats.OfflineMusicStatsRepository
 import com.kwiby.musik.data.repositories.playlists.OfflinePlaylistsRepository
+import com.kwiby.musik.data.updating.ApkInstaller
+import com.kwiby.musik.data.updating.UpdateChecker
 import com.kwiby.musik.ui.misc.ytdlp.YtDlp
 
 interface AppContainer {
@@ -14,6 +16,8 @@ interface AppContainer {
 	val playlistsRepo: OfflinePlaylistsRepository
 	val dataStoreManager: DataStoreManager
 	val ytDlp: YtDlp
+	val updateChecker: UpdateChecker
+	val apkInstaller: ApkInstaller
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
@@ -41,5 +45,13 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
 	override val ytDlp: YtDlp by lazy {
 		YtDlp(context.applicationContext)
+	}
+
+	override val updateChecker: UpdateChecker by lazy {
+		UpdateChecker(dataStoreManager)
+	}
+
+	override val apkInstaller: ApkInstaller by lazy {
+		ApkInstaller(context.applicationContext)
 	}
 }

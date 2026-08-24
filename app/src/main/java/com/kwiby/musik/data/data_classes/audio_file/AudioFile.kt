@@ -1,4 +1,4 @@
-package com.kwiby.musik.data.data_classes
+package com.kwiby.musik.data.data_classes.audio_file
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -3,6 +3,7 @@ accompanistPermissions = "0.37.3"
 agp = "9.2.1"
 coilCompose = "3.5.0"
 coilNetworkOkhttp = "3.5.0"
+converterGson = "3.0.0"
 coreKtx = "1.19.0"
 coreSplashscreen = "1.2.0"
 datastorePreferences = "1.2.1"
@@ -22,6 +23,7 @@ media3Session = "1.11.0"
 media3Ui = "1.11.0"
 navigationCompose = "2.9.8"
 reorderable = "3.1.0"
+retrofit = "3.0.0"
 roomCompiler = "2.8.4"
 roomKtx = "2.8.4"
 roomRuntime = "2.8.4"
@@ -43,6 +45,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx"
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 ffmpeg = { module = "com.github.kwiby.youtubedl-android:ffmpeg", version.ref = "ffmpeg" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -60,6 +63,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 library = { module = "com.github.kwiby.youtubedl-android:library", version.ref = "library" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 taglib = { module = "com.github.kwiby:taglib", version.ref = "taglib" }
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 

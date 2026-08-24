@@ -6,9 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kwiby.musik.data.data_classes.MusicDetails
-import com.kwiby.musik.data.data_classes.Playlist
-import com.kwiby.musik.data.data_classes.PlaylistWithSongCount
+import com.kwiby.musik.data.data_classes.music.MusicDetails
+import com.kwiby.musik.data.data_classes.playlist.Playlist
+import com.kwiby.musik.data.data_classes.playlist.PlaylistWithSongCount
 import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
 import com.kwiby.musik.data.repositories.playlists.OfflinePlaylistsRepository
 import kotlinx.coroutines.flow.SharingStarted

@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.kwiby.musik.R
-import com.kwiby.musik.data.data_classes.MusicStats
+import com.kwiby.musik.data.data_classes.music.MusicStats
 import com.kwiby.musik.ui.components.AlbumArtImage
 import com.kwiby.musik.ui.misc.formatDuration
 

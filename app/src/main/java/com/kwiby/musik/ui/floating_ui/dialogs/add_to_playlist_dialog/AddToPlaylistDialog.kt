@@ -34,7 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
-import com.kwiby.musik.data.data_classes.PlaylistWithSongCount
+import com.kwiby.musik.data.data_classes.playlist.PlaylistWithSongCount
 import com.kwiby.musik.ui.components.ListDivider
 import com.kwiby.musik.ui.components.lazyVerticalScrollbar
 import com.kwiby.musik.ui.floating_ui.dialogs.add_to_playlist_dialog.components.AddablePlaylistItem

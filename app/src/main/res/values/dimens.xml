@@ -78,7 +78,6 @@
     <dimen name="option_button_shadow_elevation">3dp</dimen>
 
     <dimen name="settings_update_ytdlp_description_top_padding">8dp</dimen>
-    <dimen name="settings_update_ytdlp_description_bottom_padding">15dp</dimen>
 
     <dimen name="settings_app_icon_option_vertical_padding">10dp</dimen>
 

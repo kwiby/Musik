@@ -36,8 +36,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
-import com.kwiby.musik.data.data_classes.Playlist
-import com.kwiby.musik.data.data_classes.PlaylistWithSongCount
+import com.kwiby.musik.data.data_classes.playlist.Playlist
+import com.kwiby.musik.data.data_classes.playlist.PlaylistWithSongCount
 import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.components.ListDivider
 import com.kwiby.musik.ui.components.LoadingIndicator

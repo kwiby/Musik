@@ -17,8 +17,8 @@ android {
         minSdk = 29
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 101
-        versionName = "1.11.0"
+        versionCode = 102
+        versionName = "1.11.1"
 
         ndk {
             abiFilters.add("x86")
@@ -30,7 +30,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         base.archivesName.set(
-            "musik_v$versionName.$versionCode-alpha"
+            "musik_v$versionName"
         )
     }
 
@@ -67,6 +67,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
     implementation(libs.androidx.exifinterface)
     implementation(libs.taglib)
 

@@ -3,6 +3,7 @@ package com.kwiby.musik.data.datastore
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +22,7 @@ class DataStoreManager(
 		val APP_ICON_KEY = stringPreferencesKey("app_icon")
 		val DO_CONVERT_MP3_KEY = booleanPreferencesKey("do_convert_mp3")
 		val YTDLP_VERSION_KEY = stringPreferencesKey("ytdlp_version")
+		val UPDATE_LAST_CHECK_TIME_KEY = longPreferencesKey("update_last_check_time")
 	}
 
 	// --===--  Download Location  --===--
@@ -90,6 +92,16 @@ class DataStoreManager(
 	suspend fun setYtDlpVersion(newVersion: String) {
 		appContext.dataStore.edit { prefs ->
 			prefs[YTDLP_VERSION_KEY] = newVersion
+		}
+	}
+
+	// --===--  Update Last Check Time  --===--
+	val updateLastCheckTime: Flow<Long> = appContext.dataStore.data.map { prefs ->
+		prefs[UPDATE_LAST_CHECK_TIME_KEY] ?: 0L
+	}
+	suspend fun setUpdateLastCheckTime(newUpdateLastCheckTime: Long) {
+		appContext.dataStore.edit { prefs ->
+			prefs[UPDATE_LAST_CHECK_TIME_KEY] = newUpdateLastCheckTime
 		}
 	}
 }

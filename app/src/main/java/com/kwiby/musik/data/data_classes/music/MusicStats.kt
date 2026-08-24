@@ -1,4 +1,4 @@
-package com.kwiby.musik.data.data_classes
+package com.kwiby.musik.data.data_classes.music
 
 data class MusicStats(
 	val id: Long = 0L,

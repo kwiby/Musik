@@ -5,8 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.kwiby.musik.data.data_classes.AudioFileStats
-import com.kwiby.musik.data.data_classes.MusicStats
+import com.kwiby.musik.data.data_classes.audio_file.AudioFileStats
+import com.kwiby.musik.data.data_classes.music.MusicStats
 import kotlinx.coroutines.flow.Flow
 
 @Dao

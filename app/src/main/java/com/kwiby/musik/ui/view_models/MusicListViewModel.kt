@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import com.kwiby.musik.data.data_classes.AudioFile
-import com.kwiby.musik.data.data_classes.MusicDetails
+import com.kwiby.musik.data.data_classes.audio_file.AudioFile
+import com.kwiby.musik.data.data_classes.music.MusicDetails
 import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
 import com.kwiby.musik.ui.misc.formatDuration
 import com.kwiby.musik.ui.misc.unformatDuration

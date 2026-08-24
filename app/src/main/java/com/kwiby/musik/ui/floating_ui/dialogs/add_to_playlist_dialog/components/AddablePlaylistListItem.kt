@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.kwiby.musik.R
-import com.kwiby.musik.data.data_classes.PlaylistWithSongCount
+import com.kwiby.musik.data.data_classes.playlist.PlaylistWithSongCount
 import com.kwiby.musik.ui.tabs.playlists.components.getSongCountText
 
 @Composable

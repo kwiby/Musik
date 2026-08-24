@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.kwiby.musik.data.data_classes.AudioFile
+import com.kwiby.musik.data.data_classes.audio_file.AudioFile
 import kotlinx.coroutines.flow.Flow
 
 @Dao

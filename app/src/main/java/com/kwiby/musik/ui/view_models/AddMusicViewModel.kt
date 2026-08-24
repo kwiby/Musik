@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.kwiby.musik.data.data_classes.MusicDetails
+import com.kwiby.musik.data.data_classes.music.MusicDetails
 import com.kwiby.musik.data.misc.fetchAudioFiles
 import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository
 import com.kwiby.musik.ui.MusikApplication

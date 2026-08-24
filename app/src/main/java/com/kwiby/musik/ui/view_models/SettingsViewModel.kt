@@ -2,8 +2,10 @@ package com.kwiby.musik.ui.view_models
 
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kwiby.musik.data.datastore.DataStoreManager
@@ -104,5 +106,12 @@ class SettingsViewModel(
 			val curBool = dataStoreDoConvertMp3.first()!!
 			dataStoreManager.setDoConvertMp3(!curBool)
 		}
+	}
+
+	fun openGitHubPage(context: Context) {
+		val url = "https://github.com/kwiby/Musik"
+		val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+
+		context.startActivity(intent)
 	}
 }

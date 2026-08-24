@@ -7,7 +7,7 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.kwiby.musik.data.data_classes.AudioFile
+import com.kwiby.musik.data.data_classes.audio_file.AudioFile
 import com.kwiby.musik.data.data_classes.VideoInfo
 import com.kwiby.musik.data.datastore.DataStoreManager
 import com.kwiby.musik.data.repositories.music_list.OfflineMusicListRepository

@@ -47,7 +47,7 @@ fun MusikTopAppBar(
 					Spacer(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.xx_small_padding)))
 
 					Text(
-						text = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}",
+						text = BuildConfig.VERSION_NAME,
 						style = MaterialTheme.typography.bodySmall,
 						color = MaterialTheme.colorScheme.surface,
 						modifier = Modifier.alignByBaseline()

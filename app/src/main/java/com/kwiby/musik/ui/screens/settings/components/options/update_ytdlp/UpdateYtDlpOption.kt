@@ -33,7 +33,7 @@ fun UpdateYtDlpOption(
 		// --===--  Current Version  --===--
 		Row {
 			Text(
-				text = stringResource(R.string.settings_update_ytdlp_option_cur_version) + " ",
+				text = stringResource(R.string.settings_update_option_cur_version) + " ",
 				color = MaterialTheme.colorScheme.onSecondary,
 				style = MaterialTheme.typography.labelLarge.copy(
 					fontWeight = FontWeight.W400
@@ -59,7 +59,7 @@ fun UpdateYtDlpOption(
 			style = MaterialTheme.typography.labelMedium
 		)
 
-		Spacer(Modifier.height(dimensionResource(R.dimen.settings_update_ytdlp_description_bottom_padding)))
+		Spacer(Modifier.height(dimensionResource(R.dimen.medium_padding)))
 
 		// --===--  Buttons  --===--
 		Row {

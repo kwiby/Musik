@@ -44,17 +44,25 @@ import com.kwiby.musik.ui.screens.settings.components.options.update_ytdlp.Updat
 import com.kwiby.musik.ui.view_models.NavViewModel
 import com.kwiby.musik.ui.view_models.Screen
 import com.kwiby.musik.ui.view_models.SettingsViewModel
+import com.kwiby.musik.ui.view_models.UpdateViewModel
 
 @Composable
 fun SettingsScreen(
 	settingsViewModel: SettingsViewModel,
-	navViewModel: NavViewModel
+	navViewModel: NavViewModel,
+	updateViewModel: UpdateViewModel
 ) {
 	val dataStoreYtDlpVersion by settingsViewModel.dataStoreYtDlpVersion.collectAsStateWithLifecycle()
 	val dataStoreDoConvertMp3 by settingsViewModel.dataStoreDoConvertMp3.collectAsStateWithLifecycle()
 	val dataStoreAppIcon by settingsViewModel.dataStoreAppIcon.collectAsStateWithLifecycle()
 	val dataStoreThemeMode by settingsViewModel.dataStoreThemeMode.collectAsStateWithLifecycle()
 	val dataStoreThemeStyle by settingsViewModel.dataStoreThemeStyle.collectAsStateWithLifecycle()
+
+	val areValuesLoading = dataStoreYtDlpVersion == null
+			|| dataStoreDoConvertMp3 == null
+			|| dataStoreAppIcon == null
+			|| dataStoreThemeMode == null
+			|| dataStoreThemeStyle == null
 
 	val scrollState = rememberScrollState()
 	val hasScrolled by remember {
@@ -128,11 +136,7 @@ fun SettingsScreen(
 				) {
 					Spacer(Modifier.height(dimensionResource(R.dimen.screen_options_top_padding)))
 
-					if (dataStoreYtDlpVersion == null
-						|| dataStoreDoConvertMp3 == null
-						|| dataStoreAppIcon == null
-						|| dataStoreThemeMode == null
-						|| dataStoreThemeStyle == null) {
+					if (areValuesLoading) {
 						LoadingIndicator()
 					} else {
 						EntryTabOption(navViewModel)
@@ -140,7 +144,10 @@ fun SettingsScreen(
 						AppIconOption(settingsViewModel)
 						DownloadingOption(settingsViewModel)
 						UpdateYtDlpOption(settingsViewModel)
-						UpdateMusikOption()
+						UpdateMusikOption(
+							settingsViewModel = settingsViewModel,
+							updateViewModel = updateViewModel
+						)
 					}
 				}
 			}

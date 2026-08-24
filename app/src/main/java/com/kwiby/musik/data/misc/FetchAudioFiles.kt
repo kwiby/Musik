@@ -3,7 +3,7 @@ package com.kwiby.musik.data.misc
 import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
-import com.kwiby.musik.data.data_classes.AudioFile
+import com.kwiby.musik.data.data_classes.audio_file.AudioFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

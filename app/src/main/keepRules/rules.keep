@@ -12,6 +12,9 @@
 #}
 
 
+-keep class com.kwiby.musik.data.data_classes.updating.** { *; }
+-keepclassmembers class com.kwiby.musik.data.data_classes.updating.** { *; }
+
 -keep class com.yausername.** { *; }
 -keep class org.apache.commons.compress.archivers.zip.** { *; }
 

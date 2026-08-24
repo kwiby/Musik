@@ -1,4 +1,4 @@
-package com.kwiby.musik.data.data_classes
+package com.kwiby.musik.data.data_classes.playlist
 
 import androidx.room.Embedded
 

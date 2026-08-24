@@ -7,10 +7,10 @@ import androidx.room.RoomDatabase
 import com.kwiby.musik.data.daos.music_list.MusicListDao
 import com.kwiby.musik.data.daos.music_stats.MusicStatsDao
 import com.kwiby.musik.data.daos.playlists.PlaylistDao
-import com.kwiby.musik.data.data_classes.AudioFile
-import com.kwiby.musik.data.data_classes.AudioFileStats
-import com.kwiby.musik.data.data_classes.Playlist
-import com.kwiby.musik.data.data_classes.PlaylistSong
+import com.kwiby.musik.data.data_classes.audio_file.AudioFile
+import com.kwiby.musik.data.data_classes.audio_file.AudioFileStats
+import com.kwiby.musik.data.data_classes.playlist.Playlist
+import com.kwiby.musik.data.data_classes.playlist.PlaylistSong
 
 @Database(
 	entities = [

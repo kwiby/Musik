@@ -43,8 +43,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
-import com.kwiby.musik.data.data_classes.MusicDetails
-import com.kwiby.musik.data.data_classes.Playlist
+import com.kwiby.musik.data.data_classes.music.MusicDetails
+import com.kwiby.musik.data.data_classes.playlist.Playlist
 import com.kwiby.musik.ui.components.CustomIconButton
 import com.kwiby.musik.ui.components.ListDivider
 import com.kwiby.musik.ui.components.LoadingIndicator

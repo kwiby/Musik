@@ -38,7 +38,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.window.DialogWindowProvider
 import com.kwiby.musik.R
-import com.kwiby.musik.data.data_classes.Playlist
+import com.kwiby.musik.data.data_classes.playlist.Playlist
 import com.kwiby.musik.ui.components.customTextSelectionColours
 import com.kwiby.musik.ui.view_models.PlaylistsViewModel
 

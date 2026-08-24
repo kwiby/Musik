@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kwiby.musik.data.data_classes.MusicStats
+import com.kwiby.musik.data.data_classes.music.MusicStats
 import com.kwiby.musik.data.repositories.music_stats.OfflineMusicStatsRepository
 import com.kwiby.musik.ui.misc.formatDuration
 import kotlinx.coroutines.launch
