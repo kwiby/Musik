@@ -9,4 +9,6 @@
 &nbsp;
 [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/kwiby/Musik/total?style=for-the-badge&label=Total%20Downloads&labelColor=%233a3a3a&color=%2358b074)](https://github.com/kwiby/Musik/releases)
 &nbsp;
-[![GitHub License](https://img.shields.io/github/license/kwiby/Musik?style=for-the-badge&labelColor=%233a3a3a&color=%23b05858)](https://github.com/kwiby/Musik/blob/main/LICENSE)
+[![GitHub Issues](https://img.shields.io/github/issues-raw/kwiby/Musik?style=for-the-badge&label=Open%20Issues&labelColor=%233a3a3a&color=%23b05858)](https://github.com/kwiby/Musik/issues)
+&nbsp;
+[![GitHub License](https://img.shields.io/github/license/kwiby/Musik?style=for-the-badge&labelColor=%233a3a3a&color=%23b68f4d)](https://github.com/kwiby/Musik/blob/main/LICENSE)
