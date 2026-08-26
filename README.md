@@ -1,7 +1,7 @@
 <div align="center">
 
 <!-- Banner -->
-[![YT-DLP](https://raw.githubusercontent.com/kwiby/Musik/refs/heads/main/images/banner.png)](#readme)
+[![Banner](https://raw.githubusercontent.com/kwiby/Musik/refs/heads/main/images/banner.png)](#readme)
 
 <!-- Title/Description-->
 # Musik
@@ -34,6 +34,9 @@
 <!-- Features -->
 <h2 align="center">Features</h2>
 
+<div>
+<img align="right" width="300" src="https://raw.githubusercontent.com/kwiby/Musik/refs/heads/main/images/UI%20Screenshots.png" alt="UI Screenshots">
+
 - Direct audio downloading from YouTube.
 - Built-in metadata editing.
   - Editable fields (future updates may include more):
@@ -53,6 +56,8 @@
 - Music playlists.
 - Audio file format conversion to mp3.
 - Very cool themes/styles!
+
+</div>
 
 <!-- Acknowledgements -->
 <h2 align="center">Acknowledgements</h2>
