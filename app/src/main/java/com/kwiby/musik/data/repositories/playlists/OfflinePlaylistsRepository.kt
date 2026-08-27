@@ -29,4 +29,6 @@ class OfflinePlaylistsRepository(
 		playlistsDao.removeSongsFromPlaylist(playlistId, songIds)
 	override suspend fun reorderSongsInPlaylist(playlistId: Long, newSongOrder: List<Long>) =
 		playlistsDao.reorderSongsInPlaylist(playlistId, newSongOrder)
+	override suspend fun getPlaylistSongCount(playlistId: Long): Int =
+		playlistsDao.getPlaylistSongCount(playlistId)
 }

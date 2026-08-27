@@ -11,7 +11,9 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import com.kwiby.musik.MainActivity
+import com.kwiby.musik.data.services.playback_service.components.PlaybackServiceHolder
 import com.kwiby.musik.data.services.playback_service.components.PlaybackStatsTracker
+import com.kwiby.musik.data.services.playback_service.components.SleepTimerController
 import com.kwiby.musik.ui.MusikApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +28,7 @@ class PlaybackService: MediaSessionService() {
 	private lateinit var player: ExoPlayer
 
 	private lateinit var statsTracker: PlaybackStatsTracker
+	lateinit var sleepTimerController: SleepTimerController
 	private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
 	override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
@@ -66,9 +69,15 @@ class PlaybackService: MediaSessionService() {
 			(application as MusikApplication).container.musicStatsRepo
 		)
 		player.addListener(statsTracker)
+
+		sleepTimerController = SleepTimerController(player, serviceScope)
+		PlaybackServiceHolder.attach(this)
 	}
 
 	override fun onDestroy() {
+		PlaybackServiceHolder.detach(this)
+		sleepTimerController.release()
+
 		runBlocking {
 			withTimeoutOrNull(1000.milliseconds) {
 				statsTracker.flush()
@@ -86,11 +95,12 @@ class PlaybackService: MediaSessionService() {
 		}
 
 		serviceScope.cancel()
-
 		super.onDestroy()
 	}
 
 	override fun onTaskRemoved(rootIntent: Intent?) {
+		sleepTimerController.stopSleepTimer()
+
 		/*
 		val player = mediaSession?.player
 		if (player != null && !player.playWhenReady) {

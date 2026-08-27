@@ -14,7 +14,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.crash_handling.CrashScreen
 import com.kwiby.musik.ui.MusikApplication
-import com.kwiby.musik.ui.floating_ui.dialogs.update_dialog.UpdateDialogController
+import com.kwiby.musik.ui.floating_ui.dialogs.update.UpdateDialogController
 import com.kwiby.musik.ui.misc.folder_manager.FolderManager
 import com.kwiby.musik.ui.misc.folder_manager.LocalFolderManager
 import com.kwiby.musik.ui.theme.AppTheme

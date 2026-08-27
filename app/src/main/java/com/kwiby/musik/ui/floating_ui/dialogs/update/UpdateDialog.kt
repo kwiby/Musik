@@ -1,4 +1,4 @@
-package com.kwiby.musik.ui.floating_ui.dialogs.update_dialog
+package com.kwiby.musik.ui.floating_ui.dialogs.update
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

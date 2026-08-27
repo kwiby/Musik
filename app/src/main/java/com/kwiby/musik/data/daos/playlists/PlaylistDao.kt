@@ -37,9 +37,6 @@ interface PlaylistDao {
 	@Query("SELECT * FROM playlist_songs WHERE playlistId = :playlistId ORDER BY orderPos ASC")
 	suspend fun getPlaylistSongs(playlistId: Long): List<PlaylistSong>
 
-	@Query("SELECT COUNT(*) FROM playlist_songs WHERE playlistId = :playlistId")
-	suspend fun getPlaylistSongCount(playlistId: Long): Int
-
 	@Query("DELETE FROM sqlite_sequence WHERE name = 'playlists'")
 	suspend fun resetPlaylistIdSequence()
 
@@ -78,6 +75,9 @@ interface PlaylistDao {
 		}
 		updatePlaylists(updatedPlaylists)
 	}
+
+	@Query("SELECT COUNT(*) FROM playlist_songs WHERE playlistId = :playlistId")
+	suspend fun getPlaylistSongCount(playlistId: Long): Int
 
 	@Query("""
 		SELECT playlists.*, COUNT(playlist_songs.songId) AS songCount

@@ -13,6 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -20,6 +24,7 @@ import com.google.accompanist.permissions.isGranted
 import com.kwiby.musik.data.misc.RequestPermissions
 import com.kwiby.musik.data.misc.rememberPermissionHandler
 import com.kwiby.musik.ui.components.MusikTopAppBar
+import com.kwiby.musik.ui.floating_ui.dialogs.sleep_timer.SleepTimerDialog
 import com.kwiby.musik.ui.main_container.MainContainer
 import com.kwiby.musik.ui.screens.edit_metadata.EditMetadataScreen
 import com.kwiby.musik.ui.screens.player.PlayerScreen
@@ -31,6 +36,7 @@ import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.PlaylistsViewModel
 import com.kwiby.musik.ui.view_models.Screen
 import com.kwiby.musik.ui.view_models.SettingsViewModel
+import com.kwiby.musik.ui.view_models.SleepTimerViewModel
 import com.kwiby.musik.ui.view_models.StatsViewModel
 import com.kwiby.musik.ui.view_models.UpdateViewModel
 import com.kwiby.musik.ui.view_models.ViewModelProvider
@@ -42,6 +48,7 @@ fun MusikApp(
 	navViewModel: NavViewModel,
 	settingsViewModel: SettingsViewModel = viewModel(factory = ViewModelProvider.Factory),
 	playbackViewModel: PlaybackViewModel = viewModel(factory = ViewModelProvider.Factory),
+	sleepTimerViewModel: SleepTimerViewModel = viewModel(factory = ViewModelProvider.Factory),
 	editMetadataViewModel: EditMetadataViewModel = viewModel(factory = ViewModelProvider.Factory),
 	musicListViewModel: MusicListViewModel = viewModel(factory = ViewModelProvider.Factory),
 	playlistsViewModel: PlaylistsViewModel = viewModel(factory = ViewModelProvider.Factory),
@@ -51,13 +58,18 @@ fun MusikApp(
 	if (!permissionStatus.status.isGranted) {
 		RequestPermissions(permissionStatus)
 	}
+	var isSleepTimerOpen by remember { mutableStateOf(false) }
 
 	SharedTransitionLayout {
 		Box(modifier = Modifier.fillMaxSize()) {
 			// --===--  Main  --===--
 			Scaffold(
 				containerColor = MaterialTheme.colorScheme.background,
-				topBar = { MusikTopAppBar(navViewModel) }
+				topBar = { MusikTopAppBar(
+					navViewModel,
+					sleepTimerViewModel
+				) { isSleepTimerOpen = true }
+				}
 			) { innerPadding ->
 				MainContainer(
 					sharedTransitionScope = this@SharedTransitionLayout,
@@ -104,6 +116,13 @@ fun MusikApp(
 						navViewModel = navViewModel,
 						playbackViewModel = playbackViewModel
 					)
+				}
+			}
+
+			// --===-- Sleep Timer Dialog --===--
+			if (isSleepTimerOpen) {
+				SleepTimerDialog(sleepTimerViewModel) {
+					isSleepTimerOpen = false
 				}
 			}
 		}

@@ -47,7 +47,7 @@ fun CrashScreen(
 
 	Scaffold(
 		containerColor = MaterialTheme.colorScheme.background,
-		topBar = { MusikTopAppBar(null) }
+		topBar = { MusikTopAppBar(null, null, null) }
 	) { innerPadding ->
 		Column(
 			modifier = Modifier

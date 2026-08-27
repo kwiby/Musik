@@ -266,7 +266,7 @@ fun SongsPage(
 							contentDescription = stringResource(R.string.remove_music_button)
 						) {
 							playlistsViewModel.removeSongsFromPlaylist(
-								playbackViewModel::removeFromQueue,
+								playbackViewModel,
 								openedPlaylist!!.playlist.id,
 								selectedSongIds
 							)

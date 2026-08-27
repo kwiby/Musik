@@ -1,5 +1,6 @@
-package com.kwiby.musik.ui.floating_ui.dialogs.add_to_playlist_dialog
+package com.kwiby.musik.ui.floating_ui.dialogs.add_songs
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -34,26 +35,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kwiby.musik.R
-import com.kwiby.musik.data.data_classes.playlist.PlaylistWithSongCount
 import com.kwiby.musik.ui.components.ListDivider
+import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.lazyVerticalScrollbar
-import com.kwiby.musik.ui.floating_ui.dialogs.add_to_playlist_dialog.components.AddablePlaylistItem
-import com.kwiby.musik.ui.floating_ui.dialogs.add_to_playlist_dialog.components.info.NoPlaylistsToAddToMsg
-import com.kwiby.musik.ui.view_models.MusicListViewModel
+import com.kwiby.musik.ui.floating_ui.dialogs.add_songs.components.info.NoMusicInAllMusicTabMsg
+import com.kwiby.musik.ui.tabs.playlists.components.AddableSongListItem
+import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.PlaylistsViewModel
+import com.kwiby.musik.ui.view_models.toMediaItem
+
+private const val LOG_TAG = "AddSongDialog"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddToPlaylistDialog(
+fun AddSongsDialog(
 	playlistsViewModel: PlaylistsViewModel,
-	musicListViewModel: MusicListViewModel,
-	onDismiss: () -> Unit,
-	onConfirm: () -> Unit
+	playbackViewModel: PlaybackViewModel,
+	onDismiss: () -> Unit
 ) {
-	val allPlaylists by playlistsViewModel.playlists.collectAsStateWithLifecycle()
-	val selectedPlaylistsWithSongCounts = remember { mutableStateListOf<PlaylistWithSongCount>() }
-	val selectedSongIds by musicListViewModel.selectedIds.collectAsStateWithLifecycle()
-	val isValidForConfirm = allPlaylists.isNotEmpty() && selectedPlaylistsWithSongCounts.isNotEmpty()
+	val openedPlaylistId by playlistsViewModel.openedPlaylistId
+	if (openedPlaylistId == null) {
+		Log.e(LOG_TAG, "Opened playlist id is null")
+		return
+	}
+
+	val isLoading by playlistsViewModel.isLoadingAllMusic
+	val allMusic by playlistsViewModel.allMusic.collectAsStateWithLifecycle()
+	val selectedSongIds = remember { mutableStateListOf<Long>() }
+	val isSelectedSongIdsNotEmpty = selectedSongIds.isNotEmpty()
 	val lazyListState = rememberLazyListState()
 	val interactionSource = remember { MutableInteractionSource() }
 
@@ -95,7 +104,7 @@ fun AddToPlaylistDialog(
 						)
 				) {
 					Text(
-						text = stringResource(R.string.add_selected_to_playlists),
+						text = stringResource(R.string.add_songs),
 						color = MaterialTheme.colorScheme.onSecondary,
 						style = MaterialTheme.typography.bodyLarge
 					)
@@ -106,7 +115,10 @@ fun AddToPlaylistDialog(
 						modifier = Modifier.weight(1f).fillMaxWidth()
 					) {
 						when {
-							allPlaylists.isEmpty() -> NoPlaylistsToAddToMsg()
+							isLoading -> LoadingIndicator(
+								Modifier.padding(vertical = dimensionResource(R.dimen.info_msg_vertical_padding))
+							)
+							allMusic.isEmpty() -> NoMusicInAllMusicTabMsg()
 							else -> {
 								LazyColumn(
 									state = lazyListState,
@@ -115,26 +127,26 @@ fun AddToPlaylistDialog(
 										.lazyVerticalScrollbar(lazyListState)
 								) {
 									items(
-										items = allPlaylists,
-										key = { it.playlist.id }
+										items = allMusic,
+										key = { it.id }
 									) { item ->
-										val isSelected = item in selectedPlaylistsWithSongCounts
+										val isSelected = item.id in selectedSongIds
 
-										AddablePlaylistItem(
-											playlistWithSongCount = item,
-											isSelected = isSelected
+										AddableSongListItem(
+											musicDetails = item,
+											isSelected = isSelected,
 										) {
 											if (isSelected) {
-												selectedPlaylistsWithSongCounts.remove(item)
+												selectedSongIds.remove(item.id)
 											} else {
-												selectedPlaylistsWithSongCounts.add(item)
+												selectedSongIds.add(item.id)
 											}
 										}
 
-										if (item != allPlaylists.lastOrNull()) {
+										if (item != allMusic.lastOrNull()) {
 											ListDivider(
-												widthFraction = 1f,
-												horizontalPadding = dimensionResource(R.dimen.x_small_padding)
+												widthFraction = 0.765f,
+												horizontalPadding = dimensionResource(R.dimen.small_padding)
 											)
 										}
 									}
@@ -165,23 +177,31 @@ fun AddToPlaylistDialog(
 
 						TextButton(
 							onClick = {
-								if (isValidForConfirm) {
-									playlistsViewModel.addSongsToPlaylists(
-										selectedPlaylistsWithSongCounts.map { playlistWithSongCount ->
-											playlistWithSongCount.playlist.id
+								if (isSelectedSongIdsNotEmpty) {
+									playlistsViewModel.addSongsToPlaylist(
+										{ newQueueItems ->
+											playbackViewModel.setQueue(
+												items = newQueueItems.map { it.toMediaItem() },
+												queueSource = PlaybackViewModel.QueueSource(
+													playbackSource = PlaybackViewModel.PlaybackSource.PLAYLIST,
+													sourceId = openedPlaylistId!!
+												),
+												isStarting = false,
+												isReordering = true
+											)
 										},
+										playlistsViewModel.openedPlaylistId.value!!,
 										selectedSongIds
 									)
-									onConfirm()
 									onDismiss()
 								}
 							},
-							enabled = isValidForConfirm,
+							enabled = isSelectedSongIdsNotEmpty,
 							shape = MaterialTheme.shapes.large
 						) {
 							Text(
 								text = stringResource(R.string.playlist_dialog_confirm),
-								color = if (isValidForConfirm) {
+								color = if (isSelectedSongIdsNotEmpty) {
 									MaterialTheme.colorScheme.outline
 								} else {
 									MaterialTheme.colorScheme.onSurface

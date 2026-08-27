@@ -1,4 +1,4 @@
-package com.kwiby.musik.ui.floating_ui.dialogs.update_dialog
+package com.kwiby.musik.ui.floating_ui.dialogs.update
 
 import android.util.Log
 import androidx.compose.runtime.Composable

@@ -44,6 +44,7 @@ import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.lazyVerticalScrollbar
 import com.kwiby.musik.ui.tabs.playlists.components.PlaylistListItem
 import com.kwiby.musik.ui.tabs.playlists.components.info.NoPlaylistsMsg
+import com.kwiby.musik.ui.view_models.PlaybackViewModel
 import com.kwiby.musik.ui.view_models.PlaylistsViewModel
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
@@ -52,6 +53,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun PlaylistsPage(
 	playlistsViewModel: PlaylistsViewModel,
+	playbackViewModel: PlaybackViewModel,
 	changeSelectedPlaylistToRename: (Playlist) -> Unit
 ) {
 	val isLoading by playlistsViewModel.isLoadingPlaylists
@@ -162,7 +164,7 @@ fun PlaylistsPage(
 						iconImageVector = Icons.Rounded.DeleteOutline,
 						contentDescription = stringResource(R.string.remove_playlists_button)
 					) {
-						playlistsViewModel.removePlaylistsButton()
+						playlistsViewModel.removePlaylistsButton(playbackViewModel)
 					}
 				}
 			}

@@ -31,6 +31,11 @@ object ViewModelProvider {
 			)
 		}
 
+		// --===--  SleepTimerViewModel  --===--
+		initializer {
+			SleepTimerViewModel()
+		}
+
 		// --===--  SettingsViewModel  --===--
 		initializer {
 			SettingsViewModel(

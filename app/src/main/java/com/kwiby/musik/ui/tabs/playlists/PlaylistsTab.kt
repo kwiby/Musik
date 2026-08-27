@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import com.kwiby.musik.data.data_classes.playlist.Playlist
 import com.kwiby.musik.ui.floating_ui.dialogs.AddPlaylistDialog
 import com.kwiby.musik.ui.floating_ui.dialogs.RenamePlaylistDialog
-import com.kwiby.musik.ui.floating_ui.dialogs.add_songs_dialog.AddSongsDialog
+import com.kwiby.musik.ui.floating_ui.dialogs.add_songs.AddSongsDialog
 import com.kwiby.musik.ui.tabs.playlists.pages.playlists.PlaylistsPage
 import com.kwiby.musik.ui.tabs.playlists.pages.songs.SongsPage
 import com.kwiby.musik.ui.view_models.NavViewModel
@@ -48,6 +48,7 @@ fun PlaylistsTab(
 	if (!isPlaylistOpen) {
 		PlaylistsPage(
 			playlistsViewModel = playlistsViewModel,
+			playbackViewModel = playbackViewModel,
 			changeSelectedPlaylistToRename = { selectedPlaylistToRename = it }
 		)
 	} else {

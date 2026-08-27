@@ -1,4 +1,4 @@
-package com.kwiby.musik.ui.floating_ui.dialogs.add_to_playlist_dialog.components
+package com.kwiby.musik.ui.floating_ui.dialogs.add_to_playlist.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

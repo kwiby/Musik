@@ -14,6 +14,7 @@ import com.kwiby.musik.data.repositories.playlists.OfflinePlaylistsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -23,7 +24,7 @@ private const val LOG_TAG = "PlaylistsViewModel"
 
 class PlaylistsViewModel(
 	private val playlistsRepo: OfflinePlaylistsRepository,
-	musicListRepo: OfflineMusicListRepository
+	private val musicListRepo: OfflineMusicListRepository
 ) : ViewModel() {
 	var isLoadingPlaylists = mutableStateOf(true)
 		private set
@@ -121,6 +122,22 @@ class PlaylistsViewModel(
 			)
 	}
 
+	private suspend fun resetToAllMusicList(playbackViewModel: PlaybackViewModel) {
+		val currentAllMusic = musicListRepo.getAllAudioFilesStream().first()
+			.map { it.toMusicDetails() }
+
+		playbackViewModel.setQueue(
+			items = currentAllMusic.map { it.toMediaItem() },
+			queueSource = PlaybackViewModel.QueueSource(
+				playbackSource = PlaybackViewModel.PlaybackSource.MUSIC_LIST,
+				sourceId = 0L
+			),
+			isStarting = false,
+			isReordering = false
+		)
+		playbackViewModel.pause()
+	}
+
 	fun disableAllModes() {
 		selectedPlaylists.value = emptyList()
 		selectedSongIds.value = emptyList()
@@ -171,10 +188,21 @@ class PlaylistsViewModel(
 		}
 	}
 
-	fun removePlaylistsButton() {
-		viewModelScope.launch {
-			playlistsRepo.deletePlaylists(selectedPlaylists.value)
+	fun removePlaylistsButton(playbackViewModel: PlaybackViewModel) {
+		val deletedPlaylists = selectedPlaylists.value
+		val deletedIds = deletedPlaylists.map { it.id }.toSet()
+		val wasPlayingSongFromDeletedPlaylist = deletedIds.any { id ->
+			playbackViewModel.isQueueSourcedFrom(PlaybackViewModel.PlaybackSource.PLAYLIST, id)
 		}
+
+		viewModelScope.launch {
+			playlistsRepo.deletePlaylists(deletedPlaylists)
+
+			if (wasPlayingSongFromDeletedPlaylist) {
+				resetToAllMusicList(playbackViewModel)
+			}
+		}
+
 		disableAllModes()
 	}
 
@@ -282,13 +310,16 @@ class PlaylistsViewModel(
 	}
 
 	fun removeSongsFromPlaylist(
-		removeFromQueueFunc: (List<Long>) -> Unit,
+		playbackViewModel: PlaybackViewModel,
 		playlistId: Long,
 		songs: List<Long>
 	) {
-		removeFromQueueFunc(songs)
 		viewModelScope.launch {
 			playlistsRepo.removeSongsFromPlaylist(playlistId, songs)
+
+			if (playlistsRepo.getPlaylistSongCount(playlistId) == 0) {
+				resetToAllMusicList(playbackViewModel)
+			}
 		}
 	}
 

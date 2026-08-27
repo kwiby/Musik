@@ -131,4 +131,11 @@
     <dimen name="playlist_divider_horizontal_padding">20dp</dimen>
     <dimen name="playlist_list_item_height">45dp</dimen>
     <dimen name="add_song_dialog_outer_vertical_padding">100dp</dimen>
+
+    <!-- Sleep TImer -->
+    <dimen name="sleep_timer_radio_button_height">40dp</dimen>
+    <dimen name="sleep_timer_component_gap">12dp</dimen>
+    <dimen name="sleep_timer_dialog_outer_horizontal_padding">50dp</dimen>
+    <dimen name="sleep_timer_left_padding">15dp</dimen>
+    <dimen name="sleep_timer_width">53dp</dimen>
 </resources>

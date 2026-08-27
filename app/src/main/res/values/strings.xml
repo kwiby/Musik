@@ -20,6 +20,7 @@
 
     <!-- Button Content Descriptions -->
     <string name="settings_button" translatable="true">Settings</string>
+    <string name="sleep_timer_button" translatable="true">Sleep Timer</string>
     <string name="add_music_button" translatable="true">Add music</string>
     <string name="enter_move_mode_button" translatable="true">Move music</string>
     <string name="confirm_move_button" translatable="true">Confirm move</string>
@@ -203,6 +204,15 @@
     <string name="no_music_in_all_music_tab_msg">No music added in \"All Music\" tab</string>
     <string name="add_selected_to_playlists">Add selected songs to playlists</string>
     <string name="no_playlist_to_add_to_msg">No playlists to add to</string>
+
+    <!-- Sleep Timer -->
+    <string name="start_sleep_timer">Start a sleep timer</string>
+    <string name="time_15_mins">15 minutes</string>
+    <string name="time_30_mins">30 minutes</string>
+    <string name="time_1_hour">1 hour</string>
+    <string name="time_2_hours">2 hours</string>
+    <string name="time_4_hours">4 hours</string>
+    <string name="time_8_hours">8 hours</string>
 
     <!-- Crash Screen -->
     <string name="crash_title">A CRASH HAS OCCURRED</string>

@@ -12,10 +12,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MusicListDao {
-	@Query("SELECT * from music_list WHERE title LIKE '%' || :search || '%'")
+	@Query("SELECT * FROm music_list WHERE title LIKE '%' || :search || '%'")
 	fun searchByTitle(search: String): Flow<List<AudioFile>>
 
-	@Query("SELECT * from music_list WHERE id = :id")
+	@Query("SELECT * FROM music_list WHERE id = :id")
 	fun getById(id: Int): Flow<AudioFile>
 
 	@Query("SELECT * FROM music_list ORDER BY orderPos ASC")

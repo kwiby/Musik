@@ -44,7 +44,7 @@ import com.kwiby.musik.ui.components.ListDivider
 import com.kwiby.musik.ui.components.LoadingIndicator
 import com.kwiby.musik.ui.components.MusicListItem
 import com.kwiby.musik.ui.components.lazyVerticalScrollbar
-import com.kwiby.musik.ui.floating_ui.dialogs.add_to_playlist_dialog.AddToPlaylistDialog
+import com.kwiby.musik.ui.floating_ui.dialogs.add_to_playlist.AddToPlaylistDialog
 import com.kwiby.musik.ui.tabs.all_music.components.info.NoMusicMsg
 import com.kwiby.musik.ui.view_models.MusicListViewModel
 import com.kwiby.musik.ui.view_models.NavViewModel

@@ -258,6 +258,11 @@ class PlaybackViewModel(
 		}*/
 	}
 
+	fun isQueueSourcedFrom(playbackSource: PlaybackSource, sourceId: Long): Boolean {
+		val source = activeQueueSource ?: pendingQueueSource
+		return source?.playbackSource == playbackSource && source.sourceId == sourceId
+	}
+
 	fun setQueue(
 		items: List<MediaItem>,
 		queueSource: QueueSource,
@@ -403,6 +408,11 @@ class PlaybackViewModel(
 				isPlaying.value = true
 			}
 		}
+	}
+
+	fun pause() {
+		mediaController?.pause()
+		isPlaying.value = false
 	}
 
 	// seekToPrevious() is alternative

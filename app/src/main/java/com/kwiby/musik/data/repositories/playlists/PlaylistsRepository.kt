@@ -16,4 +16,5 @@ interface PlaylistsRepository {
 	suspend fun addSongsToPlaylists(playlistIds: List<Long>, songIds: List<Long>)
 	suspend fun removeSongsFromPlaylist(playlistId: Long, songIds: List<Long>)
 	suspend fun reorderSongsInPlaylist(playlistId: Long, newSongOrder: List<Long>)
+	suspend fun getPlaylistSongCount(playlistId: Long): Int
 }
