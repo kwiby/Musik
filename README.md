@@ -1,7 +1,7 @@
 <div align="center">
 
 <!-- Banner -->
-[![Banner](https://raw.githubusercontent.com/kwiby/Musik/refs/heads/main/images/banner.png)](#readme)
+![Banner](https://raw.githubusercontent.com/kwiby/Musik/refs/heads/main/images/banner.png)
 
 <!-- Title/Description-->
 # Musik
@@ -23,7 +23,7 @@
   
 ### Device Requirements:
 - Android 10 or above.
-- 200 MB - 400 MB of free storage space.
+- 200 MB - 300 MB of free storage space.
 ### Installing
 - Go to the [latest release page](https://github.com/kwiby/Musik/releases/latest).
 - Select one of the `.apk` files to download from based on your device architecture (`arm64-v8a`, `armeabi-v7a`, `x86_64`, or `x86`).
@@ -35,7 +35,7 @@
 <h2 align="center">Features</h2>
 
 <div>
-<img align="right" width="300" src="https://raw.githubusercontent.com/kwiby/Musik/refs/heads/main/images/UI%20Screenshots.png" alt="UI Screenshots">
+<img align="right" width="290" src="https://raw.githubusercontent.com/kwiby/Musik/refs/heads/main/images/ui_screenshots.png" alt="UI Screenshots">
 
 - Direct audio downloading from YouTube.
 - Built-in metadata editing.
