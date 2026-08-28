@@ -21,7 +21,7 @@
 <!-- Features -->
 <h2 align="center">Features</h2>
 
-<img align="right" width="290" src="https://raw.githubusercontent.com/kwiby/Musik/refs/heads/main/images/ui_screenshots.png" alt="UI Screenshots">
+<img align="right" width="300" src="https://raw.githubusercontent.com/kwiby/Musik/refs/heads/main/images/ui_screenshots.png" alt="UI Screenshots">
 
 - Direct audio downloading from YouTube.
 - Built-in metadata editing.
