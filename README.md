@@ -40,6 +40,7 @@
     - Play count
     - Listen time
 - Music playlists.
+- Sleep timer.
 - Audio file format conversion to mp3.
 - Very cool themes/styles!
 
