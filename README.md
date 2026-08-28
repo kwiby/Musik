@@ -50,11 +50,17 @@
 - Android 10 or above.
 - 200 MB - 300 MB of free storage space.
 ### Installing
-- Go to the [latest release page](https://github.com/kwiby/Musik/releases/latest).
-- Select one of the `.apk` files to download from based on your device architecture (`arm64-v8a`, `armeabi-v7a`, `x86_64`, or `x86`).
+1. Go to the [latest release page](https://github.com/kwiby/Musik/releases/latest).
+2. Select one of the `.apk` files to download from based on your device architecture (`arm64-v8a`, `armeabi-v7a`, `x86_64`, or `x86`).
 
 > [!TIP]
 > **If you don't know what your device architecture is, download the `universal` one.**
+
+4. Open the `.apk` file after downloading and follow the steps shown to fully install.
+6. Once installed, open the app and accept the permission when prompted.
+7. Finally, go to settings at the top right of the app, scroll down to `Update YtDlp`, and select `Nightly`.
+   - This is a highly recommended step to ensure that downloading functions properly.
+   - Afterwards, you will only need to update YtDlp every ~90 days. Read the explanation given in the app for more details.
 
 <!-- Acknowledgements -->
 <h2 align="center">Acknowledgements</h2>
