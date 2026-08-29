@@ -61,22 +61,10 @@ class PlaybackStatsTracker(
 			Log.e(LOG_TAG, "Cannot update the database, session start time is null")
 			return
 		}
-
-		/*
 		if (player.currentMediaItem == null) {
 			Log.e(LOG_TAG, "Cannot update the database, current media item is null")
 			return
 		}
-		 */
-		val curTrackId = getCurTrackId()
-		if (curTrackId != curSessionTrackId) {
-			Log.e(
-				LOG_TAG,
-				"Skipping db update, player track ($curTrackId) no longer matches session track ($curSessionTrackId)"
-			)
-			return
-		}
-
 		if (updateJob?.isActive == true) {
 			Log.e(LOG_TAG, "Cannot update the database, update job is active")
 			sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
