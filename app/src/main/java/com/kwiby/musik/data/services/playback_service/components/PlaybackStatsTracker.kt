@@ -102,6 +102,7 @@ class PlaybackStatsTracker(
 				if (doLogPlayCount) {
 					musicStatsRepo.logPlayCount(curSessionTrackId)
 				}
+				Log.d(LOG_TAG, "WRITE: track=$curSessionTrackId delta=$timeElapsedSinceLastUpdate")
 				musicStatsRepo.logListenTime(curSessionTrackId, timeElapsedSinceLastUpdate)
 			} catch (e: Exception) {
 				Log.e(LOG_TAG, "DB write FAILED for $curSessionTrackId, delta=$timeElapsedSinceLastUpdate", e)
@@ -192,11 +193,14 @@ class PlaybackStatsTracker(
 			sessionMutex.withLock {
 				if (isPlaying) {
 					if (getCurTrackId() == sessionTrackId && sessionTrackId != null) {
+						Log.d(LOG_TAG, "onIsPlayingChanged() A")
 						sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
 					} else {
+						Log.d(LOG_TAG, "onIsPlayingChanged() B")
 						startSessionInternal()
 					}
 				} else {
+					Log.d(LOG_TAG, "onIsPlayingChanged() C")
 					updateDB()
 				}
 			}
