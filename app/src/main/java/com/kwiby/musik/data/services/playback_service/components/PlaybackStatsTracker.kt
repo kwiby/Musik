@@ -219,6 +219,7 @@ class PlaybackStatsTracker(
 		if (mediaItem == null) {
 			scope.launch {
 				sessionMutex.withLock {
+					Log.d(LOG_TAG, "onMediaItemTransition() A")
 					flushInternal()
 					resetInternal()
 				}
@@ -229,6 +230,7 @@ class PlaybackStatsTracker(
 
 		scope.launch {
 			sessionMutex.withLock {
+				Log.d(LOG_TAG, "onMediaItemTransition() B")
 				flushInternal()
 				resetInternal()
 
@@ -241,9 +243,15 @@ class PlaybackStatsTracker(
 
 	override fun onPlaybackStateChanged(playbackState: Int) {
 		if (playbackState == Player.STATE_ENDED && sessionTrackId != null) {
+			val endedTrackId = sessionTrackId
 			scope.launch {
 				sessionMutex.withLock {
-					flushInternal()
+					if (sessionTrackId == endedTrackId) {
+						Log.d(LOG_TAG, "C: STATE_ENDED flush for $endedTrackId")
+						flushInternal()
+					} else {
+						Log.d(LOG_TAG, "C: STATE_ENDED skipped, session moved to $sessionTrackId")
+					}
 				}
 			}
 		}
