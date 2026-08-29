@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -24,6 +25,8 @@ class PlaybackStatsTracker(
 ) : Player.Listener {
 	private val updateDelaySec = 30
 	private val playCountThresholdSec = 3
+
+	private val absMaxDeltaMsErrorGuard = updateDelaySec * 1000L * 3L
 
 	private val sessionMutex = Mutex()
 
@@ -58,12 +61,24 @@ class PlaybackStatsTracker(
 			Log.e(LOG_TAG, "Cannot update the database, session start time is null")
 			return
 		}
+
+		/*
 		if (player.currentMediaItem == null) {
 			Log.e(LOG_TAG, "Cannot update the database, current media item is null")
 			return
 		}
+		 */
+		val curTrackId = getCurTrackId()
+		if (curTrackId != curSessionTrackId) {
+			Log.e(
+				LOG_TAG,
+				"Skipping db update, player track ($curTrackId) no longer matches session track ($curSessionTrackId)"
+			)
+			return
+		}
+
 		if (updateJob?.isActive == true) {
-			Log.w(LOG_TAG, "Cannot update the database, update job is active")
+			Log.e(LOG_TAG, "Cannot update the database, update job is active")
 			sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
 			return
 		}
@@ -71,8 +86,22 @@ class PlaybackStatsTracker(
 		val playCountThresholdMs = playCountThresholdSec * 1000L
 		val totalDuration = sessionTotalDurationMs!!
 		val curElapsedRealtime = SystemClock.elapsedRealtime()
-		val timeElapsedSinceLastUpdate = curElapsedRealtime - sessionLastUpdateTimeMs!!
+		var timeElapsedSinceLastUpdate = curElapsedRealtime - sessionLastUpdateTimeMs!!
 		sessionLastUpdateTimeMs = curElapsedRealtime
+
+		if (timeElapsedSinceLastUpdate < 0) {
+			Log.e(LOG_TAG, "Skipping db update due to negative delta ($timeElapsedSinceLastUpdate)")
+			return
+		}
+		if (timeElapsedSinceLastUpdate > absMaxDeltaMsErrorGuard) {
+			Log.e(
+				LOG_TAG,
+				"Erroneous delta ($timeElapsedSinceLastUpdate) for track $curSessionTrackId, " +
+						"clamping to $absMaxDeltaMsErrorGuard ms"
+			)
+			timeElapsedSinceLastUpdate = absMaxDeltaMsErrorGuard
+		}
+
 		sessionTotalListenTime = sessionTotalListenTime!! + timeElapsedSinceLastUpdate
 		val totalListenTime = sessionTotalListenTime!!
 		val doLogPlayCount = !wasSessionPlayCountLogged && totalListenTime >= minOf(playCountThresholdMs, totalDuration)
@@ -92,14 +121,14 @@ class PlaybackStatsTracker(
 		}
 	}
 
-	private fun resetInternal() {
+	private suspend fun resetInternal() {
 		sessionTrackId = null
 		sessionTotalDurationMs = null
 		sessionTotalListenTime = null
 		sessionLastUpdateTimeMs = null
 		wasSessionPlayCountLogged = false
 
-		stopSession()
+		stopSessionInternal()
 	}
 
 	private suspend fun flushInternal() {
@@ -119,14 +148,14 @@ class PlaybackStatsTracker(
 		}
 	}
 
-	private fun startSessionInternal() {
+	private suspend fun startSessionInternal() {
 		val curTrackId = getCurTrackId()
 		if (curTrackId == null) {
 			Log.e(LOG_TAG, "Current track id is null (no music is playing)")
 			return
 		}
 
-		stopSession()
+		stopSessionInternal()
 		sessionTrackId = curTrackId
 		sessionTotalDurationMs = player.duration
 		sessionTotalListenTime = 0L
@@ -134,11 +163,13 @@ class PlaybackStatsTracker(
 		wasSessionPlayCountLogged = false
 
 		loopJob = scope.launch {
-			while (true) {
+			while (isActive) {
 				val updateDelayMs = (updateDelaySec * 1000).milliseconds
 				delay(updateDelayMs)
 
-				if (player.isPlaying) {
+				if (!isActive) break
+
+				if (player.isPlaying && getCurTrackId() == curTrackId) {
 					sessionMutex.withLock {
 						updateDB()
 					}
@@ -157,28 +188,27 @@ class PlaybackStatsTracker(
 	}
 	 */
 
-	fun stopSession() {
+	private suspend fun stopSessionInternal() {
 		loopJob?.cancel()
+		loopJob?.join()
 		loopJob = null
+
 		updateJob?.cancel()
+		updateJob?.join()
 		updateJob = null
 	}
 
 
 	override fun onIsPlayingChanged(isPlaying: Boolean) {
-		if (isPlaying) {
-			scope.launch {
-				sessionMutex.withLock {
-					if (getCurTrackId() == sessionTrackId) {
+		scope.launch {
+			sessionMutex.withLock {
+				if (isPlaying) {
+					if (getCurTrackId() == sessionTrackId && sessionTrackId != null) {
 						sessionLastUpdateTimeMs = SystemClock.elapsedRealtime()
 					} else {
 						startSessionInternal()
 					}
-				}
-			}
-		} else {
-			scope.launch {
-				sessionMutex.withLock {
+				} else {
 					updateDB()
 				}
 			}
@@ -221,6 +251,11 @@ class PlaybackStatsTracker(
 
 	override fun onPlayerError(error: PlaybackException) {
 		Log.e(LOG_TAG, "$error")
-		stopSession()
+		scope.launch {
+			sessionMutex.withLock {
+				flushInternal()
+				resetInternal()
+			}
+		}
 	}
 }
