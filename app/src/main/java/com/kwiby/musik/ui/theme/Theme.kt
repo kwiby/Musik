@@ -5,6 +5,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.kwiby.musik.ui.theme.colour_schemes.AppleDarkColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.AppleLightColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.FlamingoDarkColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.FlamingoLightColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.GrapeDarkColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.GrapeLightColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.IceDarkColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.IceLightColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.LemonDarkColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.LemonLightColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.LimeDarkColourScheme
+import com.kwiby.musik.ui.theme.colour_schemes.LimeLightColourScheme
 import com.kwiby.musik.ui.theme.colour_schemes.NightDarkColourScheme
 import com.kwiby.musik.ui.theme.colour_schemes.NightLightColourScheme
 import com.kwiby.musik.ui.theme.colour_schemes.SunsetDarkColourScheme
@@ -22,7 +34,13 @@ enum class ThemeMode {
 
 enum class ThemeStyle {
     NIGHT,
-    SUNSET;
+    ICE,
+    APPLE,
+    LIME,
+    SUNSET,
+    LEMON,
+    FLAMINGO,
+    GRAPE;
 
     companion object {
         val DEFAULT = NIGHT
@@ -43,12 +61,24 @@ data class AppTheme(
 fun AppTheme.colorScheme(): ColorScheme = when (mode) {
     ThemeMode.DARK -> when (style) {
         ThemeStyle.NIGHT -> NightDarkColourScheme
+        ThemeStyle.ICE -> IceDarkColourScheme
+        ThemeStyle.APPLE -> AppleDarkColourScheme
+        ThemeStyle.LIME -> LimeDarkColourScheme
         ThemeStyle.SUNSET -> SunsetDarkColourScheme
+        ThemeStyle.LEMON -> LemonDarkColourScheme
+        ThemeStyle.FLAMINGO -> FlamingoDarkColourScheme
+        ThemeStyle.GRAPE -> GrapeDarkColourScheme
     }
 
     ThemeMode.LIGHT -> when (style) {
         ThemeStyle.NIGHT -> NightLightColourScheme
+        ThemeStyle.ICE -> IceLightColourScheme
+        ThemeStyle.APPLE -> AppleLightColourScheme
+        ThemeStyle.LIME -> LimeLightColourScheme
         ThemeStyle.SUNSET -> SunsetLightColourScheme
+        ThemeStyle.LEMON -> LemonLightColourScheme
+        ThemeStyle.FLAMINGO -> FlamingoLightColourScheme
+        ThemeStyle.GRAPE -> GrapeLightColourScheme
     }
 }
 

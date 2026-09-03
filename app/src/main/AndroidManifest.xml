@@ -117,6 +117,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
+        <!-- Yellow Icon -->
+        <activity-alias
+            android:name=".YellowIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_yellow_launcher"
+            android:roundIcon="@mipmap/ic_yellow_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
         <!-- Pink Icon -->
         <activity-alias
             android:name=".PinkIcon"

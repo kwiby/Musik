@@ -40,9 +40,8 @@ class SettingsViewModel(
 
 	suspend fun switchAppIcon(context: Context, newAlias: String) {
 		val validAliases = setOf(
-			"Default", "Black", "Blue",
-			"Green", "Orange", "Pink",
-			"Purple", "Red", "White"
+			"Default", "Blue", "Green", "Orange", "Yellow",
+			"Pink", "Purple", "Red", "Black", "White"
 		)
 		if (!validAliases.contains(newAlias)) {
 			Log.e(LOG_TAG, "Invalid newAlias")

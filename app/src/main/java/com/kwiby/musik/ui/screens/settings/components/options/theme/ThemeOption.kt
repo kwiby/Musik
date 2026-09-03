@@ -75,8 +75,19 @@ fun ThemeOption(
 		) {
 			ThemeButton(settingsViewModel, ThemeStyle.NIGHT)
 			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
+			ThemeButton(settingsViewModel, ThemeStyle.ICE)
+			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
+			ThemeButton(settingsViewModel, ThemeStyle.LIME)
+			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
 			ThemeButton(settingsViewModel, ThemeStyle.SUNSET)
 			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
+			ThemeButton(settingsViewModel, ThemeStyle.LEMON)
+			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
+			ThemeButton(settingsViewModel, ThemeStyle.FLAMINGO)
+			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
+			ThemeButton(settingsViewModel, ThemeStyle.GRAPE)
+			Spacer(Modifier.width(dimensionResource(R.dimen.small_padding)))
+			ThemeButton(settingsViewModel, ThemeStyle.APPLE)
 		}
 	}
 

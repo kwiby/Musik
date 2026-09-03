@@ -35,13 +35,14 @@ fun AppIconButton(
 
 	val appIconRes = when (alias) {
 		"Default" -> R.drawable.musik_pixel_icon
-		"Black" -> R.drawable.musik_pixel_icon_black
 		"Blue" -> R.drawable.musik_pixel_icon_blue
 		"Green" -> R.drawable.musik_pixel_icon_green
 		"Orange" -> R.drawable.musik_pixel_icon_orange
+		"Yellow" -> R.drawable.musik_pixel_icon_yellow
 		"Pink" -> R.drawable.musik_pixel_icon_pink
 		"Purple" -> R.drawable.musik_pixel_icon_purple
 		"Red" -> R.drawable.musik_pixel_icon_red
+		"Black" -> R.drawable.musik_pixel_icon_black
 		"White" -> R.drawable.musik_pixel_icon_white
 		else -> R.drawable.musik_pixel_icon
 	}
